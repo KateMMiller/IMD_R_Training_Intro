@@ -1,2 +1,2 @@
-# R_Training
-Training materials for learning R and working with Northeast Temperate Network data.
+# IMD_R_Training_Intro
+WIP training materials (currently clone of another repo) for NPS IMD R Intro training course
