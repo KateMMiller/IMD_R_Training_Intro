@@ -1,0 +1,27 @@
+---
+title: "Day2 Mod 3"
+author: "Laurne Pandori & John Paul Schmit"
+date: "12/15/2021"
+output: html_document
+---
+#### Intro to Data Wrangling  - Dplyr functions {.tabset}
+
+<details open><summary class='drop'> Data Wrangling</summary>
+
+This section will go over the use of dplyr functions to get your data.frame how you want.
+
+We will do:
+
+1) The pipe operator '%>%' or '|>' (shortcuts) if that did not come in mod 2
+2) Dplyr commands: 
+  a) filter (w/ boolean operators), mutate, 
+  b) select and rename
+  c) arrange
+  d) pull + table
+  e) group_by + mutate
+  f) group_by + summarize
+3) Think of commands as verbs that do a thing, with pipes that string them together
+4) If this is not too long bring up lag, lead, etc in group_by mutates
+
+</details>
+<br>

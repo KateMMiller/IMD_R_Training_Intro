@@ -1,0 +1,26 @@
+---
+title: "Day 2 Mod 4"
+author: "Laurne Pandori & John Paul Schmit"
+date: "12/15/2021"
+output: html_document
+---
+
+---
+#### Intro to Data Wrangling  - Joining Tables {.tabset}
+
+<details open><summary class='drop'> Joining Tables</summary>
+
+This section will go over the use of functions to comnbine two tables into one.
+
+We will do:
+
+1) bind_rows and bind_columns for simple cases
+2) Dplyr commands: 
+  a) Left_join (and right join)
+  b) Full join
+  c) inner_join
+  d) semi_join
+  e) anti_join
+
+</details>
+<br>

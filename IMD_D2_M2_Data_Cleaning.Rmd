@@ -1,0 +1,61 @@
+---
+title: "Day 2 Mod 2"
+author: "Laurne Pandori & John Paul Schmit"
+date: "12/15/2021"
+output: html_document
+---
+
+#### Intro to Data Wrangling  - Data Cleaing {.tabset}
+
+<details open><summary class='drop'> Data Cleaning</summary>
+
+  Data wrangling is all the steps you have to take to prepare your data for analysis or plotting. Data munging or data cleaning are other terms used to describe this process.
+
+Material presented today can be found in Hadley Wickham's book "R for Data Science", which is free and online.
+<https://r4ds.had.co.nz/wrangle-intro.html>
+
+*note to self - drop link to book in the chat*
+
+Three Major Components to Data Wrangling
+
+- Step 1: Import (covered yesterday)
+- Step 2: Transform (get data in the form you'd like it)
+</details>
+<br>
+
+<details open><summary class='drop'> Topics</summary>
+Topics - notes
+
+  
+  Covered in Day 1?
+  
+- Getting familiar with data: glance, head, View, etc.
+- Parsing columns, data types
+- Numbers that don't mean numbers (ex - -99 = no data)
+
+Day 2 Topics: 
+
+- Consistent column names (take or leave) - packages aren't perfect; if have similar column names, can do by hand
+- The pipe operator '%>%' or '|>' (shortcuts)
+- Dplyr commands: filter (w/ boolean operators), arrange, select, mutate, rename, pull, table
+- Think of commands as verbs that do a thing, with pipes that string them together
+- What to do with NA's? - na.rm, na.omit, etc.
+- Group mutate/group summarize
+- Joining datasets (rbind + xx_join)
+- Pivoting
+
+</details>
+<br>
+ 
+<details open><summary class='drop'> Tidying Data</summary>
+Tidying Data - Row/Column Names
+
+Sometimes you get data where the column names are messy...
+
+```{r, echo = TRUE}
+
+
+
+```
+
+This section continues with cleaning data. 

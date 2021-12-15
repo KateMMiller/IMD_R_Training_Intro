@@ -1,0 +1,101 @@
+---
+title: "Day 2 Mod 1"
+author: "Lauren Pandori & John Paul Schmit"
+date: "12/15/2021"
+output: html_document
+---
+
+
+
+#### Intro to Data Wrangling - Intro and Packages {.tabset}
+<details open><summary class='drop'>Data Wrangling Intro</summary>
+ 
+ Goals of this Day
+ 
+ 1) Learn to load and understand how packages work
+ 2) Understand what data wrangling is and some wats to do it.
+ 3) Learn how to clean your import data so that R understands what it is 
+ 4) Get data in the format you need for analysis using the tidyverse.
+ 5) Combine data from different data.frames so that it is in the correct format
+ 
+
+<b>Disclaimer: While R provides lots of ways to check and clean up data, these tools are no replacement for sound data management that prevents data issues from happening in the first place.</b>
+
+</details>
+<br>
+
+
+<details open><summary class='drop'>Working with Packages: Installing a Package</summary>
+
+What is a package? 
+  Package is a group of functions that someone has put together.
+They come with documentation that tells you about what each function does.
+
+First, load package
+ 1) Go to packages tab in lower right quadrant
+ 2) Click on "install"
+ 3) Type name of package 'janitor'
+ 4) Click "install"
+ 5- Code will pop up in your console
+
+```{r eval = FALSE, include = TRUE}
+install.packages("janitor")
+```
+
+<details open><summary class='drop'> Calling a Package</summary>
+
+  To use a package, call it by using the command "library"
+
+```{r eval = FALSE, include = TRUE}
+library('janitor')
+```
+
+This is called "loading a package" or "calling a package".
+
+</details>
+<br>
+
+<details open><summary class='drop'> Using Package</summary>
+
+
+  Look at the vignette
+- Go to packages window of lower right quadrant
+- Click on 'janitor' name in list of packages
+- Vignette will show up in the 'help' tab
+
+*take time to click a function from the vignette list*
+  *walk through how to get helpful info*
+  
+  Did you get "error" text?
+  ========================================================
+  *decide whether or not to include*
+  
+  Text pops up in the console after you run code
+You must decide whether it means you have to change something or not
+
+```{r echo = TRUE, warning = TRUE, message = TRUE}
+library('janitor')
+```
+
+</details>
+<br>
+
+<details open><summary class='drop'> Challenge: Install a Package</summary>
+
+Challenge: install + call the package 'tidyverse'
+
+</details>
+<br>
+
+<details open><summary class='drop'> Solution</summary>
+
+Solution: install + call the package 'tidyverse'
+
+```{r eval = FALSE, include = TRUE}
+install.packages("tidyverse")
+library('tidyverse')
+```
+
+</details>
+<br>
+
