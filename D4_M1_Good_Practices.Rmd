@@ -1,0 +1,7 @@
+####Good Coding Practices {.tabset} 
+
+Sarah will take a first crack at this
+
+Good coding practices - being consistent
+
+DRY principles 

@@ -94,6 +94,19 @@ This is the dream. Again there's no judgment if you're not here. This is somethi
 ```{r D3_Assignments, child = "D3_Reading_Assignments.Rmd"}
 
 ```
+### Day 4{.tabset}
+
+ 
+
+```{r Good_Practices, child= "D4_M1_Good_Practices.Rmd"}
+```
+
+```{r Control_Structures, child= "D4_M2_Control_Structures.Rmd"}
+```
+
+```{r Troubleshooting_Iteration, child= "D4_M3_Troubleshooting_Iteration.Rmd"}
+```
+
 
 ### Useful websites
 There's a lot of great online material for learning new applications of R. The ones I've used the most are listed below. 
