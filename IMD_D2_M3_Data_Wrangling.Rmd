@@ -1,5 +1,5 @@
 ---
-title: "Day2 Mod 3"
+title: "Day 2 Mod 3"
 author: "Laurne Pandori & John Paul Schmit"
 date: "12/15/2021"
 output: html_document
@@ -23,5 +23,107 @@ We will do:
 3) Think of commands as verbs that do a thing, with pipes that string them together
 4) If this is not too long bring up lag, lead, etc in group_by mutates
 
+</details>
+<br>
+
+<details open><summary class='drop'> Pipe Operators</summary>
+
+1. Let you take the output of one function and feed it to another
+2. Lets you string together many functions in a way that is easy to read and understand
+3. Two versions: %>%  for magrttr package and |> very new (version 4.1.0 and up) base R version
+
+
+ADD EXAMPLE
+
+</details>
+<br>
+
+
+<details open><summary class='drop'> Working with Dplyr</summary>
+
+Dplyr is a package that is part of the tidyverse
+Dplyr is used to work with data.frames
+Makes things like filtering and summarizing data easier
+Uses functions that are "verb-like" so they are easy to understand and remember
+
+</details>
+<br>
+
+<details open><summary class='drop'> Dplyr- filter()</summary>
+
+filter() - filters out rows from a data.frame based on values in columns
+can combine criteria using & (and), | (or), ! not
+
+1 simple example
+1 example using more complicated criteria
+
+
+</details>
+<br>
+
+
+
+<details open><summary class='drop'> dplyr - select() and rename()</summary>
+
+select() - keeps the columns you indicate and drops the rest. you can rename the columns you select if you like, 
+  can reorder columns as you go
+rename() - keeps all the columns, but renames the ones you indicate
+
+example of each
+</details>
+<br>
+
+
+
+<details open><summary class='drop'> dplyr - arrange()</summary>
+arrange()  reorders rows 
+
+generally not needed in R, but can be helpful in exploring your data, and also 
+when working with time series data and lagged values
+
+example
+</details>
+<br>
+
+<details open><summary class='drop'> dplyr - pull()</summary>
+
+We may want to cut this to save time
+pull() takes data from a column and returns in in vector form
+
+pull() %>%  table() is a handy way to see a summary of categorical data (e.g. how may of each species is in your dataset)
+
+example
+
+</details>
+<br>
+
+
+<details open><summary class='drop'> dplyr - mutate()</summary>
+
+mutate() makes new columns by doing calculations on old columns
+
+examples
+</details>
+<br>
+
+
+<details open><summary class='drop'> dplyr - group_by() and mutate()</summary>
+
+group_by() indicates that data is in groups, so you can do calculations separately for each group
+
+group_by() %>% mutate() will add a column and return the same number of rows that the original data had
+
+example
+
+</details>
+<br>
+
+<details open><summary class='drop'> dplyr - group_by() and summarize()</summary>
+
+group_by() and  summarize() (or summarise()) also work with groupd data
+Here you calculate a summary for each group. Output data frame will have the columns that
+define the group and the summary data, will have one row for each group
+
+examples
 </details>
 <br>
