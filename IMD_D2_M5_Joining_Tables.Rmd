@@ -1,0 +1,81 @@
+---
+title: "Day 2 Mod 5"
+author: "Laurne Pandori & John Paul Schmit"
+date: "12/15/2021"
+output: html_document
+---
+
+---
+#### Intro to Data Wrangling  - Joining Tables {.tabset}
+
+<details open><summary class='drop'> Joining Tables</summary>
+
+This section will go over the use of functions to combine two tables into one.
+
+
+We will do:
+
+1) bind_rows and bind_columns for simple cases
+2) Dplyr commands: 
+  a) left_join (and right join)
+  b) full join
+  c) inner_join
+  d) semi_join
+  e) anti_join
+
+</details>
+<br>
+
+<details open><summary class='drop'> Joining Table - binding</summary>
+
+bind_rows() and bind_columns() simply merge two data.frames directly
+
+bind_rows() adds the rows in the second df to the end of the first df
+generally only makes sense if they have identical columns. 
+
+
+bind_columns() adds the colunms from the second df to the right of the 
+first df
+generally only makes sense if rows mean the same things and are in the same order'
+in each df. 
+
+</details>
+<br>
+
+<details open><summary class='drop'> Joining Table - left and right joins</summary>
+
+left_join() and right_join()
+take all rows from one df and join with matching rows in other df
+indicate key columns in the command
+order of rows is not relevant
+Ok if some rows don't match or there are double matches
+
+examples
+</detials>
+<br>
+
+
+<details open><summary class='drop'> Joining Table - full and inner joins</summary>
+
+inner_join() - only rows that have  matches in both data frames are kept
+full_join() you get all the rows from both datasets even if some don't match.
+
+examples
+</details>
+<br>
+
+<details open><summary class='drop'> Joining Table - filtering joins</summary>
+
+These are not true joins.
+Rather they filter a table based on data in another table
+
+semi_join()  Only keep data from table 1 that has a match in table 2 
+
+anti_join() only keep data in table 1 that does not have a match in table 2
+
+examples
+
+</details>
+<br>
+
+
