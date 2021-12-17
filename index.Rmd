@@ -2,10 +2,10 @@
 output: 
   html_document:
     css: custom_styles.css
-title: "R training for ACAD"
+title: "R training for 2022 IMD Scientists Training"
 ---
 
-ACAD R Training: November 3 -- 5, 2020 {.tabset .tabset-pills}
+IMD R Training: January 31  -- February 3, 2022 {.tabset .tabset-pills}
 --------------------------------------------------
 ### Prep for Training{.tabset}
 
@@ -23,7 +23,7 @@ ACAD R Training: November 3 -- 5, 2020 {.tabset .tabset-pills}
 
 ```
 
-```{r Getting_help, child = "D1_M3_Getting_help.Rmd"}
+```{r Data_importing_and_subsetting, child = "D1_M6_Importing_and_Subsetting.Rmd"}
 
 ```
 
@@ -35,7 +35,7 @@ ACAD R Training: November 3 -- 5, 2020 {.tabset .tabset-pills}
 
 ```
 
-```{r Data_importing_and_subsetting, child = "D1_M6_Importing_and_Subsetting.Rmd"}
+```{r Getting_help, child = "D1_M3_Getting_help.Rmd"}
 
 ```
 
