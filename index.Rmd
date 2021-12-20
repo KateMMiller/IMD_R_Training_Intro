@@ -1,8 +1,10 @@
 ---
 output: 
   html_document:
+    fig_caption: false
     css: custom_styles.css
 title: "R training for 2022 IMD Scientists Training"
+
 ---
 
 IMD R Training: January 31  -- February 3, 2022 {.tabset .tabset-pills}
