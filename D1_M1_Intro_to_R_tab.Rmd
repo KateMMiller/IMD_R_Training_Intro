@@ -1,4 +1,6 @@
-#### Intro to Coding
+#### Intro to R & RStudio
+
+##### Some Notes on Coding
 
 Welcome to the class!
 
@@ -23,9 +25,6 @@ Google and Stack Overflow are great resources when you don't know off the top of
 And reach out to your colleagues too - there's no reason to waste time writing code that someone else has already written!
 Just give credit where credit is due, and take some time to make sure you understand what the copied code does.
 And especially don't hesitate to reach out to more experienced colleagues with questions.
-
-
-#### Intro to R & RStudio
 
 ##### About R
 
@@ -115,14 +114,13 @@ Before we create a project, take a look at the **Console** tab. Notice that at t
 If you refer to a file in R using a *relative path*, for example `./data/my_data_file.csv`, R will look in your current working directory for a folder called `data` containing a file called `my_data_file.csv`. Using relative paths
 is a good idea because the full path is specific to your computer and likely won't work on a different computer. But there's no guarantee that everyone has the same default R working directory. This is
 where projects come in.  
-Let's make a project for this class. Click File > New Project. In the window that appears, select **New Directory**, then select **Empty Project**. You will be prompted for a directory name.
+Let's make a project for this class. Click **File > New Project**. In the window that appears, select **New Directory**, then select **New Project**. You will be prompted for a directory name.
 This is the name of your project folder. For this class, call it `imd-r-training-intro`. Next, you'll select what folder to keep your project folder in. `Documents/R` is a good place to store all of your
 R projects but it's up to you. When you are done, click on **Create Project**.  
 
-![Create new project step 1](images/CreateProject_1.PNG) 
+![Create new project step 1](images/CreateProject_1.PNG){width=450px}
+![Create new project step 2](images/CreateProject_2.PNG){width=450px}
+![Create new project step 3](images/CreateProject_3.PNG){width=450px}
 
-![Create new project step 2](images/CreateProject_2.PNG) 
-
-![Create new project step 3](images/CreateProject_3.PNG)
-
-some text here
+If you successfully started a project named `imd-r-training-intro`, you should see it listed at the very top right of your screen. As you start new projects, you'll want to check that you're working in the right one before you start coding.
+Take a look at the **Console** tab again. Notice that your current working directory is now your project folder. When you look in the **Files** tab of the bottom right pane, you'll see that it also defaults to the project folder.
