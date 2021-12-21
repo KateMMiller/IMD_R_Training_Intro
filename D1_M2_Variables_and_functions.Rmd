@@ -1,0 +1,3 @@
+#### Let's start coding
+
+First we need to create a new R script file. Click on the **New File** icon ![new file icon](images/NewFile.PNG) in the top left corner. In the dropdown, select **R Script**. The source pane will appear with an untitled empty script. Go ahead and save it by clicking the **Save** icon (and make sure the **Source on Save** checkbox is deselected). Call it `my_first_script.R`.
