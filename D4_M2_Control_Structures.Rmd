@@ -16,7 +16,82 @@ control structures
       -lapply
     -purrr - covered more in depth on day 6
 
--vectorization - examples of vectorized functions
+##### Vectorization
+
+On the first day of this class, we introduced vectors. Here are some examples:
+
+```{r VectorExamplesDay4, echo=TRUE, eval=TRUE}
+# Numeric vectors
+numbers <- 1:10
+other_numbers <- 6:15
+
+# Character vectors
+code_lang <- c("R", "C++", "Java", "Python", "C")
+human_lang <- c("English", "Spanish", "Chinese", "Russian")
+```
+
+What if we want to multiply `numbers` by two? Based on what we just learned about loops and apply functions, it might be tempting to do something like this:
+
+```{r VectorLoop, echo=TRUE, eval=TRUE}
+new_numbers <- c()  # Create a new NULL vector
+
+for (num in numbers) {
+  new_numbers <- c(new_numbers, 2 * num)
+}
+
+new_numbers
+```
+
+Or this:
+
+```{r VectorApply, echo=TRUE, eval=TRUE}
+new_numbers <- sapply(numbers, function(x){2 * x})
+new_numbers
+```
+
+Clearly both of these solutions produce the correct result, but we're actually making this harder than it needs to be. It turns out that many functions and operations in R are *vectorized*, meaning that they will be applied in parallel to each element of a vector. So in this example, all we need to do to multiply each element in `numbers` by two is:
+
+```{r VectorMult, echo=TRUE, eval=TRUE}
+new_numbers <- numbers * 2
+new_numbers
+```
+
+Division, addition, and subtraction are also vectorized:
+
+```{r VectorOps, echo=TRUE, eval=TRUE}
+numbers
+numbers + 5
+numbers - 3
+numbers / 2
+```
+
+In fact, this even works with two or more vectors.
+
+```{r TwoVectorOps, echo=TRUE, eval=TRUE}
+numbers
+other_numbers
+
+other_numbers - numbers
+other_numbers * numbers
+```
+
+So far we've only looked at operations between vectors and single values or two vectors of the same length. But what happens if we try to add two vectors of different lengths? Let's try it out.
+
+```{r DiffVectorLengths, echo=TRUE, eval=TRUE}
+ones <- rep(1, 6)  # Vector of 1's, length 6
+ones
+
+add_this <- c(1, 2)
+this_one_breaks <- c(1, 2, 3, 4)
+
+ones + add_this  # This works fine
+ones + this_one_breaks  # This breaks
+```
+
+So what happened? When we added the vector `[1, 2]` to the vector `[1, 1, 1, 1, 1, 1]`, we got `[2, 3, 2, 3, 2, 3]`. When we added `[1, 2, 3, 4]` to `[1, 1, 1, 1, 1, 1]`, we got a result, but we also got a warning along with it. The text of the warning actually gives a clue as to what R is doing. It says "longer object length is not a multiple of shorter object length" because when R tries to operate on vectors of different lengths, it repeats the shorter vector until it matches the length of the longer vector.
+`ones` is a vector of length 6. Since `add_this` is length 2 and 2 is a multiple of 6, R adds `[1, 1, 1, 1, 1, 1] + [1, 2, 1, 2, 1, 2]`, repeating `add_this` exactly three times. However, `this_one_breaks` is a vector of length 4, which is not a multiple of 6. Therefore, we get a warning because R cannot fit `this_one_breaks` into a vector of length 6 without truncating it
+
+. 
     -gsub, grep family (avoid regex)
     -basic vector math
       -rowsums vs colsums
