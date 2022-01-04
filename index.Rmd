@@ -72,15 +72,9 @@ title: "NPS IMD R Training I"
 
 ### Day 3: Data Viz {.tabset}
 
-```{r Data_wrangling_II, child = "D3_M1_Data_wrangling_II.Rmd"}
+```{r data_viz1, child = "IMD_D3_M1_Data_Viz.Rmd"}
 
 ```
-
-```{r Plotting_with_ggplot2, child = "D3_M2_Plotting_with_ggplot2.Rmd"}
-
-```
-
-
 
 ```{r D3_Assignments, child = "D3_Reading_Assignments.Rmd"}
 
