@@ -980,8 +980,8 @@ MSAccess tutorial: <a href="https://www.youtube.com/watch?v=bWKf6gT8_JI&amp;list
 </div>
 <div id="day-2-data-wrangling" class="section level3 tabset">
 <h3 class="tabset">Day 2: Data Wrangling</h3>
-<div id="intro-and-packages" class="section level4 tabset">
-<h4 class="tabset">Intro and Packages</h4>
+<div id="intro-to-data-wrangling---intro-and-packages" class="section level4 tabset">
+<h4 class="tabset">Intro to Data Wrangling - Intro and Packages</h4>
 <details open>
 <summary class="drop">
 Data Wrangling Intro
@@ -989,7 +989,7 @@ Data Wrangling Intro
 <p>Goals of this Day</p>
 <ol style="list-style-type: decimal">
 <li>Learn to load and understand how packages work</li>
-<li>Understand what data wrangling is and some wats to do it.</li>
+<li>Understand what data wrangling is and some ways to do it.</li>
 <li>Learn how to clean your import data so that R understands what it is</li>
 <li>Get data in the format you need for analysis using the tidyverse.</li>
 <li>Combine data from different data.frames so that it is in the correct format</li>
@@ -1001,8 +1001,15 @@ Data Wrangling Intro
 <summary class="drop">
 Working with Packages: Installing a Package
 </summary>
-<p>What is a package? Package is a group of functions that someone has put together. They come with documentation that tells you about what each function does.</p>
-<p>First, load package 1) Go to packages tab in lower right quadrant 2) Click on “install” 3) Type name of package ‘janitor’ 4) Click “install” 5- Code will pop up in your console</p>
+<p>What is a package? A package is a group of functions that someone has put together. They come with documentation that tells you about what each function does.</p>
+<p>First, load package</p>
+<ol style="list-style-type: decimal">
+<li>Go to packages tab in lower right quadrant</li>
+<li>Click on “install”</li>
+<li>Type name of package ‘janitor’</li>
+<li>Click “install”</li>
+<li>Code will pop up in your console</li>
+</ol>
 <pre class="r"><code>install.packages(&quot;janitor&quot;)</code></pre>
 <details open>
 <summary class="drop">
@@ -1017,9 +1024,14 @@ Calling a Package
 <summary class="drop">
 Using Package
 </summary>
-<p>Look at the vignette - Go to packages window of lower right quadrant - Click on ‘janitor’ name in list of packages - Vignette will show up in the ‘help’ tab</p>
+<p>Look at the vignette</p>
+<ul>
+<li>Go to packages window of lower right quadrant</li>
+<li>Click on ‘janitor’ name in list of packages</li>
+<li>Vignette will show up in the ‘help’ tab</li>
+</ul>
 <p><em>take time to click a function from the vignette list</em> <em>walk through how to get helpful info</em></p>
-<p>Did you get “error” text? ======================================================== <em>decide whether or not to include</em></p>
+<p>Did you get “error” text?</p>
 <p>Text pops up in the console after you run code You must decide whether it means you have to change something or not</p>
 <pre class="r"><code>library(&#39;janitor&#39;)</code></pre>
 <pre><code>## Warning: package &#39;janitor&#39; was built under R version 4.0.5</code></pre>
