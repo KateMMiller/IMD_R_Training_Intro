@@ -201,13 +201,9 @@ The installer for RStudio for PCs can be downloaded <a href="https://rstudio.com
 Install important libraries
 </summary>
 <p>One of the great things about R is that users can build and share their own packages (AKA libraries) to add functionality to R. It’s a similar idea as extensions in ArcGIS. To use other libraries, you need to first download/install them, and then you need to turn them on in your R session. Some of the packages take a while to download. To save time during training, please try to install these prior to the first day. You can do that by opening RStudio, and in the window on the left (the console) paste the code below and press enter.</p>
-<pre class="r"><code>install.packages(c(&quot;tidyverse&quot;, &quot;devtools&quot;, &quot;rgdal&quot;, &quot;ggspatial&quot;, &quot;leaflet&quot;))
-devtools::install_github(&quot;katemmiller/forestNETNarch&quot;)
-devtools::install_github(&quot;NCRN/NCRNWater&quot;)</code></pre>
+<pre class="r"><code>install.packages(c(&quot;tidyverse&quot;, &quot;leaflet&quot;))</code></pre>
 <p>Next check that this worked by pasting and running the code below:</p>
-<pre class="r"><code>library(tidyverse)
-library(forestNETN)
-library(NCRNWater)</code></pre>
+<pre class="r"><code>library(tidyverse)</code></pre>
 If you run into any problems, we can troubleshoot the first day. We’ll also discuss what the code above means the first day.
 </details>
 <p><br></p>
@@ -215,8 +211,8 @@ If you run into any problems, we can troubleshoot the first day. We’ll also di
 <summary class="drop">
 Join MS Team and download data
 </summary>
-<p>I set up a MS Team called ACAD_R_Training_Info to serve up the data and for us to use to post questions/info throughout the training. The link to the team is <a href="https://teams.microsoft.com/l/team/19%3a922d93279b8e495791b7658a624defec%40thread.skype/conversations?groupId=97be0c48-26ec-4d45-bd5b-e06a315ddb0a&amp;tenantId=0693b5ba-4b18-4d7b-9341-f32f400a5494">here</a>. Please make sure you can join this team before training starts, and let me know if you have problems.</p>
-We’ll be using several example datasets throughout the training. It will help if you can download the data prior to the first day, especially if your connection is slow. To download the data, click on this <a href="https://doimspp.sharepoint.com/sites/ACAD_R_Training_Info/Shared%20Documents/General/data.zip">data.zip</a> link (also posted in the files channel). We’ll set up file structure and unzip the data files on the first day.
+<p>+++++++ NEED TO UPDATE THIS BEFORE TRAINING +++++++ I set up a MS Team called ACAD_R_Training_Info to serve up the data and for us to use to post questions/info throughout the training. The link to the team is <a href="https://teams.microsoft.com/l/team/19%3a922d93279b8e495791b7658a624defec%40thread.skype/conversations?groupId=97be0c48-26ec-4d45-bd5b-e06a315ddb0a&amp;tenantId=0693b5ba-4b18-4d7b-9341-f32f400a5494">here</a>. Please make sure you can join this team before training starts, and let me know if you have problems.</p>
+We’ll be using several example datasets throughout the training. It will help if you can download the data prior to the first day, especially if your connection is slow. To download the data, click on this <a href="https://doimspp.sharepoint.com/sites/ACAD_R_Training_Info/Shared%20Documents/General/data.zip">data.zip</a> link (also posted in the files channel). We’ll set up file structure and unzip the data files on the first day. +++++++++++++++++++++++++++++++++++++++++++++++++++
 </details>
 <p><br></p>
 <details open>
@@ -230,9 +226,9 @@ I know you’re all busy and have to prioritize how you spend your time. If you 
 <summary class="drop">
 Structure of training
 </summary>
-<p>The training will take place over 3 half days. Each day will run from 8-noon via MS Teams, with afternoon assignments to help cement ideas and prepare for the next day’s training. Please make an effort to at least skim the assignments and fill out the <a href="https://forms.office.com/Pages/ResponsePage.aspx?id=urWTBhhLe02TQfMvQApUlFh5GkMREZNMjYcWk1MpLQ9UMEZDT0g4TEZKWkNBWk1aWjZVU0NLVFJTVy4u">Feedback form</a> at the end of each day.</p>
-<p>For most of the training, I’ll share my screen to walk through the code. It will help a lot if you have 2 monitors, so you can have the screen I’m sharing on one monitor and your own session of RStudio open on the other. If you need an extra monitor let me know (I recently upgraded and have some older (non-gov’t) ones that are looking for a new home).</p>
-<p>Three days is barely enough to scratch the surface on what you can do in R. My goals with this training are to help you get past the initial learning curve that can be really challenging to climb on your own, and to expose you to some of the really useful things R can do for you. Hopefully this also helps build a community of R users in ACAD who can help and share code with each other.</p>
+<p>The training will take place over 4 half days. Each day will run from 11-3 MST via MS Teams, with afternoon assignments to help cement ideas and prepare for the next day’s training. Please make an effort to at least skim the assignments and fill out the <a href="https://forms.office.com/Pages/ResponsePage.aspx?id=urWTBhhLe02TQfMvQApUlFh5GkMREZNMjYcWk1MpLQ9UMEZDT0g4TEZKWkNBWk1aWjZVU0NLVFJTVy4u">Feedback form</a> at the end of each day.</p>
+<p>For most of the training, I’ll share my screen to walk through the code. It will help a lot if you have 2 monitors, so you can have the screen I’m sharing on one monitor and your own session of RStudio open on the other.</p>
+<p>Four days is barely enough to scratch the surface on what you can do in R. Our goals with this training are to help you get past the initial learning curve that can be really challenging to climb on your own, and to expose you to some of the really useful things R can do for you.</p>
 </details>
 <hr>
 </div>
@@ -1316,8 +1312,11 @@ Mastering Software Development in R: <a href="https://bookdown.org/rdpeng/RProgD
 <div id="day-3-data-viz" class="section level3 tabset">
 <h3 class="tabset">Day 3: Data Viz</h3>
 <p>Topics to cover</p>
-<div id="base-r-plotting-very-brief" class="section level4 tabset">
-<h4 class="tabset">Base R plotting (very brief)</h4>
+<div id="base-r" class="section level4 tabset">
+<h4 class="tabset">Base R</h4>
+<ul>
+<li>brief intro to plotting in base R</li>
+</ul>
 </div>
 <div id="intro-to-ggplot" class="section level4">
 <h4>Intro to ggplot</h4>
@@ -1330,7 +1329,15 @@ Mastering Software Development in R: <a href="https://bookdown.org/rdpeng/RProgD
 <li>manual shapes and colors</li>
 <li>color palettes and ramps and accessibility</li>
 <li>saving ggplot graphs</li>
-<li>creating your own theme #### Leaflet and parktiles #### sf and tmap</li>
+<li>creating your own theme</li>
+</ul>
+</div>
+<div id="leaflet-and-parktiles" class="section level4">
+<h4>Leaflet and parktiles</h4>
+</div>
+<div id="sf-and-tmap" class="section level4">
+<h4>sf and tmap</h4>
+<ul>
 <li>packages for spatial figures</li>
 </ul>
 </div>
@@ -1937,12 +1944,8 @@ plot19</code></pre>
 <pre class="r"><code>#--------------------
 #       Prep
 #--------------------
-install.packages(c(&quot;tidyverse&quot;, &quot;devtools&quot;, &quot;rgdal&quot;, &quot;ggspatial&quot;, &quot;leaflet&quot;))
-devtools::install_github(&quot;katemmiller/forestNETNarch&quot;)
-devtools::install_github(&quot;NCRN/NCRNWater&quot;)
+install.packages(c(&quot;tidyverse&quot;, &quot;leaflet&quot;))
 library(tidyverse)
-library(forestNETN)
-library(NCRNWater)
 #--------------------
 #    Day 1 Mod 1
 #--------------------
