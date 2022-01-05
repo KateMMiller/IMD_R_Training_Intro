@@ -8,11 +8,14 @@ output: html_document
 
 <details open><summary class='drop'> Data Wrangling</summary>
 
+<https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-09-17>
+
+The data we'll use today are from a program called Tidy Tuesday. Each week on Tuesday, the community posts data for exploratory data analysis and visualization. You can add data from this page to your RStudio environment by copying + pasting the "Get the data!" code chunk into your script and running it in the console.
+
 This section will go over the use of dplyr functions to get your data.frame how you want.
 
 We will do:
 
-1) The pipe operator '%>%' or '|>' (shortcuts) if that did not come in mod 2
 2) Dplyr commands: 
   a) filter (w/ boolean operators), mutate, 
   b) select and rename
