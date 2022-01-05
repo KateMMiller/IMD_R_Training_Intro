@@ -23,6 +23,8 @@ Major Components to Data Wrangling
 - Step 1: Import (covered yesterday)
 - Step 2+3: Tidy & Transform (get data into a useful format)
 
+</details>
+<br>
 </details><br><details open><summary class='drop'> Column Names</summary>
 
 Sometimes you get data where the column names are messy. For an example of data that needs tidying before exploration and analyses, we'll use fake data. Copy + paste the code from the code chunk below into your script, and run it in the console to generate a tibble called "messy_data". 
@@ -55,7 +57,8 @@ The clean_names() function in the janitor package will consistently format colum
 clean_data <- clean_names(messy_data)
 clean_data
 ```
-
+</details>
+<br>
 <details open><summary class='drop'> Empty Rows and Columns </summary>
 
 Now, we'll deal with the empty row and empty column. To remove empty rows or columns, we can use the remove_empty() function.
@@ -85,7 +88,8 @@ Removing empty rows and columns
 clean_data2 <- remove_empty(clean_data, which = c('rows', 'cols'), quiet = TRUE)
 clean_data2
 ```
-
+</details>
+<br>
 <details open><summary class='drop'> The Pipe - Sequences of Functions </summary>
 
 
@@ -114,6 +118,8 @@ clean_data
 
 Note that there is no data argument in the remove_empty() function. This is because, when using a pipe, the data argument is inherited from the prior function.
 
+</details>
+<br>
 <details open><summary class='drop'> Removing Duplicate Entries </summary>
 
 
@@ -128,6 +134,8 @@ clean_data
 
 A word of caution - note that sometimes you may not want to remove duplicate rows, or may not want to remove empty rows, because they are important to the data. You know your data best, but make sure to use functions responsibly. 
 
+</details>
+<br>
 <details open><summary class='drop'> Challenge </summary>
 
 The code chunk below creates messy data, called "messy_data2". Use functions from the Janitor package to tidy the data, and name the result "clean_data2". See if you can use the pipe operator to streamline the script.  
@@ -138,6 +146,8 @@ messy_data2 <- tibble(`Park Code` = c(NA, NA, 'CABR', 'CHIS', 'SAMO', 'SAMO'),
                      `empty row` = NA)
 ```
 
+</details>
+<br>
 <details open><summary class='drop'> Solution </summary>
 
 ```{r, echo = TRUE}
