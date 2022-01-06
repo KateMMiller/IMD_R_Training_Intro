@@ -1,6 +1,6 @@
 ---
-title: "Day 2 Mod 4"
-author: "Laurne Pandori & John Paul Schmit"
+title: "Day 2 Module 4"
+author: "Lauren Pandori & John Paul Schmit"
 date: "12/15/2021"
 output: html_document
 ---
@@ -12,26 +12,153 @@ output: html_document
 
 This section will go over the use of functions to change data from wide to long format and vice-versa.
 
-We will do:
+We will:
 
 1. Explain what these formats are and why anyone cares
 2. pivot_longer()
 3. pivot_Wider()
 
+If you're starting with this section, run the following code chunk to get caught up. 
+
+```{r echo=TRUE, message = FALSE, warning = FALSE}
+# call packages
+library('readr')
+library('janitor')
+library('tidyverse')
+
+# get data
+park_visits <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/national_parks.csv")
+state_pop <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/state_pop.csv")
+gas_price <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/gas_price.csv")
+
+# cut some columns from park_visits data
+park_visits <- park_visits %>% select(year, parkname, unit_code, state, visitors)
+```
+
 </details>
 <br>
+<details open><summary class='drop'>Why do we care? </summary>
 
-<details open><summary class='drop'> pivot_wider()</summary
+Depending on your goal, you may want to have your data formatted in multiple ways. For example, it is much easier for humans to comprehend wide format data, while most R functions rely on long format data. Here is a quick demonstration using park visits data:
 
-show and example of pivot_wider()
+```{r eval = TRUE, include = TRUE, message = FALSE, warning = FALSE}
+
+# we'll first take a subset of the park visits data
+medn_visits <- park_visits %>%
+               # get parks in MEDN and no totals, years 2010-2015
+               filter(unit_code %in% c('CABR', 'CHIS', 'SAMO') & year != 'Total') %>%
+               # make year a number, since no more text 
+               mutate(year = as.numeric(year)) %>%
+               # get years 2010:2015
+               filter(year >= 2010 & year <=2015) %>%
+               # arrange in ascending order
+               arrange(year) %>%
+               # select relevant columns
+               select(unit_code, year, visitors)
+
+# if we take a look at the data, it is in long format, each observation is a row
+# this isn't the most human-friendly way to look at data, but it is really helpful if we want to use dplyr group_by() functions like mutate() and summarize()
+medn_visits
+
+# conversely, we can pivot longer to make the data wide format
+# it is more human-friendly but you can't use dplyr functions on it easily
+medn_visits_wide <- pivot_wider(medn_visits, names_from = year, values_from = visitors)
+medn_visits_wide
+```
+
+There are two commands we'll discuss today:
+
+  1. pivot_wider() : converts from long --> wide
+  2. pivot_longer() : converts from wide --> long
 
 </details>
 <br>
+<details open><summary class='drop'> pivot_wider()</summary>
 
-<details open><summary class='drop'> pivot_longer()</summary
+Full disclosure, I almost always have to google the arguments that go into the pivot_ commands. Here's the website for pivot_wider() <https://tidyr.tidyverse.org/reference/pivot_wider.html>
 
-show and example of pivot_longer()
+Here's a short example - pivoting the medn visits from long to wide, with more detail than the prior code chunk. 
 
+```{r eval = TRUE, include = TRUE, message = FALSE, warning = FALSE}
+# check out the original data (medn_visits) in long format
+medn_visits
+
+# if we want to make each row a park and each column a year, we can pivot wider
+medn_visits_wide <- medn_visits %>%
+                    pivot_wider(
+                                # names from is the thing you want to be as columns
+                                names_from = year,
+                                # values from is what you wantto fill the columns with
+                                values_from = visitors)
+
+# check out the result
+medn_visits_wide
+
+# we can also make park units the columsn and fill it with visitor data for each year
+medn_visits_wide <- medn_visits %>%
+                    pivot_wider(names_from = unit_code, values_from = visitors)
+medn_visits_wide
+```
+
+</details>
+<br>
+<details open><summary class='drop'> pivot_longer()</summary>
+
+Now that we have our data in wide format, it is time to revert back to pivoting longer. Here's the reference material for pivot_longer() <https://tidyr.tidyverse.org/reference/pivot_longer.html>.
+
+```{r eval = TRUE, include = TRUE, message = FALSE, warning = FALSE}
+# check out the original data (medn_visits_wide) in wide format
+medn_visits_wide
+
+# if we want to make each row an observation, with an associated park and year, we'll pivot_longer
+medn_visits_long <- medn_visits_wide %>%
+                    pivot_longer(
+                                # first argument is the columns you'd like to transform
+                                SAMO:CHIS,
+                                # next is what you'd like to name the former name cols
+                                names_to = 'unit_code',
+                                # last is what you'd like to name the former values cols
+                                values_to = 'visitors')
+
+# check out the result
+medn_visits_long
+
+# this should look familiar - like the original medn_visits data
+```
+
+</details>
+<br>
+<details open><summary class='drop'> pivot challenge </summary>
+
+This is a more involved challenge that will draw on your knowledge of both dplyr (from Module 3) and pivoting. 
+
+Using the state_pop data, accomplish the following tasks: 
+
+  1. Get data for 3 states of your choice for the years 2010-2015 (note - there is no 'total' values in the year column)
+  2. Create a df/tibble in long format
+  3. Pivot wider to make a human-friendly table with states as rows and years as columns
+  4. Pivot longer, returning to the original layout
+  
+Hint: if your column names are numbers, like years, you must refer to them using backticks, like a column called 2020 would be `2020`
+
+</details>
+<br>
+<details open><summary class='drop'> pivot solution </summary>
+
+```{r eval = TRUE, include = TRUE, message = FALSE, warning = FALSE}
+# get 3 states of choice (FL, CA, AK) for years 2010-2015
+solution_original <- state_pop %>%
+                     filter(state %in% c('FL', 'AK', 'CA') & 
+                            year >= 2010 & year <= 2015) 
+# pivot wider
+solution_wide <- solution_original %>%
+                 pivot_wider(names_from = 'year',
+                             values_from = 'pop')
+
+# pivot longer to return to format of solution_originol
+solution_long <- solution_wide %>%
+                 pivot_longer(`2010`:`2015`, names_to = 'year', values_to = 'pop')
+```
 </details>
 <br>
 
