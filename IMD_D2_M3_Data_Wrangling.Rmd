@@ -15,11 +15,11 @@ You can think of these functions like verbs that accomplish tasks, and are strun
 
 We'll cover the following commands: 
 
-  1. filter() - filters data for observations that meet specific criteria
-  2. mutate() - adds new column(s) to a tibble
-  3. select() - selects or removes columns
-  4. rename() - renames columns
-  5. arrange() - arranges a tibble by column values
+  1. select() - selects or removes columns
+  2. rename() - renames columns
+  3. arrange() - arranges a tibble by column values
+  4. filter() - filters data for observations that meet specific criteria
+  5. mutate() - adds new column(s) to a tibble
   6. pull() + table() - JP I'm not sure how this would differ from select(single_col_name)
   7. group_by() %>% summarize() - summary calculations by groups/factor levels
   8. group_by() %>% mutate() - JP I don't use this combo too often
@@ -50,9 +50,58 @@ state_pop <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/
 gas_price <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/gas_price.csv")
 ```
 
-<details open><summary class='drop'> Working with Dplyr</summary>
+<details open><summary class='drop'> Working with dplyr</summary>
 
 Dplyr is a package that is part of the tidyverse, which is used with data.frames. It makes tasks like filtering and summarizing data easier. Many of the functions within the package are "verb-like" so they are easy to understand and remember. 
+
+</details>
+<br>
+<details open><summary class='drop'> dplyr - select() and rename()</summary>
+
+select() - keeps the columns you indicate and drops the rest. you can rename the columns you select if you like. Since select() puts the columns in the order you type them, you can also use select() to reorder columns.
+rename() - keeps all the columns, but renames the ones you indicate
+
+Since we won't be using geographical information, other than state, in our module, we'll select columns of interest today.
+
+Note that, the name to the left of the arrow is the resulting tibble/df, the information to the right that's connected by pipes are the steps to get to the result. I normally name the result something different than the original tibble/df so that the original data aren't affected. However, since we won't need the geographical information later on, I will name this one "park_visits". 
+
+```{r eval = TRUE, include = TRUE, message = FALSE, warning = FALSE}
+# let's see the column names in park_visits
+colnames(park_visits)
+
+# we can also look at the first few rows by using head()
+head(park_visits)
+
+# you can either select for the columns you want
+park_visits1 <- park_visits %>% select(year, parkname, unit_code, state, visitors)
+
+# or against the columns you don't want, by using the minus sign before the column name
+park_visits2 <- park_visits %>% select(-gnis_id, -geometry, -metadata, -number_of_records, -region, -unit_name, -unit_type)
+
+# you can check if you have the same result by using colnames()
+colnames(park_visits1)
+colnames(park_visits2)
+
+# to clear up our environment, we'll get rid of park_visits1 and 2 using remove()
+remove(park_visits1, park_visits2)
+
+# since we won't need all of the columns in park_visits, we'll change that file (note that park_visits is on both the left and right sides of the pipe)
+park_visits <- park_visits %>% select(year, parkname, unit_code, state, visitors)
+```
+
+If we take a look at the park_visits data, there are some column name inconsistencies. For example, some are in snake case (unit_code), but some are not (parkname). To rename a column, use rename(). The structure of this argument is as follows: 
+
+rename(dataset, new_name = old_name)
+OR
+dataset %>% rename(new_name = old_name)
+
+```{r eval = TRUE, include = TRUE, message = FALSE, warning = FALSE}
+# rename parkname column to make it snake case
+park_visits <- park_visits %>% rename(park_name = parkname)
+
+# we can check if we've done it correctly by looking at the column names
+colnames(park_visits)
+```
 
 </details>
 <br>
@@ -77,81 +126,230 @@ head(wa_park_visits)
 unique(wa_park_visits$state)
 ```
 
-For a more complicated example, you could 
+Now that you've got parks in the state of Washington, perhaps you'd like to know which parks in WA had over 5 million total visitors. This will require more intensive filtering. We'll have to filter for parks where state == 'WA' AND year == 'Total' AND visitation >= 5,000,000. 
 
+```{r eval=FALSE, include=TRUE}
+wa_park_visits <- park_visits %>%
+                  # filter for parks in WA
+                  filter(state == 'WA' &
+                  # filter for total visitation
+                  year == 'Total' & 
+                  # filter for over 5 million visitors
+                  visitors > 5000000)
 
-
-
-1 simple example
-1 example using more complicated criteria
-
+# the command head() shows the first few rows of data
+head(wa_park_visits)
+```
 
 </details>
 <br>
+<details open><summary class='drop'> dplyr- first challenge</summary>
 
+Time for the first challenge. Using the park_visits data, create a new tibble/df containing total visitation for a state of your choice. Note that some "states" aren't states. For example, VI refers to the Virgin Islands. How can you check your work to make sure your work is correct?
 
-
-<details open><summary class='drop'> dplyr - select() and rename()</summary>
-
-select() - keeps the columns you indicate and drops the rest. you can rename the columns you select if you like, 
-  can reorder columns as you go
-rename() - keeps all the columns, but renames the ones you indicate
-
-example of each
 </details>
 <br>
+<details open><summary class='drop'> dplyr- first challenge solution</summary>
 
+```{r eval=FALSE, include=TRUE}
+pr_park_visits <- park_visits %>%
+                  # filter for parks in Puerto Rico
+                  filter(state == 'PR' &
+                  # filter for total visitation
+                  year == 'Total')
 
+# the command head() shows the first few rows of data
+head(pr_park_visits)
+# San Juan National Historic Site (Puerto Rico) had > 55 million visitors!
 
+# remove result from environment
+remove(pr_park_visits)
+```
+
+</details>
+<br>
 <details open><summary class='drop'> dplyr - arrange()</summary>
-arrange()  reorders rows 
 
-generally not needed in R, but can be helpful in exploring your data, and also 
-when working with time series data and lagged values
+arrange() reorders rows. You can think of this like "sort" in Excel. While this is generally not needed in R, it can be helpful for exploring your data, and when working with time series data and lagged values. 
 
-example
+As an example, we'll re-visit total park visitation in WA, sorting by the number of visitors. 
+
+```{r eval = TRUE, include=TRUE}
+wa_park_visits <- park_visits %>%
+                  # filter for parks in WA
+                  filter(state == 'WA' &
+                  # filter for total visitation
+                  year == 'Total' & 
+                  # filter for over 5 million visitors
+                  visitors > 5000000) %>%
+                  # arrange by visitation - default is ascending order
+                  arrange(visitors)
+
+# look at result (df is short so head() not needed)
+wa_park_visits
+
+# to arrange by descending order, we can use desc()
+wa_park_visits2 <- wa_park_visits %>%
+                  arrange(desc(visitors))
+
+# look at result 
+wa_park_visits2
+
+# remove one result
+remove(wa_park_visits2)
+```
+
 </details>
 <br>
-
 <details open><summary class='drop'> dplyr - pull()</summary>
 
-We may want to cut this to save time
 pull() takes data from a column and returns in in vector form
 
-pull() %>%  table() is a handy way to see a summary of categorical data (e.g. how may of each species is in your dataset)
+pull() %>%  table() is a handy way to see a summary of categorical data (e.g. how may observations for each state there are in your data)
 
-example
+```{r eval=FALSE, include=TRUE}
+# two ways to get the number of observations per state
+
+# option 1 - use pull() to isolate a column and table() to get # of observations
+state_n <- park_visits %>%
+           # pull the state column only
+           pull(state) %>%
+           # get # of observations by state in table output
+           table()
+
+# option 2 - use group_by() to isolate column(s) and tally() to get # of obs
+state_n2 <- park_visits %>%
+           # group by state
+           group_by(state) %>%
+           # get tally of observations by state in tibble output
+           tally()
+
+# remove created objects
+remove(state_n, state_n2)
+```
+
+JP - I use group_by() %>% tally() to get a similar result in tibble format. Is there an advantage to vector format? Let me know what you think.
 
 </details>
 <br>
-
-
 <details open><summary class='drop'> dplyr - mutate()</summary>
 
 mutate() makes new columns by doing calculations on old columns
 
-examples
+As an example, let's calculate the total visitation for parks with over 5 million total visitors in WA in millions, by dividing the number of total visitors by 1,000,000.
+
+```{r eval = TRUE, include = TRUE}
+wa_park_visits_millions <- wa_park_visits %>%
+                           mutate(visitors_mil = visitors/1000000)
+
+wa_park_visits_millions
+```
+
 </details>
 <br>
-
-
 <details open><summary class='drop'> dplyr - group_by() and mutate()</summary>
 
 group_by() indicates that data is in groups, so you can do calculations separately for each group
 
 group_by() %>% mutate() will add a column and return the same number of rows that the original data had
 
-example
+This is helpful when you want to get group summary information without sacrificing the original values. For example, if we want to get the total number of visitors per state as a column added to the data, but we don't want to lose individual park visitation numbers. 
+
+```{r eval = TRUE, include = TRUE}
+park_visits2 <- park_visits %>%
+                # do calculations by state
+                group_by(state) %>%
+                # add state_totals column with the sum of visitors by state
+                # the na.rm = TRUE means that NA values are not included in calculations
+                mutate(state_totals = sum(visitors, na.rm = TRUE))
+
+# take a look at the result
+head(park_visits2)
+
+# remove from environment
+remove(park_visits2)
+```
 
 </details>
 <br>
-
 <details open><summary class='drop'> dplyr - group_by() and summarize()</summary>
 
-group_by() and  summarize() (or summarise()) also work with groupd data
-Here you calculate a summary for each group. Output data frame will have the columns that
-define the group and the summary data, will have one row for each group
+group_by() and  summarize() (or summarise()) also work with grouped data. Here you calculate a summary for each group. Output data frame will have the columns that
+define the group and the summary data, will have one row for each group.
 
-examples
+I find this combination most helpful for calculating means and standard deviations for data. You can also find minimum and maximum values. We'll filter for total visitation numbers for each park, then calculate a visitation summary for each state. 
+
+```{r eval = TRUE, include = TRUE}
+state_summary <- park_visits %>%
+                # filter for total visitation numbers (to avoid double counts)
+                filter(year == 'Total') %>%
+                # do calculations by state
+                group_by(state) %>%
+                # calculate summaries
+                summarize(
+                  # mean number of total visitors across parks in each state
+                  mean_visit = mean(visitors, na.rm = TRUE),
+                  # sd of total visitors across parks in each state
+                  sd_visit = sd(visitors, na.rm = TRUE),
+                  # min total visitors across parks in each state
+                  min_visit = min(visitors, na.rm = TRUE),
+                  # max total visitors across parks in each state
+                  max_visit = max(visitors, na.rm = TRUE),
+                  # get number of park units w data in each state
+                  n_parks = n()
+                )
+
+# take a look at the result
+head(state_summary)
+
+# if you want to continue analyzing this summarized data, you must first ungroup()
+# for example:
+state_summary <- state_summary %>%
+                 ungroup() %>%
+                 mutate(dif = max_visit - min_visit)
+
+# remove from environment
+remove(state_summary)
+```
+
+</details>
+<br>
+<details open><summary class='drop'> dplyr - challenge 2</summary>
+
+For this second challenge, you'll start with the park_visits data. Calculate the average visitation divided by the number of parks for each state. The final df/tibble should be arranged in descending order by a numeric column of your choice. 
+
+</details>
+<br>
+<details open><summary class='drop'> dplyr - solution 2</summary>
+
+```{r eval = TRUE, include = TRUE}
+challenge2 <- park_visits %>%
+                # filter for total visitation numbers (to avoid double counts)
+                filter(year == 'Total') %>%
+                # do calculations by state
+                group_by(state) %>%
+                # calculate summaries
+                summarize(
+                  # mean number of total visitors across parks in each state
+                  mean_visit = mean(visitors, na.rm = TRUE),
+                  # get number of park units w data in each state
+                  n_parks = n()
+                ) %>%
+                # ungroup to do another calculation
+                ungroup() %>%
+                # calculate visit/n
+                mutate(visit_per_park = mean_visit/n_parks) %>%
+                # select relevant columns
+                select(state, visit_per_park) %>%
+                # arrange in descending order
+                arrange(desc(visit_per_park))
+                
+
+# take a look at the result
+head(challenge2)
+
+# remove from environment
+remove(challenge2)
+```
 </details>
 <br>
