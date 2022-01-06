@@ -1,65 +1,86 @@
 ---
-title: "Day 2 Mod 3"
+title: "Day 2 Module 3"
 author: "Lauren Pandori & John Paul Schmit"
 date: "12/15/2021"
 output: html_document
 ---
 #### Intro to Data Wrangling  - Dplyr functions {.tabset}
 
-The data we'll use today are from a program called Tidy Tuesday. Each week on Tuesday, the community posts data for exploratory data analysis and visualization. You can add data from this page to your RStudio environment by copying + pasting the "Get the data!" code chunk into your script and running it in the console.
+<details open><summary class='drop'> Data Wrangling</summary>
+
+In this section, we'll introduce functions in the dplyr package. This package is one of the packages that make up the tidyverse, so you won't have to install and call another package. The dplyr package is a group of functions that help to manipulate and summarize data. 
+<https://www.rdocumentation.org/packages/dplyr/versions/0.7.8>
+
+You can think of these functions like verbs that accomplish tasks, and are strung together by the pipe operator (%>% or |>).
+
+We'll cover the following commands: 
+
+  1. filter() - filters data for observations that meet specific criteria
+  2. mutate() - adds new column(s) to a tibble
+  3. select() - selects or removes columns
+  4. rename() - renames columns
+  5. arrange() - arranges a tibble by column values
+  6. pull() + table() - JP I'm not sure how this would differ from select(single_col_name)
+  7. group_by() %>% summarize() - summary calculations by groups/factor levels
+  8. group_by() %>% mutate() - JP I don't use this combo too often
+
+The data we'll use for modules 3-5 is from a program called Tidy Tuesday. Each week on Tuesday, the community posts data for exploratory data analysis and visualization. You can add data from this page to your RStudio environment by copying + pasting the "Get the data!" code chunk into your script and running it in the console.
 
 <https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-09-17>
 
-<details open><summary class='drop'> Data Wrangling</summary>
+The data we'll use is in csv format, so we'll need to call the readr package, as well as the tidyverse and janitor for this lesson (if you've already called tidyverse and janitor, don't run those lines).
 
+```{r echo=TRUE, message = FALSE, warning = FALSE}
+library('readr')
+library('janitor')
+library('tidyverse')
+```
 
+Next, we'll load the data from the R for Data Science Tidy Tuesday GitHub page.There are three lines which will load three tibbles.
 
+  1. park_visits - which contains data on visits to US National Parks
+  2. state_pop - which contains information on populations of US states
+  3. gas_price - which contains information on gas prices over space and time
+  
+For now, we'll focus on the park_visits tibble, and will circle back to the other two later. There are descriptions of each column for each tibble on the Tidy Tuesday website linked above if you'd like more information. 
 
-
-This section will go over the use of dplyr functions to get your data.frame how you want.
-
-We will do:
-
-2) Dplyr commands: 
-  a) filter (w/ boolean operators), mutate, 
-  b) select and rename
-  c) arrange
-  d) pull + table
-  e) group_by + mutate
-  f) group_by + summarize
-3) Think of commands as verbs that do a thing, with pipes that string them together
-4) If this is not too long bring up lag, lead, etc in group_by mutates
-
-</details>
-<br>
-
-<details open><summary class='drop'> Pipe Operators</summary>
-
-1. Let you take the output of one function and feed it to another
-2. Lets you string together many functions in a way that is easy to read and understand
-3. Two versions: %>%  for magrttr package and |> very new (version 4.1.0 and up) base R version
-
-
-ADD EXAMPLE
-
-</details>
-<br>
-
+```{r echo=TRUE, message = FALSE, warning = FALSE}
+park_visits <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/national_parks.csv")
+state_pop <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/state_pop.csv")
+gas_price <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/gas_price.csv")
+```
 
 <details open><summary class='drop'> Working with Dplyr</summary>
 
-Dplyr is a package that is part of the tidyverse
-Dplyr is used to work with data.frames
-Makes things like filtering and summarizing data easier
-Uses functions that are "verb-like" so they are easy to understand and remember
+Dplyr is a package that is part of the tidyverse, which is used with data.frames. It makes tasks like filtering and summarizing data easier. Many of the functions within the package are "verb-like" so they are easy to understand and remember. 
 
 </details>
 <br>
-
 <details open><summary class='drop'> Dplyr- filter()</summary>
 
 filter() - filters out rows from a data.frame based on values in columns
-can combine criteria using & (and), | (or), ! not
+can combine criteria using & (and), | (or), ! (not)
+
+If you'd like to get visitation data for just parks in the state of Washington (WA), you can use the filter command. The structure is as follows: 
+```{r eval=FALSE, include=TRUE}
+wa_park_visits <- filter(
+                        # name of tibble
+                        park_visits, 
+                        # condition
+                        state == 'WA'
+                        )
+
+# the command head() shows the first few rows of data
+head(wa_park_visits)
+
+# you can use the unique() command to check you've done the filtering correctly
+unique(wa_park_visits$state)
+```
+
+For a more complicated example, you could 
+
+
+
 
 1 simple example
 1 example using more complicated criteria
