@@ -45,9 +45,9 @@ Next, we'll load the data from the R for Data Science Tidy Tuesday GitHub page.T
 For now, we'll focus on the park_visits tibble, and will circle back to the other two later. There are descriptions of each column for each tibble on the Tidy Tuesday website linked above if you'd like more information. 
 
 ```{r echo=TRUE, message = FALSE, warning = FALSE}
-park_visits <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/national_parks.csv")
-state_pop <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/state_pop.csv")
-gas_price <- readr::read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/gas_price.csv")
+park_visits <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/national_parks.csv")
+state_pop <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/state_pop.csv")
+gas_price <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/gas_price.csv")
 ```
 
 <details open><summary class='drop'> Working with dplyr</summary>
@@ -58,10 +58,11 @@ Dplyr is a package that is part of the tidyverse, which is used with data.frames
 <br>
 <details open><summary class='drop'> dplyr - select() and rename()</summary>
 
-select() - keeps the columns you indicate and drops the rest. you can rename the columns you select if you like. Since select() puts the columns in the order you type them, you can also use select() to reorder columns.
+select() - keeps the columns you indicate and drops the rest. Since select() puts the columns in the order you type them, you can also use select() to reorder columns.
+
 rename() - keeps all the columns, but renames the ones you indicate
 
-Since we won't be using geographical information, other than state, in our module, we'll select columns of interest today.
+Since we won't be using geographical information, other than state, in our module, we'll select some columns from the park_visits data to use today.
 
 Note that, the name to the left of the arrow is the resulting tibble/df, the information to the right that's connected by pipes are the steps to get to the result. I normally name the result something different than the original tibble/df so that the original data aren't affected. However, since we won't need the geographical information later on, I will name this one "park_visits". 
 
@@ -105,7 +106,7 @@ colnames(park_visits)
 
 </details>
 <br>
-<details open><summary class='drop'> Dplyr- filter()</summary>
+<details open><summary class='drop'> dplyr- filter()</summary>
 
 filter() - filters out rows from a data.frame based on values in columns
 can combine criteria using & (and), | (or), ! (not)
@@ -143,13 +144,13 @@ head(wa_park_visits)
 
 </details>
 <br>
-<details open><summary class='drop'> dplyr- first challenge</summary>
+<details open><summary class='drop'> dplyr- challenge 1</summary>
 
 Time for the first challenge. Using the park_visits data, create a new tibble/df containing total visitation for a state of your choice. Note that some "states" aren't states. For example, VI refers to the Virgin Islands. How can you check your work to make sure your work is correct?
 
 </details>
 <br>
-<details open><summary class='drop'> dplyr- first challenge solution</summary>
+<details open><summary class='drop'> dplyr- solution 1</summary>
 
 ```{r eval=FALSE, include=TRUE}
 pr_park_visits <- park_visits %>%
