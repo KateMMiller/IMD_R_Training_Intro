@@ -37,7 +37,7 @@ The code above should work fine, assuming that the datasets `pH_Data_All`, `DO_D
 
 *Dear Dr. Hydrologist,*
 
-*I need your pH data from 2020. Please send me the pH dataset from 2020. I need your dissolved oxygen data from 2020. Please send me the dissolved oxygen dataset from 2020. I need your specific conductance data from 2020. Please send me the specific conductance dataset from 2020.*
+*I would like a copy of your pH data from 2020. Please send me the pH dataset from 2020. I need your dissolved oxygen data from 2020. Please send me the dissolved oxygen dataset from 2020. I need your specific conductance data from 2020. Please send me the specific conductance dataset from 2020.*
 
 *Best,*
 *An aspiring R programmer*
@@ -46,7 +46,7 @@ Well, we certainly got the information across. But our collaborator might look a
 
 *Dear Dr. Hydrologist,*
 
-*I need your most current pH, dissolved oxygen, and specific conductance data. Please send me the 2020 datasets for pH, dissolved oxygen, and specific conductance.*
+*I need a copy of your most current pH, dissolved oxygen, and specific conductance data. Please send me the 2020 datasets for pH, dissolved oxygen, and specific conductance.*
 
 *Best,*
 *An aspiring R programmer*

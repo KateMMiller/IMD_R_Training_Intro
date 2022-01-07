@@ -89,9 +89,10 @@ ones + this_one_breaks  # This breaks
 ```
 
 So what happened? When we added the vector `[1, 2]` to the vector `[1, 1, 1, 1, 1, 1]`, we got `[2, 3, 2, 3, 2, 3]`. When we added `[1, 2, 3, 4]` to `[1, 1, 1, 1, 1, 1]`, we got a result, but we also got a warning along with it. The text of the warning actually gives a clue as to what R is doing. It says "longer object length is not a multiple of shorter object length" because when R tries to operate on vectors of different lengths, it repeats the shorter vector until it matches the length of the longer vector.
-`ones` is a vector of length 6. Since `add_this` is length 2 and 2 is a multiple of 6, R adds `[1, 1, 1, 1, 1, 1] + [1, 2, 1, 2, 1, 2]`, repeating `add_this` exactly three times. However, `this_one_breaks` is a vector of length 4, which is not a multiple of 6. Therefore, we get a warning because R cannot fit `this_one_breaks` into a vector of length 6 without truncating it
+`ones` is a vector of length 6. Since `add_this` is length 2 and 2 is a multiple of 6, R adds `[1, 1, 1, 1, 1, 1] + [1, 2, 1, 2, 1, 2]`, repeating `add_this` exactly three times. However, `this_one_breaks` is a vector of length 4, which is not a multiple of 6. Therefore, we get a warning because R cannot fit `this_one_breaks` into a vector of length 6 without truncating it.
 
-. 
+**Consider mentioning how to do matrix math if you don't want vectorization
+
     -gsub, grep family (avoid regex)
     -basic vector math
       -rowsums vs colsums
