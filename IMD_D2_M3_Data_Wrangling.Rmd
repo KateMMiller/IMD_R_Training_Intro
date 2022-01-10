@@ -20,7 +20,7 @@ We'll cover the following commands:
   3. arrange() - arranges a tibble by column values
   4. filter() - filters data for observations that meet specific criteria
   5. mutate() - adds new column(s) to a tibble
-  6. pull() - takes a column of data out of a tibble and puts it into a vector
+  6. pull() %>% table() - takes a column of data out of a tibble and puts it into a vector
   7. group_by() %>% summarize() - summary calculations by groups/factor levels and returns data for each group
   8. group_by() %>% mutate() - summary calculations by groups/factor levels and returns data for each observation
 
@@ -230,8 +230,6 @@ state_n2 <- park_visits %>%
 remove(state_n, state_n2)
 ```
 
-JP - I use group_by() %>% tally() to get a similar result in tibble format. Is there an advantage to vector format? Let me know what you think.
-
 </details>
 <br>
 <details open><summary class='drop'> dplyr - mutate()</summary>
@@ -263,10 +261,12 @@ park_visits2 <- park_visits %>%
                 filter(year != "Total")  %>% 
                 # do calculations by park
                 group_by(park_name) %>%
-                # add visit_percent column with the  vistitation for each year divided by the sum of visitors for all years for each park
+                # add visit_percent column
+                # visits fore each year divided by the sum of total visits for each park
                 # the na.rm = TRUE means that NA values are not included in calculations
-                # round(2) is used to round the result to 2 decimpal places for easier reading
-                mutate(visit_percent = (100*visitors/sum(visitors, na.rm = TRUE)) %>% round(2) ) 
+                # round(2) is rounds result to 2 decimal places for easier reading
+                mutate(visit_percent = (100*visitors/sum(visitors, na.rm = TRUE)) %>%
+                         round(2)) 
 
 # take a look at the result
 head(park_visits2)

@@ -39,7 +39,7 @@ park_visits <- park_visits %>% select(year, parkname, unit_code, state, visitors
 <br>
 <details open><summary class='drop'>Why do we care? </summary>
 
-Depending on your goal, you may want to have your data formatted in multiple ways. For example, it is much easier for humans to comprehend wide format data, while most R functions rely on long format data. Here is a quick demonstration using park visits data:
+Depending on your goal, you may want to have your data formatted in multiple ways. For example, it is much easier for humans to read wide format data, while most R functions rely on long format data. Here is a quick demonstration using park visits data:
 
 ```{r eval = TRUE, include = TRUE, message = FALSE, warning = FALSE}
 
