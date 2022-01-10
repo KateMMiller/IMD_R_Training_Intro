@@ -123,7 +123,7 @@ Note that there is no data argument in the remove_empty() function. This is beca
 <details open><summary class='drop'> Removing Duplicate Entries </summary>
 
 
-The last janitor package function we'll discuss is distinct(), which removes duplicate rows from data.
+A final function we'll discuss is distinct() from the dplyr package, which is park of tidyverse. It removes duplicate rows from data.
 
 ```{r, echo = TRUE}
 clean_data <- clean_names(messy_data) %>%

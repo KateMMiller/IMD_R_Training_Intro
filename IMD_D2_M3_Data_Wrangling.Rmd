@@ -20,9 +20,9 @@ We'll cover the following commands:
   3. arrange() - arranges a tibble by column values
   4. filter() - filters data for observations that meet specific criteria
   5. mutate() - adds new column(s) to a tibble
-  6. pull() + table() - JP I'm not sure how this would differ from select(single_col_name)
-  7. group_by() %>% summarize() - summary calculations by groups/factor levels
-  8. group_by() %>% mutate() - JP I don't use this combo too often
+  6. pull() - takes a column of data out of a tibble and puts it into a vector
+  7. group_by() %>% summarize() - summary calculations by groups/factor levels and returns data for each group
+  8. group_by() %>% mutate() - summary calculations by groups/factor levels and returns data for each observation
 
 The data we'll use for modules 3-5 is from a program called Tidy Tuesday. Each week on Tuesday, the community posts data for exploratory data analysis and visualization. You can add data from this page to your RStudio environment by copying + pasting the "Get the data!" code chunk into your script and running it in the console.
 
@@ -71,6 +71,7 @@ Note that, the name to the left of the arrow is the resulting tibble/df, the inf
 colnames(park_visits)
 
 # we can also look at the first few rows by using head()
+
 head(park_visits)
 
 # you can either select for the columns you want
@@ -254,15 +255,18 @@ group_by() indicates that data is in groups, so you can do calculations separate
 
 group_by() %>% mutate() will add a column and return the same number of rows that the original data had
 
-This is helpful when you want to get group summary information without sacrificing the original values. For example, if we want to get the total number of visitors per state as a column added to the data, but we don't want to lose individual park visitation numbers. 
+This is helpful when you want to get group summary information without sacrificing the original values. For example, if we want to know what percent of the total visitation of a park occurs in each year, and add this to the orginal data. 
 
 ```{r eval = TRUE, include = TRUE}
 park_visits2 <- park_visits %>%
-                # do calculations by state
-                group_by(state) %>%
-                # add state_totals column with the sum of visitors by state
+                # remove the rows with Totals per park
+                filter(year != "Total")  %>% 
+                # do calculations by park
+                group_by(park_name) %>%
+                # add visit_percent column with the  vistitation for each year divided by the sum of visitors for all years for each park
                 # the na.rm = TRUE means that NA values are not included in calculations
-                mutate(state_totals = sum(visitors, na.rm = TRUE))
+                # round(2) is used to round the result to 2 decimpal places for easier reading
+                mutate(visit_percent = (100*visitors/sum(visitors, na.rm = TRUE)) %>% round(2) ) 
 
 # take a look at the result
 head(park_visits2)

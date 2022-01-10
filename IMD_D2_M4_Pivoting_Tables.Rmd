@@ -77,7 +77,7 @@ There are two commands we'll discuss today:
 
 Full disclosure, I almost always have to google the arguments that go into the pivot_ commands. Here's the website for pivot_wider() <https://tidyr.tidyverse.org/reference/pivot_wider.html>
 
-Here's a short example - pivoting the medn visits from long to wide, with more detail than the prior code chunk. 
+Here's a short example - pivoting the MEDN visits from long to wide, with more detail than the prior code chunk. 
 
 ```{r eval = TRUE, include = TRUE, message = FALSE, warning = FALSE}
 # check out the original data (medn_visits) in long format
@@ -86,15 +86,15 @@ medn_visits
 # if we want to make each row a park and each column a year, we can pivot wider
 medn_visits_wide <- medn_visits %>%
                     pivot_wider(
-                                # names from is the thing you want to be as columns
+                                # names from is the thing you want to be the columns
                                 names_from = year,
-                                # values from is what you wantto fill the columns with
+                                # values from is what you want to fill the columns with
                                 values_from = visitors)
 
 # check out the result
 medn_visits_wide
 
-# we can also make park units the columsn and fill it with visitor data for each year
+# we can also make park units the columns and fill it with visitor data for each year
 medn_visits_wide <- medn_visits %>%
                     pivot_wider(names_from = unit_code, values_from = visitors)
 medn_visits_wide
