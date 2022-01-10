@@ -1065,150 +1065,547 @@ library(&#39;tidyverse&#39;)</code></pre>
 <summary class="drop">
 Data Cleaning
 </summary>
-<p>Data wrangling is all the steps you have to take to prepare your data for analysis or plotting. Data munging or data cleaning are other terms used to describe this process.</p>
-<p>Material presented today can be found in Hadley Wickham’s book “R for Data Science”, which is free and online. <a href="https://r4ds.had.co.nz/wrangle-intro.html" class="uri">https://r4ds.had.co.nz/wrangle-intro.html</a></p>
-<p><em>note to self - drop link to book in the chat</em></p>
-<p>Three Major Components to Data Wrangling</p>
+<p>Data wrangling is all the steps you have to take to prepare your data for analysis or plotting. Data munging or data cleaning are other terms used to describe this process.Material presented today can be found in Hadley Wickham’s book “R for Data Science”, which is free and online. <a href="https://r4ds.had.co.nz/wrangle-intro.html" class="uri">https://r4ds.had.co.nz/wrangle-intro.html</a></p>
+<p>If you’re starting from this tab of the lesson, you’ll need to load two packages before proceeding.</p>
+<pre class="r"><code>library(&#39;janitor&#39;)
+library(&#39;tidyverse&#39;)</code></pre>
+<p>Major Components to Data Wrangling</p>
 <ul>
 <li>Step 1: Import (covered yesterday)</li>
-<li>Step 2: Transform (get data in the form you’d like it)</li>
+<li>Step 2+3: Tidy &amp; Transform (get data into a useful format)</li>
 </ul>
 </details>
-<p><br></p>
-<details open>
-<summary class="drop">
-Topics
-</summary>
-<p>Topics - notes</p>
-<p>Covered in Day 1?</p>
-<ul>
-<li>Getting familiar with data: glance, head, View, etc.</li>
-<li>Parsing columns, data types</li>
-<li>Numbers that don’t mean numbers (ex - -99 = no data)</li>
-</ul>
-<p>Day 2 Topics:</p>
-<ul>
-<li>Consistent column names (take or leave) - packages aren’t perfect; if have similar column names, can do by hand</li>
-<li>The pipe operator ‘%&gt;%’ or ‘|&gt;’ (shortcuts)</li>
-<li>Dplyr commands: filter (w/ boolean operators), arrange, select, mutate, rename, pull, table</li>
-<li>Think of commands as verbs that do a thing, with pipes that string them together</li>
-<li>What to do with NA’s? - na.rm, na.omit, etc.</li>
-<li>Group mutate/group summarize</li>
-<li>Joining datasets (rbind + xx_join)</li>
-<li>Pivoting</li>
-</ul>
+<br>
 </details>
-<p><br></p>
+<br>
 <details open>
 <summary class="drop">
-Tidying Data
+Column Names
 </summary>
-<p>Tidying Data - Row/Column Names</p>
-<p>Sometimes you get data where the column names are messy…</p>
-<p>This section continues with cleaning data.</p>
+<p>Sometimes you get data where the column names are messy. For an example of data that needs tidying before exploration and analyses, we’ll use fake data. Copy + paste the code from the code chunk below into your script, and run it in the console to generate a tibble called “messy_data”.</p>
+<pre class="r"><code>messy_data &lt;- tibble(TrailName = c(&#39;Bayside&#39;, &#39;Coastal&#39;, &#39;Tidepools&#39;, 
+                                   &#39;Monument&#39;, &#39;Tidepools&#39;, NA),
+                     Visitor_count = c(200, 300, 400, 500, 400, NA),
+                     `empty row` = NA)</code></pre>
+<p>This tibble captures the hypothetical number of visitors across four trails at a park.There are a few qualities that make it difficult to interpret. Seeing this data, what would you change to make it most consistent?</p>
+<pre class="r"><code>messy_data</code></pre>
+<pre><code>## # A tibble: 6 x 3
+##   TrailName Visitor_count `empty row`
+##   &lt;chr&gt;             &lt;dbl&gt; &lt;lgl&gt;      
+## 1 Bayside             200 NA         
+## 2 Coastal             300 NA         
+## 3 Tidepools           400 NA         
+## 4 Monument            500 NA         
+## 5 Tidepools           400 NA         
+## 6 &lt;NA&gt;                 NA NA</code></pre>
+<p>There are four things I suggest fixing with these data:</p>
+<ol style="list-style-type: decimal">
+<li>The column names are inconsistently formatted</li>
+<li>There is an empty row</li>
+<li>There is an empty column</li>
+<li>There is a duplicated row</li>
+</ol>
+<p>The Janitor package has ways to fix all of these data situations and aid in data cleaning. Let’s proceed with changing the column names.</p>
+<p>The clean_names() function in the janitor package will consistently format column names.</p>
+<pre class="r"><code>clean_data &lt;- clean_names(messy_data)
+clean_data</code></pre>
+<pre><code>## # A tibble: 6 x 3
+##   trail_name visitor_count empty_row
+##   &lt;chr&gt;              &lt;dbl&gt; &lt;lgl&gt;    
+## 1 Bayside              200 NA       
+## 2 Coastal              300 NA       
+## 3 Tidepools            400 NA       
+## 4 Monument             500 NA       
+## 5 Tidepools            400 NA       
+## 6 &lt;NA&gt;                  NA NA</code></pre>
+</details>
+<br>
+<details open>
+<summary class="drop">
+Empty Rows and Columns
+</summary>
+<p>Now, we’ll deal with the empty row and empty column. To remove empty rows or columns, we can use the remove_empty() function.</p>
+<p>The arguments for the function are as follows:</p>
+<pre class="r"><code>remove_empty(
+  # first argument is the data
+  dat, 
+  # the next specifies if you want to get rid of empty rows, columns, or both
+  which = c(&quot;rows&quot;, &quot;cols&quot;), 
+  # this last one asks whether (TRUE) or not (FALSE) you want R to tell you which rows or columns were removed
+  quiet = TRUE)</code></pre>
+<p>Let’s give it a try</p>
+<p>Removing empty rows</p>
+<pre class="r"><code>clean_data2 &lt;- remove_empty(clean_data, which = c(&#39;rows&#39;), quiet = FALSE)</code></pre>
+<pre><code>## Removing 1 empty rows of 6 rows total (16.7%).</code></pre>
+<pre class="r"><code>clean_data2</code></pre>
+<pre><code>## # A tibble: 5 x 3
+##   trail_name visitor_count empty_row
+##   &lt;chr&gt;              &lt;dbl&gt; &lt;lgl&gt;    
+## 1 Bayside              200 NA       
+## 2 Coastal              300 NA       
+## 3 Tidepools            400 NA       
+## 4 Monument             500 NA       
+## 5 Tidepools            400 NA</code></pre>
+<p>Removing empty rows and columns</p>
+<pre class="r"><code>clean_data2 &lt;- remove_empty(clean_data, which = c(&#39;rows&#39;, &#39;cols&#39;), quiet = TRUE)
+clean_data2</code></pre>
+<pre><code>## # A tibble: 5 x 2
+##   trail_name visitor_count
+##   &lt;chr&gt;              &lt;dbl&gt;
+## 1 Bayside              200
+## 2 Coastal              300
+## 3 Tidepools            400
+## 4 Monument             500
+## 5 Tidepools            400</code></pre>
+</details>
+<br>
+<details open>
+<summary class="drop">
+The Pipe - Sequences of Functions
+</summary>
+<p>What happens if you’d like to both clean_names() and remove_empty() on the same data?</p>
+<p>Solution 1 - run as a sequence</p>
+<pre class="r"><code>clean_data &lt;- clean_names(messy_data)
+clean_data &lt;- remove_empty(clean_data, which = c(&#39;rows&#39;, &#39;cols&#39;), quiet = TRUE)
+clean_data</code></pre>
+<pre><code>## # A tibble: 5 x 2
+##   trail_name visitor_count
+##   &lt;chr&gt;              &lt;dbl&gt;
+## 1 Bayside              200
+## 2 Coastal              300
+## 3 Tidepools            400
+## 4 Monument             500
+## 5 Tidepools            400</code></pre>
+<p>Solution 2 - use the pipe operator</p>
+<p>Pipe operators (%&gt;% or |&gt;) can be read like the word “then”. For example, clean_names() %&gt;% remove_empty() can be read as “clean names, then remove empty”. They allow for a more clean workflow.</p>
+<pre class="r"><code>clean_data &lt;- clean_names(messy_data) %&gt;%
+              remove_empty(which = c(&#39;rows&#39;, &#39;cols&#39;), quiet = TRUE)
+clean_data</code></pre>
+<pre><code>## # A tibble: 5 x 2
+##   trail_name visitor_count
+##   &lt;chr&gt;              &lt;dbl&gt;
+## 1 Bayside              200
+## 2 Coastal              300
+## 3 Tidepools            400
+## 4 Monument             500
+## 5 Tidepools            400</code></pre>
+<pre class="r"><code># note that replacing %&gt;% with |&gt; also works</code></pre>
+<p>Note that there is no data argument in the remove_empty() function. This is because, when using a pipe, the data argument is inherited from the prior function.</p>
+</details>
+<br>
+<details open>
+<summary class="drop">
+Removing Duplicate Entries
+</summary>
+<p>The last janitor package function we’ll discuss is distinct(), which removes duplicate rows from data.</p>
+<pre class="r"><code>clean_data &lt;- clean_names(messy_data) %&gt;%
+              remove_empty(which = c(&#39;rows&#39;, &#39;cols&#39;), quiet = TRUE) %&gt;%
+              distinct()
+clean_data</code></pre>
+<pre><code>## # A tibble: 4 x 2
+##   trail_name visitor_count
+##   &lt;chr&gt;              &lt;dbl&gt;
+## 1 Bayside              200
+## 2 Coastal              300
+## 3 Tidepools            400
+## 4 Monument             500</code></pre>
+<p>A word of caution - note that sometimes you may not want to remove duplicate rows, or may not want to remove empty rows, because they are important to the data. You know your data best, but make sure to use functions responsibly.</p>
+</details>
+<br>
+<details open>
+<summary class="drop">
+Challenge
+</summary>
+<p>The code chunk below creates messy data, called “messy_data2”. Use functions from the Janitor package to tidy the data, and name the result “clean_data2”. See if you can use the pipe operator to streamline the script.</p>
+<pre class="r"><code>messy_data2 &lt;- tibble(`Park Code` = c(NA, NA, &#39;CABR&#39;, &#39;CHIS&#39;, &#39;SAMO&#39;, &#39;SAMO&#39;),
+                     visitor_count = c(NA, NA, 400, 500, 400, 400),
+                     `empty row` = NA)</code></pre>
+</details>
+<br>
+<details open>
+<summary class="drop">
+Solution
+</summary>
+<pre class="r"><code>clean_data2 &lt;- clean_names(messy_data2) %&gt;%
+               remove_empty(which = c(&#39;rows&#39;, &#39;cols&#39;), quiet = TRUE) %&gt;%
+               distinct()</code></pre>
 </div>
-<div id="intro-to-dplyr-functions" class="section level4 tabset">
-<h4 class="tabset">Intro to dplyr functions</h4>
+<div id="dplyr-functions" class="section level4 tabset">
+<h4 class="tabset">Dplyr functions</h4>
 <details open>
 <summary class="drop">
 Data Wrangling
 </summary>
-<p>This section will go over the use of dplyr functions to get your data.frame how you want.</p>
-<p>We will do:</p>
+<p>In this section, we’ll introduce functions in the dplyr package. This package is one of the packages that make up the tidyverse, so you won’t have to install and call another package. The dplyr package is a group of functions that help to manipulate and summarize data. <a href="https://www.rdocumentation.org/packages/dplyr/versions/0.7.8" class="uri">https://www.rdocumentation.org/packages/dplyr/versions/0.7.8</a></p>
+<p>You can think of these functions like verbs that accomplish tasks, and are strung together by the pipe operator (%&gt;% or |&gt;).</p>
+<p>We’ll cover the following commands:</p>
 <ol style="list-style-type: decimal">
-<li>The pipe operator ‘%&gt;%’ or ‘|&gt;’ (shortcuts) if that did not come in mod 2</li>
-<li>Dplyr commands:</li>
+<li>select() - selects or removes columns</li>
+<li>rename() - renames columns</li>
+<li>arrange() - arranges a tibble by column values</li>
+<li>filter() - filters data for observations that meet specific criteria</li>
+<li>mutate() - adds new column(s) to a tibble</li>
+<li>pull() + table() - JP I’m not sure how this would differ from select(single_col_name)</li>
+<li>group_by() %&gt;% summarize() - summary calculations by groups/factor levels</li>
+<li>group_by() %&gt;% mutate() - JP I don’t use this combo too often</li>
 </ol>
-<ol style="list-style-type: lower-alpha">
-<li>filter (w/ boolean operators), mutate,</li>
-<li>select and rename</li>
-<li>arrange</li>
-<li>pull + table</li>
-<li>group_by + mutate</li>
-<li>group_by + summarize</li>
-</ol>
-<ol start="3" style="list-style-type: decimal">
-<li>Think of commands as verbs that do a thing, with pipes that string them together</li>
-<li>If this is not too long bring up lag, lead, etc in group_by mutates</li>
-</ol>
-</details>
-<p><br></p>
-<details open>
-<summary class="drop">
-Pipe Operators
-</summary>
+<p>The data we’ll use for modules 3-5 is from a program called Tidy Tuesday. Each week on Tuesday, the community posts data for exploratory data analysis and visualization. You can add data from this page to your RStudio environment by copying + pasting the “Get the data!” code chunk into your script and running it in the console.</p>
+<p><a href="https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-09-17" class="uri">https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-09-17</a></p>
+<p>The data we’ll use is in csv format, so we’ll need to call the readr package, as well as the tidyverse and janitor for this lesson (if you’ve already called tidyverse and janitor, don’t run those lines).</p>
+<pre class="r"><code>library(&#39;readr&#39;)
+library(&#39;janitor&#39;)
+library(&#39;tidyverse&#39;)</code></pre>
+<p>Next, we’ll load the data from the R for Data Science Tidy Tuesday GitHub page.There are three lines which will load three tibbles.</p>
 <ol style="list-style-type: decimal">
-<li>Let you take the output of one function and feed it to another</li>
-<li>Lets you string together many functions in a way that is easy to read and understand</li>
-<li>Two versions: %&gt;% for magrttr package and |&gt; very new (version 4.1.0 and up) base R version</li>
+<li>park_visits - which contains data on visits to US National Parks</li>
+<li>state_pop - which contains information on populations of US states</li>
+<li>gas_price - which contains information on gas prices over space and time</li>
 </ol>
-<p>ADD EXAMPLE</p>
-</details>
-<p><br></p>
+<p>For now, we’ll focus on the park_visits tibble, and will circle back to the other two later. There are descriptions of each column for each tibble on the Tidy Tuesday website linked above if you’d like more information.</p>
+<pre class="r"><code>park_visits &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/national_parks.csv&quot;)
+state_pop &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/state_pop.csv&quot;)
+gas_price &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/gas_price.csv&quot;)</code></pre>
 <details open>
 <summary class="drop">
-Working with Dplyr
+Working with dplyr
 </summary>
-<p>Dplyr is a package that is part of the tidyverse Dplyr is used to work with data.frames Makes things like filtering and summarizing data easier Uses functions that are “verb-like” so they are easy to understand and remember</p>
+<p>Dplyr is a package that is part of the tidyverse, which is used with data.frames. It makes tasks like filtering and summarizing data easier. Many of the functions within the package are “verb-like” so they are easy to understand and remember.</p>
 </details>
-<p><br></p>
-<details open>
-<summary class="drop">
-Dplyr- filter()
-</summary>
-<p>filter() - filters out rows from a data.frame based on values in columns can combine criteria using &amp; (and), | (or), ! not</p>
-<p>1 simple example 1 example using more complicated criteria</p>
-</details>
-<p><br></p>
+<br>
 <details open>
 <summary class="drop">
 dplyr - select() and rename()
 </summary>
-<p>select() - keeps the columns you indicate and drops the rest. you can rename the columns you select if you like, can reorder columns as you go rename() - keeps all the columns, but renames the ones you indicate</p>
-example of each
+<p>select() - keeps the columns you indicate and drops the rest. Since select() puts the columns in the order you type them, you can also use select() to reorder columns.</p>
+<p>rename() - keeps all the columns, but renames the ones you indicate</p>
+<p>Since we won’t be using geographical information, other than state, in our module, we’ll select some columns from the park_visits data to use today.</p>
+<p>Note that, the name to the left of the arrow is the resulting tibble/df, the information to the right that’s connected by pipes are the steps to get to the result. I normally name the result something different than the original tibble/df so that the original data aren’t affected. However, since we won’t need the geographical information later on, I will name this one “park_visits”.</p>
+<pre class="r"><code># let&#39;s see the column names in park_visits
+colnames(park_visits)</code></pre>
+<pre><code>##  [1] &quot;year&quot;              &quot;gnis_id&quot;           &quot;geometry&quot;         
+##  [4] &quot;metadata&quot;          &quot;number_of_records&quot; &quot;parkname&quot;         
+##  [7] &quot;region&quot;            &quot;state&quot;             &quot;unit_code&quot;        
+## [10] &quot;unit_name&quot;         &quot;unit_type&quot;         &quot;visitors&quot;</code></pre>
+<pre class="r"><code># we can also look at the first few rows by using head()
+head(park_visits)</code></pre>
+<pre><code>## # A tibble: 6 x 12
+##   year  gnis_id geometry     metadata number_of_records parkname    region state
+##   &lt;chr&gt;   &lt;dbl&gt; &lt;chr&gt;        &lt;chr&gt;                &lt;dbl&gt; &lt;chr&gt;       &lt;chr&gt;  &lt;chr&gt;
+## 1 1904  1163670 POLYGON      &lt;NA&gt;                     1 Crater Lake PW     OR   
+## 2 1941  1531834 MULTIPOLYGON &lt;NA&gt;                     1 Lake Roose~ PW     WA   
+## 3 1961  2055170 MULTIPOLYGON &lt;NA&gt;                     1 Lewis and ~ PW     WA   
+## 4 1935  1530459 MULTIPOLYGON &lt;NA&gt;                     1 Olympic     PW     WA   
+## 5 1982   277263 POLYGON      &lt;NA&gt;                     1 Santa Moni~ PW     CA   
+## 6 1919   578853 MULTIPOLYGON &lt;NA&gt;                     1 &lt;NA&gt;        NE     ME   
+## # ... with 4 more variables: unit_code &lt;chr&gt;, unit_name &lt;chr&gt;, unit_type &lt;chr&gt;,
+## #   visitors &lt;dbl&gt;</code></pre>
+<pre class="r"><code># you can either select for the columns you want
+park_visits1 &lt;- park_visits %&gt;% select(year, parkname, unit_code, state, visitors)
+
+# or against the columns you don&#39;t want, by using the minus sign before the column name
+park_visits2 &lt;- park_visits %&gt;% select(-gnis_id, -geometry, -metadata, -number_of_records, -region, -unit_name, -unit_type)
+
+# you can check if you have the same result by using colnames()
+colnames(park_visits1)</code></pre>
+<pre><code>## [1] &quot;year&quot;      &quot;parkname&quot;  &quot;unit_code&quot; &quot;state&quot;     &quot;visitors&quot;</code></pre>
+<pre class="r"><code>colnames(park_visits2)</code></pre>
+<pre><code>## [1] &quot;year&quot;      &quot;parkname&quot;  &quot;state&quot;     &quot;unit_code&quot; &quot;visitors&quot;</code></pre>
+<pre class="r"><code># to clear up our environment, we&#39;ll get rid of park_visits1 and 2 using remove()
+remove(park_visits1, park_visits2)
+
+# since we won&#39;t need all of the columns in park_visits, we&#39;ll change that file (note that park_visits is on both the left and right sides of the pipe)
+park_visits &lt;- park_visits %&gt;% select(year, parkname, unit_code, state, visitors)</code></pre>
+<p>If we take a look at the park_visits data, there are some column name inconsistencies. For example, some are in snake case (unit_code), but some are not (parkname). To rename a column, use rename(). The structure of this argument is as follows:</p>
+<p>rename(dataset, new_name = old_name) OR dataset %&gt;% rename(new_name = old_name)</p>
+<pre class="r"><code># rename parkname column to make it snake case
+park_visits &lt;- park_visits %&gt;% rename(park_name = parkname)
+
+# we can check if we&#39;ve done it correctly by looking at the column names
+colnames(park_visits)</code></pre>
+<pre><code>## [1] &quot;year&quot;      &quot;park_name&quot; &quot;unit_code&quot; &quot;state&quot;     &quot;visitors&quot;</code></pre>
 </details>
-<p><br></p>
+<br>
+<details open>
+<summary class="drop">
+dplyr- filter()
+</summary>
+<p>filter() - filters out rows from a data.frame based on values in columns can combine criteria using &amp; (and), | (or), ! (not)</p>
+<p>If you’d like to get visitation data for just parks in the state of Washington (WA), you can use the filter command. The structure is as follows:</p>
+<pre class="r"><code>wa_park_visits &lt;- filter(
+                        # name of tibble
+                        park_visits, 
+                        # condition
+                        state == &#39;WA&#39;
+                        )
+
+# the command head() shows the first few rows of data
+head(wa_park_visits)
+
+# you can use the unique() command to check you&#39;ve done the filtering correctly
+unique(wa_park_visits$state)</code></pre>
+<p>Now that you’ve got parks in the state of Washington, perhaps you’d like to know which parks in WA had over 5 million total visitors. This will require more intensive filtering. We’ll have to filter for parks where state == ‘WA’ AND year == ‘Total’ AND visitation &gt;= 5,000,000.</p>
+<pre class="r"><code>wa_park_visits &lt;- park_visits %&gt;%
+                  # filter for parks in WA
+                  filter(state == &#39;WA&#39; &amp;
+                  # filter for total visitation
+                  year == &#39;Total&#39; &amp; 
+                  # filter for over 5 million visitors
+                  visitors &gt; 5000000)
+
+# the command head() shows the first few rows of data
+head(wa_park_visits)</code></pre>
+</details>
+<br>
+<details open>
+<summary class="drop">
+dplyr- challenge 1
+</summary>
+<p>Time for the first challenge. Using the park_visits data, create a new tibble/df containing total visitation for a state of your choice. Note that some “states” aren’t states. For example, VI refers to the Virgin Islands. How can you check your work to make sure your work is correct?</p>
+</details>
+<br>
+<details open>
+<summary class="drop">
+dplyr- solution 1
+</summary>
+<pre class="r"><code>pr_park_visits &lt;- park_visits %&gt;%
+                  # filter for parks in Puerto Rico
+                  filter(state == &#39;PR&#39; &amp;
+                  # filter for total visitation
+                  year == &#39;Total&#39;)
+
+# the command head() shows the first few rows of data
+head(pr_park_visits)
+# San Juan National Historic Site (Puerto Rico) had &gt; 55 million visitors!
+
+# remove result from environment
+remove(pr_park_visits)</code></pre>
+</details>
+<br>
 <details open>
 <summary class="drop">
 dplyr - arrange()
 </summary>
-<p>arrange() reorders rows</p>
-<p>generally not needed in R, but can be helpful in exploring your data, and also when working with time series data and lagged values</p>
-example
+<p>arrange() reorders rows. You can think of this like “sort” in Excel. While this is generally not needed in R, it can be helpful for exploring your data, and when working with time series data and lagged values.</p>
+<p>As an example, we’ll re-visit total park visitation in WA, sorting by the number of visitors.</p>
+<pre class="r"><code>wa_park_visits &lt;- park_visits %&gt;%
+                  # filter for parks in WA
+                  filter(state == &#39;WA&#39; &amp;
+                  # filter for total visitation
+                  year == &#39;Total&#39; &amp; 
+                  # filter for over 5 million visitors
+                  visitors &gt; 5000000) %&gt;%
+                  # arrange by visitation - default is ascending order
+                  arrange(visitors)
+
+# look at result (df is short so head() not needed)
+wa_park_visits</code></pre>
+<pre><code>## # A tibble: 9 x 5
+##   year  park_name       unit_code state  visitors
+##   &lt;chr&gt; &lt;chr&gt;           &lt;chr&gt;     &lt;chr&gt;     &lt;dbl&gt;
+## 1 Total Lewis and Clark LEWI      WA      9515314
+## 2 Total &lt;NA&gt;            NEPE      WA      9566104
+## 3 Total Ross Lake       ROLA      WA     11335924
+## 4 Total North Cascades  NOCA      WA     14809679
+## 5 Total Fort Vancouver  FOVA      WA     20238294
+## 6 Total San Juan Island SAJH      WA     23066952
+## 7 Total Lake Roosevelt  LARO      WA     62247752
+## 8 Total Mount Rainier   MORA      WA     94488801
+## 9 Total Olympic         OLYM      WA    160737962</code></pre>
+<pre class="r"><code># to arrange by descending order, we can use desc()
+wa_park_visits2 &lt;- wa_park_visits %&gt;%
+                  arrange(desc(visitors))
+
+# look at result 
+wa_park_visits2</code></pre>
+<pre><code>## # A tibble: 9 x 5
+##   year  park_name       unit_code state  visitors
+##   &lt;chr&gt; &lt;chr&gt;           &lt;chr&gt;     &lt;chr&gt;     &lt;dbl&gt;
+## 1 Total Olympic         OLYM      WA    160737962
+## 2 Total Mount Rainier   MORA      WA     94488801
+## 3 Total Lake Roosevelt  LARO      WA     62247752
+## 4 Total San Juan Island SAJH      WA     23066952
+## 5 Total Fort Vancouver  FOVA      WA     20238294
+## 6 Total North Cascades  NOCA      WA     14809679
+## 7 Total Ross Lake       ROLA      WA     11335924
+## 8 Total &lt;NA&gt;            NEPE      WA      9566104
+## 9 Total Lewis and Clark LEWI      WA      9515314</code></pre>
+<pre class="r"><code># remove one result
+remove(wa_park_visits2)</code></pre>
 </details>
-<p><br></p>
+<br>
 <details open>
 <summary class="drop">
 dplyr - pull()
 </summary>
-<p>We may want to cut this to save time pull() takes data from a column and returns in in vector form</p>
-<p>pull() %&gt;% table() is a handy way to see a summary of categorical data (e.g. how may of each species is in your dataset)</p>
-<p>example</p>
+<p>pull() takes data from a column and returns in in vector form</p>
+<p>pull() %&gt;% table() is a handy way to see a summary of categorical data (e.g. how may observations for each state there are in your data)</p>
+<pre class="r"><code># two ways to get the number of observations per state
+
+# option 1 - use pull() to isolate a column and table() to get # of observations
+state_n &lt;- park_visits %&gt;%
+           # pull the state column only
+           pull(state) %&gt;%
+           # get # of observations by state in table output
+           table()
+
+# option 2 - use group_by() to isolate column(s) and tally() to get # of obs
+state_n2 &lt;- park_visits %&gt;%
+           # group by state
+           group_by(state) %&gt;%
+           # get tally of observations by state in tibble output
+           tally()
+
+# remove created objects
+remove(state_n, state_n2)</code></pre>
+<p>JP - I use group_by() %&gt;% tally() to get a similar result in tibble format. Is there an advantage to vector format? Let me know what you think.</p>
 </details>
-<p><br></p>
+<br>
 <details open>
 <summary class="drop">
 dplyr - mutate()
 </summary>
 <p>mutate() makes new columns by doing calculations on old columns</p>
-examples
+<p>As an example, let’s calculate the total visitation for parks with over 5 million total visitors in WA in millions, by dividing the number of total visitors by 1,000,000.</p>
+<pre class="r"><code>wa_park_visits_millions &lt;- wa_park_visits %&gt;%
+                           mutate(visitors_mil = visitors/1000000)
+
+wa_park_visits_millions</code></pre>
+<pre><code>## # A tibble: 9 x 6
+##   year  park_name       unit_code state  visitors visitors_mil
+##   &lt;chr&gt; &lt;chr&gt;           &lt;chr&gt;     &lt;chr&gt;     &lt;dbl&gt;        &lt;dbl&gt;
+## 1 Total Lewis and Clark LEWI      WA      9515314         9.52
+## 2 Total &lt;NA&gt;            NEPE      WA      9566104         9.57
+## 3 Total Ross Lake       ROLA      WA     11335924        11.3 
+## 4 Total North Cascades  NOCA      WA     14809679        14.8 
+## 5 Total Fort Vancouver  FOVA      WA     20238294        20.2 
+## 6 Total San Juan Island SAJH      WA     23066952        23.1 
+## 7 Total Lake Roosevelt  LARO      WA     62247752        62.2 
+## 8 Total Mount Rainier   MORA      WA     94488801        94.5 
+## 9 Total Olympic         OLYM      WA    160737962       161.</code></pre>
 </details>
-<p><br></p>
+<br>
 <details open>
 <summary class="drop">
 dplyr - group_by() and mutate()
 </summary>
 <p>group_by() indicates that data is in groups, so you can do calculations separately for each group</p>
 <p>group_by() %&gt;% mutate() will add a column and return the same number of rows that the original data had</p>
-<p>example</p>
+<p>This is helpful when you want to get group summary information without sacrificing the original values. For example, if we want to get the total number of visitors per state as a column added to the data, but we don’t want to lose individual park visitation numbers.</p>
+<pre class="r"><code>park_visits2 &lt;- park_visits %&gt;%
+                # do calculations by state
+                group_by(state) %&gt;%
+                # add state_totals column with the sum of visitors by state
+                # the na.rm = TRUE means that NA values are not included in calculations
+                mutate(state_totals = sum(visitors, na.rm = TRUE))
+
+# take a look at the result
+head(park_visits2)</code></pre>
+<pre><code>## # A tibble: 6 x 6
+## # Groups:   state [4]
+##   year  park_name              unit_code state visitors state_totals
+##   &lt;chr&gt; &lt;chr&gt;                  &lt;chr&gt;     &lt;chr&gt;    &lt;dbl&gt;        &lt;dbl&gt;
+## 1 1904  Crater Lake            CRLA      OR        1500     94989320
+## 2 1941  Lake Roosevelt         LARO      WA           0    823976864
+## 3 1961  Lewis and Clark        LEWI      WA       69000    823976864
+## 4 1935  Olympic                OLYM      WA        2200    823976864
+## 5 1982  Santa Monica Mountains SAMO      CA      468144   3188771008
+## 6 1919  &lt;NA&gt;                   ACAD      ME       64000    327121806</code></pre>
+<pre class="r"><code># remove from environment
+remove(park_visits2)</code></pre>
 </details>
-<p><br></p>
+<br>
 <details open>
 <summary class="drop">
 dplyr - group_by() and summarize()
 </summary>
-<p>group_by() and summarize() (or summarise()) also work with groupd data Here you calculate a summary for each group. Output data frame will have the columns that define the group and the summary data, will have one row for each group</p>
-examples
+<p>group_by() and summarize() (or summarise()) also work with grouped data. Here you calculate a summary for each group. Output data frame will have the columns that define the group and the summary data, will have one row for each group.</p>
+<p>I find this combination most helpful for calculating means and standard deviations for data. You can also find minimum and maximum values. We’ll filter for total visitation numbers for each park, then calculate a visitation summary for each state.</p>
+<pre class="r"><code>state_summary &lt;- park_visits %&gt;%
+                # filter for total visitation numbers (to avoid double counts)
+                filter(year == &#39;Total&#39;) %&gt;%
+                # do calculations by state
+                group_by(state) %&gt;%
+                # calculate summaries
+                summarize(
+                  # mean number of total visitors across parks in each state
+                  mean_visit = mean(visitors, na.rm = TRUE),
+                  # sd of total visitors across parks in each state
+                  sd_visit = sd(visitors, na.rm = TRUE),
+                  # min total visitors across parks in each state
+                  min_visit = min(visitors, na.rm = TRUE),
+                  # max total visitors across parks in each state
+                  max_visit = max(visitors, na.rm = TRUE),
+                  # get number of park units w data in each state
+                  n_parks = n()
+                )
+
+# take a look at the result
+head(state_summary)</code></pre>
+<pre><code>## # A tibble: 6 x 6
+##   state mean_visit   sd_visit min_visit max_visit n_parks
+##   &lt;chr&gt;      &lt;dbl&gt;      &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;int&gt;
+## 1 AK      4661539    6737110.     10490  19476522      22
+## 2 AL      2998848.   2162876.    365883   5487784       5
+## 3 AR     20647567.  34237894.     60563  92028933       7
+## 4 AS       113694         NA     113694    113694       1
+## 5 AZ     23655713.  46310344.    348811 205486894      19
+## 6 CA     61322519. 120602434.      6349 611031225      26</code></pre>
+<pre class="r"><code># if you want to continue analyzing this summarized data, you must first ungroup()
+# for example:
+state_summary &lt;- state_summary %&gt;%
+                 ungroup() %&gt;%
+                 mutate(dif = max_visit - min_visit)
+
+# remove from environment
+remove(state_summary)</code></pre>
+</details>
+<br>
+<details open>
+<summary class="drop">
+dplyr - challenge 2
+</summary>
+<p>For this second challenge, you’ll start with the park_visits data. Calculate the average visitation divided by the number of parks for each state. The final df/tibble should be arranged in descending order by a numeric column of your choice.</p>
+</details>
+<br>
+<details open>
+<summary class="drop">
+dplyr - solution 2
+</summary>
+<pre class="r"><code>challenge2 &lt;- park_visits %&gt;%
+                # filter for total visitation numbers (to avoid double counts)
+                filter(year == &#39;Total&#39;) %&gt;%
+                # do calculations by state
+                group_by(state) %&gt;%
+                # calculate summaries
+                summarize(
+                  # mean number of total visitors across parks in each state
+                  mean_visit = mean(visitors, na.rm = TRUE),
+                  # get number of park units w data in each state
+                  n_parks = n()
+                ) %&gt;%
+                # ungroup to do another calculation
+                ungroup() %&gt;%
+                # calculate visit/n
+                mutate(visit_per_park = mean_visit/n_parks) %&gt;%
+                # select relevant columns
+                select(state, visit_per_park) %&gt;%
+                # arrange in descending order
+                arrange(desc(visit_per_park))
+                
+
+# take a look at the result
+head(challenge2)</code></pre>
+<pre><code>## # A tibble: 6 x 2
+##   state visit_per_park
+##   &lt;chr&gt;          &lt;dbl&gt;
+## 1 NV        103867788.
+## 2 PR         55928192 
+## 3 ME         40890226.
+## 4 NC         19591218.
+## 5 MS         19160525 
+## 6 OK         18206483.</code></pre>
+<pre class="r"><code># remove from environment
+remove(challenge2)</code></pre>
 </details>
 <p><br></p>
 <hr />
@@ -1220,23 +1617,230 @@ examples
 Pivoting Tables
 </summary>
 <p>This section will go over the use of functions to change data from wide to long format and vice-versa.</p>
-<p>We will do:</p>
+<p>We will:</p>
 <ol style="list-style-type: decimal">
 <li>Explain what these formats are and why anyone cares</li>
 <li>pivot_longer()</li>
 <li>pivot_Wider()</li>
 </ol>
+<p>If you’re starting with this section, run the following code chunk to get caught up.</p>
+<pre class="r"><code># call packages
+library(&#39;readr&#39;)
+library(&#39;janitor&#39;)
+library(&#39;tidyverse&#39;)
+
+# get data
+park_visits &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/national_parks.csv&quot;)
+state_pop &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/state_pop.csv&quot;)
+gas_price &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/gas_price.csv&quot;)
+
+# cut some columns from park_visits data
+park_visits &lt;- park_visits %&gt;% select(year, parkname, unit_code, state, visitors)</code></pre>
 </details>
-<p><br></p>
+<br>
+<details open>
+<summary class="drop">
+Why do we care?
+</summary>
+<p>Depending on your goal, you may want to have your data formatted in multiple ways. For example, it is much easier for humans to comprehend wide format data, while most R functions rely on long format data. Here is a quick demonstration using park visits data:</p>
+<pre class="r"><code># we&#39;ll first take a subset of the park visits data
+medn_visits &lt;- park_visits %&gt;%
+               # get parks in MEDN and no totals, years 2010-2015
+               filter(unit_code %in% c(&#39;CABR&#39;, &#39;CHIS&#39;, &#39;SAMO&#39;) &amp; year != &#39;Total&#39;) %&gt;%
+               # make year a number, since no more text 
+               mutate(year = as.numeric(year)) %&gt;%
+               # get years 2010:2015
+               filter(year &gt;= 2010 &amp; year &lt;=2015) %&gt;%
+               # arrange in ascending order
+               arrange(year) %&gt;%
+               # select relevant columns
+               select(unit_code, year, visitors)
+
+# if we take a look at the data, it is in long format, each observation is a row
+# this isn&#39;t the most human-friendly way to look at data, but it is really helpful if we want to use dplyr group_by() functions like mutate() and summarize()
+medn_visits</code></pre>
+<pre><code>## # A tibble: 18 x 3
+##    unit_code  year visitors
+##    &lt;chr&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+##  1 SAMO       2010   568371
+##  2 CABR       2010   763140
+##  3 CHIS       2010   277515
+##  4 SAMO       2011   609636
+##  5 CABR       2011   813351
+##  6 CHIS       2011   242756
+##  7 SAMO       2012   649471
+##  8 CABR       2012   877951
+##  9 CHIS       2012   249594
+## 10 SAMO       2013   633054
+## 11 CABR       2013   856128
+## 12 CHIS       2013   212029
+## 13 SAMO       2014   694714
+## 14 CABR       2014   893434
+## 15 CHIS       2014   342161
+## 16 SAMO       2015   797126
+## 17 CABR       2015   981825
+## 18 CHIS       2015   324816</code></pre>
+<pre class="r"><code># conversely, we can pivot longer to make the data wide format
+# it is more human-friendly but you can&#39;t use dplyr functions on it easily
+medn_visits_wide &lt;- pivot_wider(medn_visits, names_from = year, values_from = visitors)
+medn_visits_wide</code></pre>
+<pre><code>## # A tibble: 3 x 7
+##   unit_code `2010` `2011` `2012` `2013` `2014` `2015`
+##   &lt;chr&gt;      &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1 SAMO      568371 609636 649471 633054 694714 797126
+## 2 CABR      763140 813351 877951 856128 893434 981825
+## 3 CHIS      277515 242756 249594 212029 342161 324816</code></pre>
+<p>There are two commands we’ll discuss today:</p>
+<ol style="list-style-type: decimal">
+<li>pivot_wider() : converts from long –&gt; wide</li>
+<li>pivot_longer() : converts from wide –&gt; long</li>
+</ol>
+</details>
+<br>
 <details open>
 <summary class="drop">
 pivot_wider()
 </summary>
-<p><br></p>
+<p>Full disclosure, I almost always have to google the arguments that go into the pivot_ commands. Here’s the website for pivot_wider() <a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="uri">https://tidyr.tidyverse.org/reference/pivot_wider.html</a></p>
+<p>Here’s a short example - pivoting the medn visits from long to wide, with more detail than the prior code chunk.</p>
+<pre class="r"><code># check out the original data (medn_visits) in long format
+medn_visits</code></pre>
+<pre><code>## # A tibble: 18 x 3
+##    unit_code  year visitors
+##    &lt;chr&gt;     &lt;dbl&gt;    &lt;dbl&gt;
+##  1 SAMO       2010   568371
+##  2 CABR       2010   763140
+##  3 CHIS       2010   277515
+##  4 SAMO       2011   609636
+##  5 CABR       2011   813351
+##  6 CHIS       2011   242756
+##  7 SAMO       2012   649471
+##  8 CABR       2012   877951
+##  9 CHIS       2012   249594
+## 10 SAMO       2013   633054
+## 11 CABR       2013   856128
+## 12 CHIS       2013   212029
+## 13 SAMO       2014   694714
+## 14 CABR       2014   893434
+## 15 CHIS       2014   342161
+## 16 SAMO       2015   797126
+## 17 CABR       2015   981825
+## 18 CHIS       2015   324816</code></pre>
+<pre class="r"><code># if we want to make each row a park and each column a year, we can pivot wider
+medn_visits_wide &lt;- medn_visits %&gt;%
+                    pivot_wider(
+                                # names from is the thing you want to be as columns
+                                names_from = year,
+                                # values from is what you wantto fill the columns with
+                                values_from = visitors)
+
+# check out the result
+medn_visits_wide</code></pre>
+<pre><code>## # A tibble: 3 x 7
+##   unit_code `2010` `2011` `2012` `2013` `2014` `2015`
+##   &lt;chr&gt;      &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1 SAMO      568371 609636 649471 633054 694714 797126
+## 2 CABR      763140 813351 877951 856128 893434 981825
+## 3 CHIS      277515 242756 249594 212029 342161 324816</code></pre>
+<pre class="r"><code># we can also make park units the columsn and fill it with visitor data for each year
+medn_visits_wide &lt;- medn_visits %&gt;%
+                    pivot_wider(names_from = unit_code, values_from = visitors)
+medn_visits_wide</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##    year   SAMO   CABR   CHIS
+##   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1  2010 568371 763140 277515
+## 2  2011 609636 813351 242756
+## 3  2012 649471 877951 249594
+## 4  2013 633054 856128 212029
+## 5  2014 694714 893434 342161
+## 6  2015 797126 981825 324816</code></pre>
+</details>
+<br>
 <details open>
 <summary class="drop">
 pivot_longer()
 </summary>
+<p>Now that we have our data in wide format, it is time to revert back to pivoting longer. Here’s the reference material for pivot_longer() <a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="uri">https://tidyr.tidyverse.org/reference/pivot_longer.html</a>.</p>
+<pre class="r"><code># check out the original data (medn_visits_wide) in wide format
+medn_visits_wide</code></pre>
+<pre><code>## # A tibble: 6 x 4
+##    year   SAMO   CABR   CHIS
+##   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+## 1  2010 568371 763140 277515
+## 2  2011 609636 813351 242756
+## 3  2012 649471 877951 249594
+## 4  2013 633054 856128 212029
+## 5  2014 694714 893434 342161
+## 6  2015 797126 981825 324816</code></pre>
+<pre class="r"><code># if we want to make each row an observation, with an associated park and year, we&#39;ll pivot_longer
+medn_visits_long &lt;- medn_visits_wide %&gt;%
+                    pivot_longer(
+                                # first argument is the columns you&#39;d like to transform
+                                SAMO:CHIS,
+                                # next is what you&#39;d like to name the former name cols
+                                names_to = &#39;unit_code&#39;,
+                                # last is what you&#39;d like to name the former values cols
+                                values_to = &#39;visitors&#39;)
+
+# check out the result
+medn_visits_long</code></pre>
+<pre><code>## # A tibble: 18 x 3
+##     year unit_code visitors
+##    &lt;dbl&gt; &lt;chr&gt;        &lt;dbl&gt;
+##  1  2010 SAMO        568371
+##  2  2010 CABR        763140
+##  3  2010 CHIS        277515
+##  4  2011 SAMO        609636
+##  5  2011 CABR        813351
+##  6  2011 CHIS        242756
+##  7  2012 SAMO        649471
+##  8  2012 CABR        877951
+##  9  2012 CHIS        249594
+## 10  2013 SAMO        633054
+## 11  2013 CABR        856128
+## 12  2013 CHIS        212029
+## 13  2014 SAMO        694714
+## 14  2014 CABR        893434
+## 15  2014 CHIS        342161
+## 16  2015 SAMO        797126
+## 17  2015 CABR        981825
+## 18  2015 CHIS        324816</code></pre>
+<pre class="r"><code># this should look familiar - like the original medn_visits data</code></pre>
+</details>
+<br>
+<details open>
+<summary class="drop">
+pivot challenge
+</summary>
+<p>This is a more involved challenge that will draw on your knowledge of both dplyr (from Module 3) and pivoting.</p>
+<p>Using the state_pop data, accomplish the following tasks:</p>
+<ol style="list-style-type: decimal">
+<li>Get data for 3 states of your choice for the years 2010-2015 (note - there is no ‘total’ values in the year column)</li>
+<li>Create a df/tibble in long format</li>
+<li>Pivot wider to make a human-friendly table with states as rows and years as columns</li>
+<li>Pivot longer, returning to the original layout</li>
+</ol>
+<p>Hint: if your column names are numbers, like years, you must refer to them using backticks, like a column called 2020 would be <code>2020</code></p>
+</details>
+<br>
+<details open>
+<summary class="drop">
+pivot solution
+</summary>
+<pre class="r"><code># get 3 states of choice (FL, CA, AK) for years 2010-2015
+solution_original &lt;- state_pop %&gt;%
+                     filter(state %in% c(&#39;FL&#39;, &#39;AK&#39;, &#39;CA&#39;) &amp; 
+                            year &gt;= 2010 &amp; year &lt;= 2015) 
+# pivot wider
+solution_wide &lt;- solution_original %&gt;%
+                 pivot_wider(names_from = &#39;year&#39;,
+                             values_from = &#39;pop&#39;)
+
+# pivot longer to return to format of solution_originol
+solution_long &lt;- solution_wide %&gt;%
+                 pivot_longer(`2010`:`2015`, names_to = &#39;year&#39;, values_to = &#39;pop&#39;)</code></pre>
+</details>
 <p><br></p>
 <hr />
 </div>
@@ -1381,12 +1985,10 @@ Mastering Software Development in R: <a href="https://bookdown.org/rdpeng/RProgD
 </div>
 <div id="day-4-best-practices-wrap-up" class="section level3">
 <h3>Day 4: Best Practices &amp; Wrap-up</h3>
-<div id="good-coding-practices" class="section level4 tabset">
-<h4 class="tabset">Good Coding Practices</h4>
+<p>####Good Coding Practices {.tabset}</p>
 <p>Sarah will take a first crack at this</p>
 <p>Good coding practices - being consistent</p>
 <p>DRY principles</p>
-</div>
 <div id="control-structures" class="section level4 tabset">
 <h4 class="tabset">Control Structures</h4>
 <p>Sarah Vectorization Thomas if/else Thomas for, apply family purrr????</p>
@@ -1396,9 +1998,7 @@ Mastering Software Development in R: <a href="https://bookdown.org/rdpeng/RProgD
 <p>-vectorization - examples of vectorized functions -gsub, grep family (avoid regex) -basic vector math -rowsums vs colsums -inequalities ==, &lt;, &gt;, %in% -&amp; , |, (maybe get into &amp;&amp;, || )</p>
 <p>-other control structures to be aware of.</p>
 <p>NOT FOR TAB: Break to discuss other hard questions from previous days - especially how you integrate it into iteration.</p>
-</div>
-<div id="troubleshooting-iteration" class="section level4 tabset">
-<h4 class="tabset">Troubleshooting Iteration</h4>
+<p>####Troubleshooting Iteration {.tabset}</p>
 <p>Jointly, Thomas take first crask. SARAH will doe breakpoints. Thomas Do examples and posting to Stack for iteration troubleshooting Both sarah and Thomas useful resources</p>
 <p>Troubleshooting and good resources -Troubleshooting iteration -How???? -Simple and complex approaches -in development use verbose iteration -print() to give an update -breakpoints debugging tool in r studio -traceback - certainly an option -should you just ignore warnings()?</p>
 <p>-Minimum reproducible examples -Your problem might not be as complex as it seems</p>
@@ -2153,9 +2753,303 @@ library(&#39;janitor&#39;)
 library(&#39;janitor&#39;)
 install.packages(&quot;tidyverse&quot;)
 library(&#39;tidyverse&#39;)
+library(&#39;janitor&#39;)
+library(&#39;tidyverse&#39;)
+messy_data &lt;- tibble(TrailName = c(&#39;Bayside&#39;, &#39;Coastal&#39;, &#39;Tidepools&#39;, 
+                                   &#39;Monument&#39;, &#39;Tidepools&#39;, NA),
+                     Visitor_count = c(200, 300, 400, 500, 400, NA),
+                     `empty row` = NA)
+messy_data
+clean_data &lt;- clean_names(messy_data)
+clean_data
+remove_empty(
+  # first argument is the data
+  dat, 
+  # the next specifies if you want to get rid of empty rows, columns, or both
+  which = c(&quot;rows&quot;, &quot;cols&quot;), 
+  # this last one asks whether (TRUE) or not (FALSE) you want R to tell you which rows or columns were removed
+  quiet = TRUE)
+clean_data2 &lt;- remove_empty(clean_data, which = c(&#39;rows&#39;), quiet = FALSE)
+clean_data2
+clean_data2 &lt;- remove_empty(clean_data, which = c(&#39;rows&#39;, &#39;cols&#39;), quiet = TRUE)
+clean_data2
+clean_data &lt;- clean_names(messy_data)
+clean_data &lt;- remove_empty(clean_data, which = c(&#39;rows&#39;, &#39;cols&#39;), quiet = TRUE)
+clean_data
+clean_data &lt;- clean_names(messy_data) %&gt;%
+              remove_empty(which = c(&#39;rows&#39;, &#39;cols&#39;), quiet = TRUE)
+clean_data
+# note that replacing %&gt;% with |&gt; also works
+clean_data &lt;- clean_names(messy_data) %&gt;%
+              remove_empty(which = c(&#39;rows&#39;, &#39;cols&#39;), quiet = TRUE) %&gt;%
+              distinct()
+clean_data
+messy_data2 &lt;- tibble(`Park Code` = c(NA, NA, &#39;CABR&#39;, &#39;CHIS&#39;, &#39;SAMO&#39;, &#39;SAMO&#39;),
+                     visitor_count = c(NA, NA, 400, 500, 400, 400),
+                     `empty row` = NA)
+clean_data2 &lt;- clean_names(messy_data2) %&gt;%
+               remove_empty(which = c(&#39;rows&#39;, &#39;cols&#39;), quiet = TRUE) %&gt;%
+               distinct()
+library(&#39;readr&#39;)
+library(&#39;janitor&#39;)
+library(&#39;tidyverse&#39;)
+park_visits &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/national_parks.csv&quot;)
+state_pop &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/state_pop.csv&quot;)
+gas_price &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/gas_price.csv&quot;)
+# let&#39;s see the column names in park_visits
+colnames(park_visits)
 
+# we can also look at the first few rows by using head()
+head(park_visits)
 
+# you can either select for the columns you want
+park_visits1 &lt;- park_visits %&gt;% select(year, parkname, unit_code, state, visitors)
 
+# or against the columns you don&#39;t want, by using the minus sign before the column name
+park_visits2 &lt;- park_visits %&gt;% select(-gnis_id, -geometry, -metadata, -number_of_records, -region, -unit_name, -unit_type)
+
+# you can check if you have the same result by using colnames()
+colnames(park_visits1)
+colnames(park_visits2)
+
+# to clear up our environment, we&#39;ll get rid of park_visits1 and 2 using remove()
+remove(park_visits1, park_visits2)
+
+# since we won&#39;t need all of the columns in park_visits, we&#39;ll change that file (note that park_visits is on both the left and right sides of the pipe)
+park_visits &lt;- park_visits %&gt;% select(year, parkname, unit_code, state, visitors)
+# rename parkname column to make it snake case
+park_visits &lt;- park_visits %&gt;% rename(park_name = parkname)
+
+# we can check if we&#39;ve done it correctly by looking at the column names
+colnames(park_visits)
+wa_park_visits &lt;- filter(
+                        # name of tibble
+                        park_visits, 
+                        # condition
+                        state == &#39;WA&#39;
+                        )
+
+# the command head() shows the first few rows of data
+head(wa_park_visits)
+
+# you can use the unique() command to check you&#39;ve done the filtering correctly
+unique(wa_park_visits$state)
+wa_park_visits &lt;- park_visits %&gt;%
+                  # filter for parks in WA
+                  filter(state == &#39;WA&#39; &amp;
+                  # filter for total visitation
+                  year == &#39;Total&#39; &amp; 
+                  # filter for over 5 million visitors
+                  visitors &gt; 5000000)
+
+# the command head() shows the first few rows of data
+head(wa_park_visits)
+pr_park_visits &lt;- park_visits %&gt;%
+                  # filter for parks in Puerto Rico
+                  filter(state == &#39;PR&#39; &amp;
+                  # filter for total visitation
+                  year == &#39;Total&#39;)
+
+# the command head() shows the first few rows of data
+head(pr_park_visits)
+# San Juan National Historic Site (Puerto Rico) had &gt; 55 million visitors!
+
+# remove result from environment
+remove(pr_park_visits)
+wa_park_visits &lt;- park_visits %&gt;%
+                  # filter for parks in WA
+                  filter(state == &#39;WA&#39; &amp;
+                  # filter for total visitation
+                  year == &#39;Total&#39; &amp; 
+                  # filter for over 5 million visitors
+                  visitors &gt; 5000000) %&gt;%
+                  # arrange by visitation - default is ascending order
+                  arrange(visitors)
+
+# look at result (df is short so head() not needed)
+wa_park_visits
+
+# to arrange by descending order, we can use desc()
+wa_park_visits2 &lt;- wa_park_visits %&gt;%
+                  arrange(desc(visitors))
+
+# look at result 
+wa_park_visits2
+
+# remove one result
+remove(wa_park_visits2)
+# two ways to get the number of observations per state
+
+# option 1 - use pull() to isolate a column and table() to get # of observations
+state_n &lt;- park_visits %&gt;%
+           # pull the state column only
+           pull(state) %&gt;%
+           # get # of observations by state in table output
+           table()
+
+# option 2 - use group_by() to isolate column(s) and tally() to get # of obs
+state_n2 &lt;- park_visits %&gt;%
+           # group by state
+           group_by(state) %&gt;%
+           # get tally of observations by state in tibble output
+           tally()
+
+# remove created objects
+remove(state_n, state_n2)
+wa_park_visits_millions &lt;- wa_park_visits %&gt;%
+                           mutate(visitors_mil = visitors/1000000)
+
+wa_park_visits_millions
+park_visits2 &lt;- park_visits %&gt;%
+                # do calculations by state
+                group_by(state) %&gt;%
+                # add state_totals column with the sum of visitors by state
+                # the na.rm = TRUE means that NA values are not included in calculations
+                mutate(state_totals = sum(visitors, na.rm = TRUE))
+
+# take a look at the result
+head(park_visits2)
+
+# remove from environment
+remove(park_visits2)
+state_summary &lt;- park_visits %&gt;%
+                # filter for total visitation numbers (to avoid double counts)
+                filter(year == &#39;Total&#39;) %&gt;%
+                # do calculations by state
+                group_by(state) %&gt;%
+                # calculate summaries
+                summarize(
+                  # mean number of total visitors across parks in each state
+                  mean_visit = mean(visitors, na.rm = TRUE),
+                  # sd of total visitors across parks in each state
+                  sd_visit = sd(visitors, na.rm = TRUE),
+                  # min total visitors across parks in each state
+                  min_visit = min(visitors, na.rm = TRUE),
+                  # max total visitors across parks in each state
+                  max_visit = max(visitors, na.rm = TRUE),
+                  # get number of park units w data in each state
+                  n_parks = n()
+                )
+
+# take a look at the result
+head(state_summary)
+
+# if you want to continue analyzing this summarized data, you must first ungroup()
+# for example:
+state_summary &lt;- state_summary %&gt;%
+                 ungroup() %&gt;%
+                 mutate(dif = max_visit - min_visit)
+
+# remove from environment
+remove(state_summary)
+challenge2 &lt;- park_visits %&gt;%
+                # filter for total visitation numbers (to avoid double counts)
+                filter(year == &#39;Total&#39;) %&gt;%
+                # do calculations by state
+                group_by(state) %&gt;%
+                # calculate summaries
+                summarize(
+                  # mean number of total visitors across parks in each state
+                  mean_visit = mean(visitors, na.rm = TRUE),
+                  # get number of park units w data in each state
+                  n_parks = n()
+                ) %&gt;%
+                # ungroup to do another calculation
+                ungroup() %&gt;%
+                # calculate visit/n
+                mutate(visit_per_park = mean_visit/n_parks) %&gt;%
+                # select relevant columns
+                select(state, visit_per_park) %&gt;%
+                # arrange in descending order
+                arrange(desc(visit_per_park))
+                
+
+# take a look at the result
+head(challenge2)
+
+# remove from environment
+remove(challenge2)
+# call packages
+library(&#39;readr&#39;)
+library(&#39;janitor&#39;)
+library(&#39;tidyverse&#39;)
+
+# get data
+park_visits &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/national_parks.csv&quot;)
+state_pop &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/state_pop.csv&quot;)
+gas_price &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/gas_price.csv&quot;)
+
+# cut some columns from park_visits data
+park_visits &lt;- park_visits %&gt;% select(year, parkname, unit_code, state, visitors)
+
+# we&#39;ll first take a subset of the park visits data
+medn_visits &lt;- park_visits %&gt;%
+               # get parks in MEDN and no totals, years 2010-2015
+               filter(unit_code %in% c(&#39;CABR&#39;, &#39;CHIS&#39;, &#39;SAMO&#39;) &amp; year != &#39;Total&#39;) %&gt;%
+               # make year a number, since no more text 
+               mutate(year = as.numeric(year)) %&gt;%
+               # get years 2010:2015
+               filter(year &gt;= 2010 &amp; year &lt;=2015) %&gt;%
+               # arrange in ascending order
+               arrange(year) %&gt;%
+               # select relevant columns
+               select(unit_code, year, visitors)
+
+# if we take a look at the data, it is in long format, each observation is a row
+# this isn&#39;t the most human-friendly way to look at data, but it is really helpful if we want to use dplyr group_by() functions like mutate() and summarize()
+medn_visits
+
+# conversely, we can pivot longer to make the data wide format
+# it is more human-friendly but you can&#39;t use dplyr functions on it easily
+medn_visits_wide &lt;- pivot_wider(medn_visits, names_from = year, values_from = visitors)
+medn_visits_wide
+# check out the original data (medn_visits) in long format
+medn_visits
+
+# if we want to make each row a park and each column a year, we can pivot wider
+medn_visits_wide &lt;- medn_visits %&gt;%
+                    pivot_wider(
+                                # names from is the thing you want to be as columns
+                                names_from = year,
+                                # values from is what you wantto fill the columns with
+                                values_from = visitors)
+
+# check out the result
+medn_visits_wide
+
+# we can also make park units the columsn and fill it with visitor data for each year
+medn_visits_wide &lt;- medn_visits %&gt;%
+                    pivot_wider(names_from = unit_code, values_from = visitors)
+medn_visits_wide
+# check out the original data (medn_visits_wide) in wide format
+medn_visits_wide
+
+# if we want to make each row an observation, with an associated park and year, we&#39;ll pivot_longer
+medn_visits_long &lt;- medn_visits_wide %&gt;%
+                    pivot_longer(
+                                # first argument is the columns you&#39;d like to transform
+                                SAMO:CHIS,
+                                # next is what you&#39;d like to name the former name cols
+                                names_to = &#39;unit_code&#39;,
+                                # last is what you&#39;d like to name the former values cols
+                                values_to = &#39;visitors&#39;)
+
+# check out the result
+medn_visits_long
+
+# this should look familiar - like the original medn_visits data
+# get 3 states of choice (FL, CA, AK) for years 2010-2015
+solution_original &lt;- state_pop %&gt;%
+                     filter(state %in% c(&#39;FL&#39;, &#39;AK&#39;, &#39;CA&#39;) &amp; 
+                            year &gt;= 2010 &amp; year &lt;= 2015) 
+# pivot wider
+solution_wide &lt;- solution_original %&gt;%
+                 pivot_wider(names_from = &#39;year&#39;,
+                             values_from = &#39;pop&#39;)
+
+# pivot longer to return to format of solution_originol
+solution_long &lt;- solution_wide %&gt;%
+                 pivot_longer(`2010`:`2015`, names_to = &#39;year&#39;, values_to = &#39;pop&#39;)
 #--------------------
 #    Day 1 Answers
 #--------------------
