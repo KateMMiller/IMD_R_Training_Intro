@@ -11,7 +11,7 @@ The only thing you really need to do to prepare for R training is to install the
 
 Even if you already have R or RStudio installed, please install the latest versions of both programs. R recently went through a major version change from 3.x to 4.x with some potential code-breaking changes. The latest versions are needed to ensure everyone's code behaves the same way. 
 
-<details open><summary class='drop'>Install the latest version of R (4.0.4 as of March 2021)</summary>
+<details open><summary class='drop'>Install the latest version of R (4.1.2 as of January 2022)</summary>
 Assuming you're on a PC, the installer for the latest version of R can be downloaded from <a href="https://cran.r-project.org/bin/windows/base/">The Comprehensive R Archive Network (CRAN)</a>. You'll want to download the R installer by clicking on "Download R 4.0.4 for Windows", or whatever the latest version number happens to be. After it downloads, open and run the installer with default settings. Note that there's no need to pin R to your taskbar or add a shortcut to your desktop. For 99% of your needs, you'll run R within RStudio, and won't ever open R directly.
 </details>
 <br>
@@ -30,41 +30,18 @@ One of the great things about R is that users can build and share their own pack
 #--------------------
 ```
 
-```{r install_packages, echo=T, eval=F}
-install.packages(c("tidyverse", "devtools", "rgdal", "ggspatial", "leaflet"))
-devtools::install_github("katemmiller/forestNETNarch")
-devtools::install_github("NCRN/NCRNWater")
-```
-
-Next check that this worked by pasting and running the code below:
-```{r check_install, echo=T, results='hide', eval=FALSE}
-library(tidyverse)
-library(forestNETN)
-library(NCRNWater)
-```
-
-If you run into any problems, we can troubleshoot the first day. We'll also discuss what the code above means the first day.
-</details>
-<br>
-
-<details open><summary class='drop'>Join MS Team and download data</summary>
-I set up a MS Team called ACAD_R_Training_Info to serve up the data and for us to use to post questions/info throughout the training. The link to the team is <a href="https://teams.microsoft.com/l/team/19%3a922d93279b8e495791b7658a624defec%40thread.skype/conversations?groupId=97be0c48-26ec-4d45-bd5b-e06a315ddb0a&tenantId=0693b5ba-4b18-4d7b-9341-f32f400a5494">here</a>. Please make sure you can join this team before training starts, and let me know if you have problems. 
-
-We'll be using several example datasets throughout the training. It will help if you can download the data prior to the first day, especially if your connection is slow. To download the data, click on this <a href="https://doimspp.sharepoint.com/sites/ACAD_R_Training_Info/Shared%20Documents/General/data.zip">data.zip</a> link (also posted in the files channel). We'll set up file structure and unzip the data files on the first day. 
-</details>
-<br>
 
 <details open><summary class='drop'>Optional Reading</summary>
-I know you're all busy and have to prioritize how you spend your time. If you have any time before training starts, I highly recommend reading <a href="https://stat545.com/r-basics.html">Chapter 2: R basics and workflows</a> in STAT545. This is an online book based on a graduate level statistics class that Jenny Bryan teaches and is turning into this book. She's a stats professor turned senior programmer at RStudio, and I really like how she approaches programming R in this book. 
+We know you're all busy and have to prioritize how you spend your time. If you have any time before training starts, we highly recommend reading <a href="https://stat545.com/r-basics.html">Chapter 2: R basics and workflows</a> in STAT545. This is an online book based on a graduate level statistics class that Jenny Bryan teaches and is turning into this book. She's a stats professor turned senior programmer at RStudio, and I really like how she approaches programming R in this book. 
 </details>
 <br>
 
 <details open><summary class='drop'>Structure of training</summary>
-The training will take place over 3 half days. Each day will run from 8-noon via MS Teams, with afternoon assignments to help cement ideas and prepare for the next day's training. Please make an effort to at least skim the assignments and fill out the <a href="https://forms.office.com/Pages/ResponsePage.aspx?id=urWTBhhLe02TQfMvQApUlFh5GkMREZNMjYcWk1MpLQ9UMEZDT0g4TEZKWkNBWk1aWjZVU0NLVFJTVy4u">Feedback form</a> at the end of each day. 
+The training will take place over 4 half days. Each day will run from 10-2 MST via MS Teams. The hour before training, and the hour after training will also be posted by at least one trainer as office hours, in case there are questions that couldn't be handled during training. 
 
-For most of the training, I'll share my screen to walk through the code. It will help a lot if you have 2 monitors, so you can have the screen I'm sharing on one monitor and your own session of RStudio open on the other. If you need an extra monitor let me know (I recently upgraded and have some older (non-gov't) ones that are looking for a new home). 
+For most of the training, the trainer will share their screen to walk through the website and code. It will help a lot if you have 2 monitors, so you can have the screen being shared on one monitor and your own session of RStudio open on the other.  
 
-Three days is barely enough to scratch the surface on what you can do in R. My goals with this training are to help you get past the initial learning curve that can be really challenging to climb on your own, and to expose you to some of the really useful things R can do for you. Hopefully this also helps build a community of R users in ACAD who can help and share code with each other. 
+Four days is barely enough to scratch the surface on what you can do in R. Our goals with this training are to help you get past the initial learning curve that can be really challenging to climb on your own, and to expose you to some of the really useful things R can do for you. Hopefully this also helps build a larger community of R users in IMD who can help and share code with each other. 
 
 </details>
 <hr>
