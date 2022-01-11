@@ -13,18 +13,18 @@ In this section, we'll introduce functions in the dplyr package. This package is
 
 You can think of these functions like verbs that accomplish tasks, and are strung together by the pipe operator (%>% or |>).
 
-We'll cover the following commands: 
+We'll cover the following functions: 
 
   1. select() - selects or removes columns
   2. rename() - renames columns
-  3. arrange() - arranges a tibble by column values
+  3. arrange() - arranges a data.frame by column values
   4. filter() - filters data for observations that meet specific criteria
-  5. mutate() - adds new column(s) to a tibble
-  6. pull() %>% table() - takes a column of data out of a tibble and puts it into a vector
+  5. mutate() - adds new column(s) to a data.frame
+  6. pull() %>% table() - isolates and summarizes by a column 
   7. group_by() %>% summarize() - summary calculations by groups/factor levels and returns data for each group
   8. group_by() %>% mutate() - summary calculations by groups/factor levels and returns data for each observation
 
-The data we'll use for modules 3-5 is from a program called Tidy Tuesday. Each week on Tuesday, the community posts data for exploratory data analysis and visualization. You can add data from this page to your RStudio environment by copying + pasting the "Get the data!" code chunk into your script and running it in the console.
+The data we'll use for modules 3-5 is from the Tidy Tuesday community on GitHub. Each week on Tuesday, the community posts data for exploratory data analysis and visualization. You can add data from this page to your RStudio environment by copying + pasting the "Get the data!" code chunk into your script and running it in the console.
 
 <https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-09-17>
 
@@ -36,13 +36,13 @@ library('janitor')
 library('tidyverse')
 ```
 
-Next, we'll load the data from the R for Data Science Tidy Tuesday GitHub page.There are three lines which will load three tibbles.
+Next, we'll load the data from the R for Data Science Tidy Tuesday GitHub page. There are three lines which will load three data.frames.
 
   1. park_visits - which contains data on visits to US National Parks
   2. state_pop - which contains information on populations of US states
   3. gas_price - which contains information on gas prices over space and time
   
-For now, we'll focus on the park_visits tibble, and will circle back to the other two later. There are descriptions of each column for each tibble on the Tidy Tuesday website linked above if you'd like more information. 
+For now, we'll focus on the park_visits data.frame, and will circle back to the other two later. There are descriptions of each column for each data.frame on the Tidy Tuesday website linked above if you'd like more information. 
 
 ```{r echo=TRUE, message = FALSE, warning = FALSE}
 park_visits <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/national_parks.csv")
@@ -64,7 +64,7 @@ rename() - keeps all the columns, but renames the ones you indicate
 
 Since we won't be using geographical information, other than state, in our module, we'll select some columns from the park_visits data to use today.
 
-Note that, the name to the left of the arrow is the resulting tibble/df, the information to the right that's connected by pipes are the steps to get to the result. I normally name the result something different than the original tibble/df so that the original data aren't affected. However, since we won't need the geographical information later on, I will name this one "park_visits". 
+Note that, the name to the left of the arrow is the resulting data.frame, the information to the right that's connected by pipes are the steps to get to the result. I normally name the result something different than the original data.frame so that the original data aren't affected. However, since we won't need the geographical information later on, I will name this one "park_visits". 
 
 ```{r eval = TRUE, include = TRUE, message = FALSE, warning = FALSE}
 # let's see the column names in park_visits
@@ -91,7 +91,7 @@ remove(park_visits1, park_visits2)
 park_visits <- park_visits %>% select(year, parkname, unit_code, state, visitors)
 ```
 
-If we take a look at the park_visits data, there are some column name inconsistencies. For example, some are in snake case (unit_code), but some are not (parkname). To rename a column, use rename(). The structure of this argument is as follows: 
+Taking a look at the park_visits data, there are some column name inconsistencies. For example, some are in snake case (unit_code), but some are not (parkname). To rename a column, use rename(). The structure of this argument is as follows: 
 
 rename(dataset, new_name = old_name)
 OR
@@ -112,19 +112,19 @@ colnames(park_visits)
 filter() - filters out rows from a data.frame based on values in columns
 can combine criteria using & (and), | (or), ! (not)
 
-If you'd like to get visitation data for just parks in the state of Washington (WA), you can use the filter command. The structure is as follows: 
+If you'd like to get visitation data for just parks in the state of Washington (WA), you can use the filter function. The structure is as follows: 
 ```{r eval=FALSE, include=TRUE}
 wa_park_visits <- filter(
-                        # name of tibble
+                        # name of data.frame
                         park_visits, 
                         # condition
                         state == 'WA'
                         )
 
-# the command head() shows the first few rows of data
+# head() shows the first few rows of data
 head(wa_park_visits)
 
-# you can use the unique() command to check you've done the filtering correctly
+# you can use the unique() to check you've done the filtering correctly
 unique(wa_park_visits$state)
 ```
 
@@ -139,15 +139,17 @@ wa_park_visits <- park_visits %>%
                   # filter for over 5 million visitors
                   visitors > 5000000)
 
-# the command head() shows the first few rows of data
+# head() shows the first few rows of data
 head(wa_park_visits)
 ```
+
+You also might be wondering why we use "==" instead of "=". In R, the single equal sign "=" is used to assign something. For example, if you want to make some variable equal to a number, you could tell R "x = 5", and it would remember that x is equal to 5. To evaluate something as TRUE/FALSE, you use "==". If you type "5 == 3" into the console, it will return the answer "FALSE". The filtering argument uses this TRUE/FALSE evaluation - filtering for rows where the stated condition - such as year == 'Total" - is TRUE.
 
 </details>
 <br>
 <details open><summary class='drop'> dplyr- challenge 1</summary>
 
-Time for the first challenge. Using the park_visits data, create a new tibble/df containing total visitation for a state of your choice. Note that some "states" aren't states. For example, VI refers to the Virgin Islands. How can you check your work to make sure your work is correct?
+Time for the first challenge. Using the park_visits data, create a new data.frame containing total visitation for a state of your choice. Note that some "states" aren't states. For example, VI refers to the Virgin Islands. How can you check your work?
 
 </details>
 <br>
@@ -160,7 +162,7 @@ pr_park_visits <- park_visits %>%
                   # filter for total visitation
                   year == 'Total')
 
-# the command head() shows the first few rows of data
+# head() shows the first few rows of data
 head(pr_park_visits)
 # San Juan National Historic Site (Puerto Rico) had > 55 million visitors!
 
@@ -223,7 +225,7 @@ state_n <- park_visits %>%
 state_n2 <- park_visits %>%
            # group by state
            group_by(state) %>%
-           # get tally of observations by state in tibble output
+           # get tally of observations by state in output
            tally()
 
 # remove created objects
@@ -251,9 +253,9 @@ wa_park_visits_millions
 
 group_by() indicates that data is in groups, so you can do calculations separately for each group
 
-group_by() %>% mutate() will add a column and return the same number of rows that the original data had
+group_by() %>% mutate() will add a column and return the same number of rows as the original data
 
-This is helpful when you want to get group summary information without sacrificing the original values. For example, if we want to know what percent of the total visitation of a park occurs in each year, and add this to the orginal data. 
+This is helpful when you want to get group summary information without sacrificing the original values. For example, if we want to know what percent of the total visitation of a park occurs in each year, and add this to the original data. 
 
 ```{r eval = TRUE, include = TRUE}
 park_visits2 <- park_visits %>%
@@ -321,7 +323,7 @@ remove(state_summary)
 <br>
 <details open><summary class='drop'> dplyr - challenge 2</summary>
 
-For this second challenge, you'll start with the park_visits data. Calculate the average visitation divided by the number of parks for each state. The final df/tibble should be arranged in descending order by a numeric column of your choice. 
+For this second challenge, you'll start with the park_visits data. Calculate the average visitation divided by the number of parks for each state. The final data.frame should be arranged in descending order by a numeric column of your choice. 
 
 </details>
 <br>

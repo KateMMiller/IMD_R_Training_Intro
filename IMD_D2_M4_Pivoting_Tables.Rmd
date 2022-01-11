@@ -66,7 +66,7 @@ medn_visits_wide <- pivot_wider(medn_visits, names_from = year, values_from = vi
 medn_visits_wide
 ```
 
-There are two commands we'll discuss today:
+There are two functions we'll discuss today:
 
   1. pivot_wider() : converts from long --> wide
   2. pivot_longer() : converts from wide --> long
@@ -75,7 +75,7 @@ There are two commands we'll discuss today:
 <br>
 <details open><summary class='drop'> pivot_wider()</summary>
 
-Full disclosure, I almost always have to google the arguments that go into the pivot_ commands. Here's the website for pivot_wider() <https://tidyr.tidyverse.org/reference/pivot_wider.html>
+Full disclosure, I almost always have to google the arguments that go into the pivot_ functions. Here's the website for pivot_wider() <https://tidyr.tidyverse.org/reference/pivot_wider.html>
 
 Here's a short example - pivoting the MEDN visits from long to wide, with more detail than the prior code chunk. 
 
@@ -135,11 +135,11 @@ This is a more involved challenge that will draw on your knowledge of both dplyr
 Using the state_pop data, accomplish the following tasks: 
 
   1. Get data for 3 states of your choice for the years 2010-2015 (note - there is no 'total' values in the year column)
-  2. Create a df/tibble in long format
+  2. Create a data.frame in long format
   3. Pivot wider to make a human-friendly table with states as rows and years as columns
   4. Pivot longer, returning to the original layout
   
-Hint: if your column names are numbers, like years, you must refer to them using backticks, like a column called 2020 would be `2020`
+Hint: if your column names are numbers, like years, you must refer to them using back-ticks. A column called 2020 would be \`2020\`
 
 </details>
 <br>
@@ -155,7 +155,7 @@ solution_wide <- solution_original %>%
                  pivot_wider(names_from = 'year',
                              values_from = 'pop')
 
-# pivot longer to return to format of solution_originol
+# pivot longer to return to format of solution_original
 solution_long <- solution_wide %>%
                  pivot_longer(`2010`:`2015`, names_to = 'year', values_to = 'pop')
 ```
