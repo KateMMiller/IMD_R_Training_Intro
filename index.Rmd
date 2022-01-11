@@ -68,10 +68,6 @@ title: "NPS IMD R Training I"
 
 ```
 
-```{r D3_Assignments, child = "D3_Reading_Assignments.Rmd"}
-
-```
-
 
 ### Day 4: Best Practices & Wrap-up {.tabset}
 
