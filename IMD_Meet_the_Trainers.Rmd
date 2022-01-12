@@ -5,11 +5,6 @@ output:
   html_document:
     css: custom_styles.css
 ---
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
-
 <p style="font-size:14px">We are the trainers who designed and led the training for this week. We hope you found it useful, and that you keep with it! <br>
 
 <div class = 'row'>
