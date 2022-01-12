@@ -27,7 +27,9 @@ Major Components to Data Wrangling
 <br>
 </details><br><details open><summary class='drop'> Column Names</summary>
 
-Sometimes you get data where the column names are messy. For an example of data that needs tidying before exploration and analyses, we'll use fake data. Copy + paste the code from the code chunk below into your script, and run it in the console to generate a tibble called "messy_data". 
+Sometimes you get data where the column names are messy. For an example of data that needs tidying before exploration and analyses, we'll use fake data. Copy + paste the code chunk below into your script, and run it in the console to generate a dataframe called "messy_data". 
+
+Here, we'll clarify that we are using the word "data.frame" or "dataframe" to describe the data. The word "tibble" also shows up. We'll use these terms interchangeably.
 
 ```{r, echo = TRUE}
 messy_data <- tibble(TrailName = c('Bayside', 'Coastal', 'Tidepools', 
@@ -36,7 +38,7 @@ messy_data <- tibble(TrailName = c('Bayside', 'Coastal', 'Tidepools',
                      `empty row` = NA)
 ```
 
-This tibble captures the hypothetical number of visitors across four trails at a park.There are a few qualities that make it difficult to interpret. Seeing this data, what would you change to make it most consistent?
+This data.frame captures the hypothetical number of visitors across four trails at a park. There are a few qualities that make it difficult to interpret. Seeing this data, what would you change to make it most consistent?
 
 ```{r, echo = TRUE}
 messy_data
@@ -132,7 +134,7 @@ clean_data <- clean_names(messy_data) %>%
 clean_data
 ```
 
-A word of caution - note that sometimes you may not want to remove duplicate rows, or may not want to remove empty rows, because they are important to the data. You know your data best, but make sure to use functions responsibly. 
+A word of caution - sometimes you may not want to remove duplicate rows, or may not want to remove empty rows, because they are important to the data. You know your data best. Use functions responsibly. 
 
 </details>
 <br>

@@ -1,6 +1,6 @@
 ---
-title: "Day 2 Mod 5"
-author: "Laurne Pandori & John Paul Schmit"
+title: "Day 2 Module 5"
+author: "Lauren Pandori & John Paul Schmit"
 date: "12/15/2021"
 output: html_document
 ---
@@ -208,7 +208,7 @@ So, all the data from gas_price is present, if necessary it was repeated to matc
 In the previous section we used left and right joins to get all of the data from one data.frame with matching data from a second data.frame. Now we will look at 2 other joins:
 
 1) inner_join() - only rows that have matches in both data frames are kept
-2) full_join() you get all the rows from both datasets even if some don't match.
+2) full_join() - you get all the rows from both datasets even if some don't match.
 
 inner join:
 ```{r eval = TRUE, include = TRUE, message = FALSE, warning = FALSE}
@@ -273,7 +273,7 @@ rm(park_visits_pop)
 
 <details open><summary class='drop'> Filtering Joins</summary>
 
-Sometimes you don't want to combine two table, but you do want to filter one table so that it only has data that can match data in another table. semi_join() is used for this
+Sometimes you don't want to combine two tables, but you do want to filter one table so that it only has data that can match data in another table. semi_join() is used for this
 
 full join:
 ```{r eval = TRUE, include = TRUE, message = FALSE, warning = FALSE}
@@ -321,7 +321,7 @@ Filter the park_visits data so that it only contains data that can be joined wit
 
 Note that the state_pop data has some NAs for population for Alaska and Hawaii prior to 1949. For a bigger challenge, don't include data those state / year combinations in your final data set.
 
-Hint: the function is.na(data) will be TRUE when a value is NA. If you put an exclimation mark in front !is.na(data) it will tell you when teh values are not NA. 
+Hint: the function is.na(data) will be TRUE when a value is NA. If you put an exclamation mark in front !is.na(data) it will tell you when the values are not NA. 
 
 </details>
 <br>

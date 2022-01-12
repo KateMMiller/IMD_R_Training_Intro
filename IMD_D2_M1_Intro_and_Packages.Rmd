@@ -42,7 +42,7 @@ install.packages("janitor")
 
 <details open><summary class='drop'> Calling a Package</summary>
 
-  To use a package, call it by using the command "library"
+  To use a package, call it by using the function "library"
 
 ```{r eval = FALSE, include = TRUE}
 library('janitor')
