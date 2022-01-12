@@ -107,7 +107,7 @@ There's a lot of great online material for learning new applications of R. The o
 </ul>
 
 ### Code printout {.tabset}
-```{r Code_printout, child = "D3_Code_Printout.Rmd"}
+```{r Code_printout, child = "IMD_Code_Printout.Rmd"}
 
 ```
 
