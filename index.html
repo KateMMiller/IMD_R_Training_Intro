@@ -963,7 +963,7 @@ Working with Packages: Installing a Package
 <summary class="drop">
 Calling a Package
 </summary>
-<p>To use a package, call it by using the command “library”</p>
+<p>To use a package, call it by using the function “library”</p>
 <pre class="r"><code>library(&#39;janitor&#39;)</code></pre>
 <p>This is called “loading a package” or “calling a package”.</p>
 </details>
@@ -1030,12 +1030,13 @@ library(&#39;tidyverse&#39;)</code></pre>
 <summary class="drop">
 Column Names
 </summary>
-<p>Sometimes you get data where the column names are messy. For an example of data that needs tidying before exploration and analyses, we’ll use fake data. Copy + paste the code from the code chunk below into your script, and run it in the console to generate a tibble called “messy_data”.</p>
+<p>Sometimes you get data where the column names are messy. For an example of data that needs tidying before exploration and analyses, we’ll use fake data. Copy + paste the code chunk below into your script, and run it in the console to generate a dataframe called “messy_data”.</p>
+<p>Here, we’ll clarify that we are using the word “data.frame” or “dataframe” to describe the data. The word “tibble” also shows up. We’ll use these terms interchangeably.</p>
 <pre class="r"><code>messy_data &lt;- tibble(TrailName = c(&#39;Bayside&#39;, &#39;Coastal&#39;, &#39;Tidepools&#39;, 
                                    &#39;Monument&#39;, &#39;Tidepools&#39;, NA),
                      Visitor_count = c(200, 300, 400, 500, 400, NA),
                      `empty row` = NA)</code></pre>
-<p>This tibble captures the hypothetical number of visitors across four trails at a park.There are a few qualities that make it difficult to interpret. Seeing this data, what would you change to make it most consistent?</p>
+<p>This data.frame captures the hypothetical number of visitors across four trails at a park. There are a few qualities that make it difficult to interpret. Seeing this data, what would you change to make it most consistent?</p>
 <pre class="r"><code>messy_data</code></pre>
 <pre><code>## # A tibble: 6 x 3
 ##   TrailName Visitor_count `empty row`
@@ -1157,7 +1158,7 @@ clean_data</code></pre>
 ## 2 Coastal              300
 ## 3 Tidepools            400
 ## 4 Monument             500</code></pre>
-<p>A word of caution - note that sometimes you may not want to remove duplicate rows, or may not want to remove empty rows, because they are important to the data. You know your data best, but make sure to use functions responsibly.</p>
+<p>A word of caution - sometimes you may not want to remove duplicate rows, or may not want to remove empty rows, because they are important to the data. You know your data best. Use functions responsibly.</p>
 </details>
 <br>
 <details open>
@@ -1186,30 +1187,30 @@ Data Wrangling
 </summary>
 <p>In this section, we’ll introduce functions in the dplyr package. This package is one of the packages that make up the tidyverse, so you won’t have to install and call another package. The dplyr package is a group of functions that help to manipulate and summarize data. <a href="https://www.rdocumentation.org/packages/dplyr/versions/0.7.8" class="uri">https://www.rdocumentation.org/packages/dplyr/versions/0.7.8</a></p>
 <p>You can think of these functions like verbs that accomplish tasks, and are strung together by the pipe operator (%&gt;% or |&gt;).</p>
-<p>We’ll cover the following commands:</p>
+<p>We’ll cover the following functions:</p>
 <ol style="list-style-type: decimal">
 <li>select() - selects or removes columns</li>
 <li>rename() - renames columns</li>
-<li>arrange() - arranges a tibble by column values</li>
+<li>arrange() - arranges a data.frame by column values</li>
 <li>filter() - filters data for observations that meet specific criteria</li>
-<li>mutate() - adds new column(s) to a tibble</li>
-<li>pull() %&gt;% table() - takes a column of data out of a tibble and puts it into a vector</li>
+<li>mutate() - adds new column(s) to a data.frame</li>
+<li>pull() %&gt;% table() - isolates and summarizes by a column</li>
 <li>group_by() %&gt;% summarize() - summary calculations by groups/factor levels and returns data for each group</li>
 <li>group_by() %&gt;% mutate() - summary calculations by groups/factor levels and returns data for each observation</li>
 </ol>
-<p>The data we’ll use for modules 3-5 is from a program called Tidy Tuesday. Each week on Tuesday, the community posts data for exploratory data analysis and visualization. You can add data from this page to your RStudio environment by copying + pasting the “Get the data!” code chunk into your script and running it in the console.</p>
+<p>The data we’ll use for modules 3-5 is from the Tidy Tuesday community on GitHub. Each week on Tuesday, the community posts data for exploratory data analysis and visualization. You can add data from this page to your RStudio environment by copying + pasting the “Get the data!” code chunk into your script and running it in the console.</p>
 <p><a href="https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-09-17" class="uri">https://github.com/rfordatascience/tidytuesday/tree/master/data/2019/2019-09-17</a></p>
 <p>The data we’ll use is in csv format, so we’ll need to call the readr package, as well as the tidyverse and janitor for this lesson (if you’ve already called tidyverse and janitor, don’t run those lines).</p>
 <pre class="r"><code>library(&#39;readr&#39;)
 library(&#39;janitor&#39;)
 library(&#39;tidyverse&#39;)</code></pre>
-<p>Next, we’ll load the data from the R for Data Science Tidy Tuesday GitHub page.There are three lines which will load three tibbles.</p>
+<p>Next, we’ll load the data from the R for Data Science Tidy Tuesday GitHub page. There are three lines which will load three data.frames.</p>
 <ol style="list-style-type: decimal">
 <li>park_visits - which contains data on visits to US National Parks</li>
 <li>state_pop - which contains information on populations of US states</li>
 <li>gas_price - which contains information on gas prices over space and time</li>
 </ol>
-<p>For now, we’ll focus on the park_visits tibble, and will circle back to the other two later. There are descriptions of each column for each tibble on the Tidy Tuesday website linked above if you’d like more information.</p>
+<p>For now, we’ll focus on the park_visits data.frame, and will circle back to the other two later. There are descriptions of each column for each data.frame on the Tidy Tuesday website linked above if you’d like more information.</p>
 <pre class="r"><code>park_visits &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/national_parks.csv&quot;)
 state_pop &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/state_pop.csv&quot;)
 gas_price &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/gas_price.csv&quot;)</code></pre>
@@ -1227,7 +1228,7 @@ dplyr - select() and rename()
 <p>select() - keeps the columns you indicate and drops the rest. Since select() puts the columns in the order you type them, you can also use select() to reorder columns.</p>
 <p>rename() - keeps all the columns, but renames the ones you indicate</p>
 <p>Since we won’t be using geographical information, other than state, in our module, we’ll select some columns from the park_visits data to use today.</p>
-<p>Note that, the name to the left of the arrow is the resulting tibble/df, the information to the right that’s connected by pipes are the steps to get to the result. I normally name the result something different than the original tibble/df so that the original data aren’t affected. However, since we won’t need the geographical information later on, I will name this one “park_visits”.</p>
+<p>Note that, the name to the left of the arrow is the resulting data.frame, the information to the right that’s connected by pipes are the steps to get to the result. I normally name the result something different than the original data.frame so that the original data aren’t affected. However, since we won’t need the geographical information later on, I will name this one “park_visits”.</p>
 <pre class="r"><code># let&#39;s see the column names in park_visits
 colnames(park_visits)</code></pre>
 <pre><code>##  [1] &quot;year&quot;              &quot;gnis_id&quot;           &quot;geometry&quot;         
@@ -1264,7 +1265,7 @@ remove(park_visits1, park_visits2)
 
 # since we won&#39;t need all of the columns in park_visits, we&#39;ll change that file (note that park_visits is on both the left and right sides of the pipe)
 park_visits &lt;- park_visits %&gt;% select(year, parkname, unit_code, state, visitors)</code></pre>
-<p>If we take a look at the park_visits data, there are some column name inconsistencies. For example, some are in snake case (unit_code), but some are not (parkname). To rename a column, use rename(). The structure of this argument is as follows:</p>
+<p>Taking a look at the park_visits data, there are some column name inconsistencies. For example, some are in snake case (unit_code), but some are not (parkname). To rename a column, use rename(). The structure of this argument is as follows:</p>
 <p>rename(dataset, new_name = old_name) OR dataset %&gt;% rename(new_name = old_name)</p>
 <pre class="r"><code># rename parkname column to make it snake case
 park_visits &lt;- park_visits %&gt;% rename(park_name = parkname)
@@ -1279,18 +1280,18 @@ colnames(park_visits)</code></pre>
 dplyr- filter()
 </summary>
 <p>filter() - filters out rows from a data.frame based on values in columns can combine criteria using &amp; (and), | (or), ! (not)</p>
-<p>If you’d like to get visitation data for just parks in the state of Washington (WA), you can use the filter command. The structure is as follows:</p>
+<p>If you’d like to get visitation data for just parks in the state of Washington (WA), you can use the filter function. The structure is as follows:</p>
 <pre class="r"><code>wa_park_visits &lt;- filter(
-                        # name of tibble
+                        # name of data.frame
                         park_visits, 
                         # condition
                         state == &#39;WA&#39;
                         )
 
-# the command head() shows the first few rows of data
+# head() shows the first few rows of data
 head(wa_park_visits)
 
-# you can use the unique() command to check you&#39;ve done the filtering correctly
+# you can use the unique() to check you&#39;ve done the filtering correctly
 unique(wa_park_visits$state)</code></pre>
 <p>Now that you’ve got parks in the state of Washington, perhaps you’d like to know which parks in WA had over 5 million total visitors. This will require more intensive filtering. We’ll have to filter for parks where state == ‘WA’ AND year == ‘Total’ AND visitation &gt;= 5,000,000.</p>
 <pre class="r"><code>wa_park_visits &lt;- park_visits %&gt;%
@@ -1301,15 +1302,16 @@ unique(wa_park_visits$state)</code></pre>
                   # filter for over 5 million visitors
                   visitors &gt; 5000000)
 
-# the command head() shows the first few rows of data
+# head() shows the first few rows of data
 head(wa_park_visits)</code></pre>
+<p>You also might be wondering why we use “==” instead of “=”. In R, the single equal sign “=” is used to assign something. For example, if you want to make some variable equal to a number, you could tell R “x = 5”, and it would remember that x is equal to 5. To evaluate something as TRUE/FALSE, you use “==”. If you type “5 == 3” into the console, it will return the answer “FALSE”. The filtering argument uses this TRUE/FALSE evaluation - filtering for rows where the stated condition - such as year == ’Total&quot; - is TRUE.</p>
 </details>
 <br>
 <details open>
 <summary class="drop">
 dplyr- challenge 1
 </summary>
-<p>Time for the first challenge. Using the park_visits data, create a new tibble/df containing total visitation for a state of your choice. Note that some “states” aren’t states. For example, VI refers to the Virgin Islands. How can you check your work to make sure your work is correct?</p>
+<p>Time for the first challenge. Using the park_visits data, create a new data.frame containing total visitation for a state of your choice. Note that some “states” aren’t states. For example, VI refers to the Virgin Islands. How can you check your work?</p>
 </details>
 <br>
 <details open>
@@ -1322,7 +1324,7 @@ dplyr- solution 1
                   # filter for total visitation
                   year == &#39;Total&#39;)
 
-# the command head() shows the first few rows of data
+# head() shows the first few rows of data
 head(pr_park_visits)
 # San Juan National Historic Site (Puerto Rico) had &gt; 55 million visitors!
 
@@ -1401,7 +1403,7 @@ state_n &lt;- park_visits %&gt;%
 state_n2 &lt;- park_visits %&gt;%
            # group by state
            group_by(state) %&gt;%
-           # get tally of observations by state in tibble output
+           # get tally of observations by state in output
            tally()
 
 # remove created objects
@@ -1437,8 +1439,8 @@ wa_park_visits_millions</code></pre>
 dplyr - group_by() and mutate()
 </summary>
 <p>group_by() indicates that data is in groups, so you can do calculations separately for each group</p>
-<p>group_by() %&gt;% mutate() will add a column and return the same number of rows that the original data had</p>
-<p>This is helpful when you want to get group summary information without sacrificing the original values. For example, if we want to know what percent of the total visitation of a park occurs in each year, and add this to the orginal data.</p>
+<p>group_by() %&gt;% mutate() will add a column and return the same number of rows as the original data</p>
+<p>This is helpful when you want to get group summary information without sacrificing the original values. For example, if we want to know what percent of the total visitation of a park occurs in each year, and add this to the original data.</p>
 <pre class="r"><code>park_visits2 &lt;- park_visits %&gt;%
                 # remove the rows with Totals per park
                 filter(year != &quot;Total&quot;)  %&gt;% 
@@ -1517,7 +1519,7 @@ remove(state_summary)</code></pre>
 <summary class="drop">
 dplyr - challenge 2
 </summary>
-<p>For this second challenge, you’ll start with the park_visits data. Calculate the average visitation divided by the number of parks for each state. The final df/tibble should be arranged in descending order by a numeric column of your choice.</p>
+<p>For this second challenge, you’ll start with the park_visits data. Calculate the average visitation divided by the number of parks for each state. The final data.frame should be arranged in descending order by a numeric column of your choice.</p>
 </details>
 <br>
 <details open>
@@ -1643,7 +1645,7 @@ medn_visits_wide</code></pre>
 ## 1 SAMO      568371 609636 649471 633054 694714 797126
 ## 2 CABR      763140 813351 877951 856128 893434 981825
 ## 3 CHIS      277515 242756 249594 212029 342161 324816</code></pre>
-<p>There are two commands we’ll discuss today:</p>
+<p>There are two functions we’ll discuss today:</p>
 <ol style="list-style-type: decimal">
 <li>pivot_wider() : converts from long –&gt; wide</li>
 <li>pivot_longer() : converts from wide –&gt; long</li>
@@ -1654,7 +1656,7 @@ medn_visits_wide</code></pre>
 <summary class="drop">
 pivot_wider()
 </summary>
-<p>Full disclosure, I almost always have to google the arguments that go into the pivot_ commands. Here’s the website for pivot_wider() <a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="uri">https://tidyr.tidyverse.org/reference/pivot_wider.html</a></p>
+<p>Full disclosure, I almost always have to google the arguments that go into the pivot_ functions. Here’s the website for pivot_wider() <a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="uri">https://tidyr.tidyverse.org/reference/pivot_wider.html</a></p>
 <p>Here’s a short example - pivoting the MEDN visits from long to wide, with more detail than the prior code chunk.</p>
 <pre class="r"><code># check out the original data (medn_visits) in long format
 medn_visits</code></pre>
@@ -1770,11 +1772,11 @@ pivot challenge
 <p>Using the state_pop data, accomplish the following tasks:</p>
 <ol style="list-style-type: decimal">
 <li>Get data for 3 states of your choice for the years 2010-2015 (note - there is no ‘total’ values in the year column)</li>
-<li>Create a df/tibble in long format</li>
+<li>Create a data.frame in long format</li>
 <li>Pivot wider to make a human-friendly table with states as rows and years as columns</li>
 <li>Pivot longer, returning to the original layout</li>
 </ol>
-<p>Hint: if your column names are numbers, like years, you must refer to them using backticks, like a column called 2020 would be <code>2020</code></p>
+<p>Hint: if your column names are numbers, like years, you must refer to them using back-ticks. A column called 2020 would be `2020`</p>
 </details>
 <br>
 <details open>
@@ -1790,7 +1792,7 @@ solution_wide &lt;- solution_original %&gt;%
                  pivot_wider(names_from = &#39;year&#39;,
                              values_from = &#39;pop&#39;)
 
-# pivot longer to return to format of solution_originol
+# pivot longer to return to format of solution_original
 solution_long &lt;- solution_wide %&gt;%
                  pivot_longer(`2010`:`2015`, names_to = &#39;year&#39;, values_to = &#39;pop&#39;)</code></pre>
 </details>
@@ -2063,7 +2065,7 @@ Basic Joins - inner_join and full_join
 <p>In the previous section we used left and right joins to get all of the data from one data.frame with matching data from a second data.frame. Now we will look at 2 other joins:</p>
 <ol style="list-style-type: decimal">
 <li>inner_join() - only rows that have matches in both data frames are kept</li>
-<li>full_join() you get all the rows from both datasets even if some don’t match.</li>
+<li>full_join() - you get all the rows from both datasets even if some don’t match.</li>
 </ol>
 <p>inner join:</p>
 <pre class="r"><code># inner_join example 
@@ -2140,7 +2142,7 @@ rm(park_visits_pop)</code></pre>
 <summary class="drop">
 Filtering Joins
 </summary>
-<p>Sometimes you don’t want to combine two table, but you do want to filter one table so that it only has data that can match data in another table. semi_join() is used for this</p>
+<p>Sometimes you don’t want to combine two tables, but you do want to filter one table so that it only has data that can match data in another table. semi_join() is used for this</p>
 <p>full join:</p>
 <pre class="r"><code># semi_join example 
 
@@ -2202,7 +2204,7 @@ Filtering Joins Challenge
 </summary>
 <p>Filter the park_visits data so that it only contains data that can be joined with the data in and the state_pop data create a new data.frame with all the data from park_visit and any matching data from state_pop and gas_price.</p>
 <p>Note that the state_pop data has some NAs for population for Alaska and Hawaii prior to 1949. For a bigger challenge, don’t include data those state / year combinations in your final data set.</p>
-<p>Hint: the function is.na(data) will be TRUE when a value is NA. If you put an exclimation mark in front !is.na(data) it will tell you when teh values are not NA.</p>
+<p>Hint: the function is.na(data) will be TRUE when a value is NA. If you put an exclamation mark in front !is.na(data) it will tell you when the values are not NA.</p>
 </details>
 <br>
 <details open>
@@ -2607,16 +2609,16 @@ park_visits &lt;- park_visits %&gt;% rename(park_name = parkname)
 # we can check if we&#39;ve done it correctly by looking at the column names
 colnames(park_visits)
 wa_park_visits &lt;- filter(
-                        # name of tibble
+                        # name of data.frame
                         park_visits, 
                         # condition
                         state == &#39;WA&#39;
                         )
 
-# the command head() shows the first few rows of data
+# head() shows the first few rows of data
 head(wa_park_visits)
 
-# you can use the unique() command to check you&#39;ve done the filtering correctly
+# you can use the unique() to check you&#39;ve done the filtering correctly
 unique(wa_park_visits$state)
 wa_park_visits &lt;- park_visits %&gt;%
                   # filter for parks in WA
@@ -2626,7 +2628,7 @@ wa_park_visits &lt;- park_visits %&gt;%
                   # filter for over 5 million visitors
                   visitors &gt; 5000000)
 
-# the command head() shows the first few rows of data
+# head() shows the first few rows of data
 head(wa_park_visits)
 pr_park_visits &lt;- park_visits %&gt;%
                   # filter for parks in Puerto Rico
@@ -2634,7 +2636,7 @@ pr_park_visits &lt;- park_visits %&gt;%
                   # filter for total visitation
                   year == &#39;Total&#39;)
 
-# the command head() shows the first few rows of data
+# head() shows the first few rows of data
 head(pr_park_visits)
 # San Juan National Historic Site (Puerto Rico) had &gt; 55 million visitors!
 
@@ -2675,7 +2677,7 @@ state_n &lt;- park_visits %&gt;%
 state_n2 &lt;- park_visits %&gt;%
            # group by state
            group_by(state) %&gt;%
-           # get tally of observations by state in tibble output
+           # get tally of observations by state in output
            tally()
 
 # remove created objects
@@ -2836,7 +2838,7 @@ solution_wide &lt;- solution_original %&gt;%
                  pivot_wider(names_from = &#39;year&#39;,
                              values_from = &#39;pop&#39;)
 
-# pivot longer to return to format of solution_originol
+# pivot longer to return to format of solution_original
 solution_long &lt;- solution_wide %&gt;%
                  pivot_longer(`2010`:`2015`, names_to = &#39;year&#39;, values_to = &#39;pop&#39;)
 # call packages
