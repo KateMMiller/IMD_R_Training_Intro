@@ -110,3 +110,9 @@ There's a lot of great online material for learning new applications of R. The o
 ```{r Code_printout, child = "D3_Code_Printout.Rmd"}
 
 ```
+
+### Meet the Trainers
+```{r about, child = "IMD_Meet_the_Trainers.Rmd"}
+
+```
+
