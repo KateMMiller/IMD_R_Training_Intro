@@ -278,7 +278,7 @@ Finally we can do some plotting.
           library(ggplot2)
   lapply(HoboList, function(x){
                 p<-ggplot(x, aes(x=DateTime, y=T_F))+
-                   geom_point()
+                   geom_point()+
                    ggtitle()
                 ggsave(filename=  ,path=  ,plot=p, device="pdf", width=5,height=5,units="in")
                             
