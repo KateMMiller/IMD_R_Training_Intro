@@ -1,0 +1,26 @@
+---
+title: 'Day 3: Data Visualization'
+author: "Ellen Change & Kate Miller"
+date: "01/04/2022"
+output: html_document
+---
+
+Topics to cover
+
+#### Base R {.tabset}
+- brief intro to plotting in base R
+
+#### Intro to ggplot
+
+#### Customizing ggplot
+- include built in themes (eg theme_bw())
+- changing font sizes 
+- manual shapes and colors
+- color palettes and ramps and accessibility
+- saving ggplot graphs
+- creating your own theme
+
+#### Leaflet and parktiles
+
+#### sf and tmap 
+- packages for spatial figures

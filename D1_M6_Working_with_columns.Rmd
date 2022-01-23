@@ -36,7 +36,7 @@ We can then use this conversion factor to convert the 'Height_ft' column to inch
 
 ```{r HeightConversion}
 # here we are specifying the new column on the left side of the '<-', and telling R what we want put into it on the right side of the '<-'.
-tree_data$Height_in <- tree_data$Height_ft * x
+tree_data$Height_in <- tree_data$Height_ft * in_per_ft
 
 # we can now use the 'head function to check our work, and make sure the proper conversion was carried out:
 head(tree_data)
