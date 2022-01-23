@@ -782,7 +782,6 @@ Using Package
 <p>Did you get “error” text?</p>
 <p>Text pops up in the console after you run code You must decide whether it means you have to change something or not</p>
 <pre class="r"><code>library(&#39;janitor&#39;)</code></pre>
-<pre><code>## Warning: package &#39;janitor&#39; was built under R version 4.1.2</code></pre>
 <pre><code>## 
 ## Attaching package: &#39;janitor&#39;</code></pre>
 <pre><code>## The following objects are masked from &#39;package:stats&#39;:
@@ -1104,7 +1103,7 @@ unique(wa_park_visits$state)</code></pre>
 
 # head() shows the first few rows of data
 head(wa_park_visits)</code></pre>
-<p>You also might be wondering why we use “==” instead of “=”. In R, the single equal sign “=” is used to assign something. For example, if you want to make some variable equal to a number, you could tell R “x = 5”, and it would remember that x is equal to 5. To evaluate something as TRUE/FALSE, you use “==”. If you type “5 == 3” into the console, it will return the answer “FALSE”. The filtering argument uses this TRUE/FALSE evaluation - filtering for rows where the stated condition - such as year == ’Total&quot; - is TRUE.</p>
+<p>You also might be wondering why we use “==” instead of “=”. In R, the single equal sign “=” is used to assign something. For example, if you want to make some variable equal to a number, you could tell R “x = 5”, and it would remember that x is equal to 5. To evaluate something as TRUE/FALSE, you use “==”. If you type “5 == 3” into the console, it will return the answer “FALSE”. The filtering argument uses this TRUE/FALSE evaluation - filtering for rows where the stated condition - such as year == ’Total” - is TRUE.</p>
 </details>
 <br>
 <details open>
@@ -1363,241 +1362,145 @@ head(challenge2)</code></pre>
 remove(challenge2)</code></pre>
 </details>
 <p><br></p>
-<hr />
-</div>
-<div id="intro-to-data-wrangling---pivoting-tables" class="section level4 tabset">
-<h4 class="tabset">Intro to Data Wrangling - Pivoting Tables</h4>
-<details open>
-<summary class="drop">
-Pivoting Tables
-</summary>
-<p>This section will go over the use of functions to change data from wide to long format and vice-versa.</p>
-<p>We will:</p>
-<ol style="list-style-type: decimal">
-<li>Explain what these formats are and why anyone cares</li>
-<li>pivot_longer()</li>
-<li>pivot_Wider()</li>
-</ol>
-<p>If you’re starting with this section, run the following code chunk to get caught up.</p>
-<pre class="r"><code># call packages
-library(&#39;readr&#39;)
-library(&#39;janitor&#39;)
-library(&#39;tidyverse&#39;)
-
-# get data
-park_visits &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/national_parks.csv&quot;)
-state_pop &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/state_pop.csv&quot;)
-gas_price &lt;- read_csv(&quot;https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/gas_price.csv&quot;)
-
-# cut some columns from park_visits data
-park_visits &lt;- park_visits %&gt;% select(year, parkname, unit_code, state, visitors)</code></pre>
-</details>
-<br>
-<details open>
-<summary class="drop">
-Why do we care?
-</summary>
-<p>Depending on your goal, you may want to have your data formatted in multiple ways. For example, it is much easier for humans to read wide format data, while most R functions rely on long format data. Here is a quick demonstration using park visits data:</p>
-<pre class="r"><code># we&#39;ll first take a subset of the park visits data
-medn_visits &lt;- park_visits %&gt;%
-               # get parks in MEDN and no totals, years 2010-2015
-               filter(unit_code %in% c(&#39;CABR&#39;, &#39;CHIS&#39;, &#39;SAMO&#39;) &amp; year != &#39;Total&#39;) %&gt;%
-               # make year a number, since no more text 
-               mutate(year = as.numeric(year)) %&gt;%
-               # get years 2010:2015
-               filter(year &gt;= 2010 &amp; year &lt;=2015) %&gt;%
-               # arrange in ascending order
-               arrange(year) %&gt;%
-               # select relevant columns
-               select(unit_code, year, visitors)
-
-# if we take a look at the data, it is in long format, each observation is a row
-# this isn&#39;t the most human-friendly way to look at data, but it is really helpful if we want to use dplyr group_by() functions like mutate() and summarize()
-medn_visits</code></pre>
-<pre><code>## # A tibble: 18 x 3
-##    unit_code  year visitors
-##    &lt;chr&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-##  1 SAMO       2010   568371
-##  2 CABR       2010   763140
-##  3 CHIS       2010   277515
-##  4 SAMO       2011   609636
-##  5 CABR       2011   813351
-##  6 CHIS       2011   242756
-##  7 SAMO       2012   649471
-##  8 CABR       2012   877951
-##  9 CHIS       2012   249594
-## 10 SAMO       2013   633054
-## 11 CABR       2013   856128
-## 12 CHIS       2013   212029
-## 13 SAMO       2014   694714
-## 14 CABR       2014   893434
-## 15 CHIS       2014   342161
-## 16 SAMO       2015   797126
-## 17 CABR       2015   981825
-## 18 CHIS       2015   324816</code></pre>
-<pre class="r"><code># conversely, we can pivot longer to make the data wide format
-# it is more human-friendly but you can&#39;t use dplyr functions on it easily
-medn_visits_wide &lt;- pivot_wider(medn_visits, names_from = year, values_from = visitors)
-medn_visits_wide</code></pre>
-<pre><code>## # A tibble: 3 x 7
-##   unit_code `2010` `2011` `2012` `2013` `2014` `2015`
-##   &lt;chr&gt;      &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-## 1 SAMO      568371 609636 649471 633054 694714 797126
-## 2 CABR      763140 813351 877951 856128 893434 981825
-## 3 CHIS      277515 242756 249594 212029 342161 324816</code></pre>
-<p>There are two functions we’ll discuss today:</p>
-<ol style="list-style-type: decimal">
-<li>pivot_wider() : converts from long –&gt; wide</li>
-<li>pivot_longer() : converts from wide –&gt; long</li>
-</ol>
-</details>
-<br>
-<details open>
-<summary class="drop">
-pivot_wider()
-</summary>
-<p>Full disclosure, I almost always have to google the arguments that go into the pivot_ functions. Here’s the website for pivot_wider() <a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="uri">https://tidyr.tidyverse.org/reference/pivot_wider.html</a></p>
-<p>Here’s a short example - pivoting the MEDN visits from long to wide, with more detail than the prior code chunk.</p>
-<pre class="r"><code># check out the original data (medn_visits) in long format
-medn_visits</code></pre>
-<pre><code>## # A tibble: 18 x 3
-##    unit_code  year visitors
-##    &lt;chr&gt;     &lt;dbl&gt;    &lt;dbl&gt;
-##  1 SAMO       2010   568371
-##  2 CABR       2010   763140
-##  3 CHIS       2010   277515
-##  4 SAMO       2011   609636
-##  5 CABR       2011   813351
-##  6 CHIS       2011   242756
-##  7 SAMO       2012   649471
-##  8 CABR       2012   877951
-##  9 CHIS       2012   249594
-## 10 SAMO       2013   633054
-## 11 CABR       2013   856128
-## 12 CHIS       2013   212029
-## 13 SAMO       2014   694714
-## 14 CABR       2014   893434
-## 15 CHIS       2014   342161
-## 16 SAMO       2015   797126
-## 17 CABR       2015   981825
-## 18 CHIS       2015   324816</code></pre>
-<pre class="r"><code># if we want to make each row a park and each column a year, we can pivot wider
-medn_visits_wide &lt;- medn_visits %&gt;%
-                    pivot_wider(
-                                # names from is the thing you want to be the columns
-                                names_from = year,
-                                # values from is what you want to fill the columns with
-                                values_from = visitors)
-
-# check out the result
-medn_visits_wide</code></pre>
-<pre><code>## # A tibble: 3 x 7
-##   unit_code `2010` `2011` `2012` `2013` `2014` `2015`
-##   &lt;chr&gt;      &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-## 1 SAMO      568371 609636 649471 633054 694714 797126
-## 2 CABR      763140 813351 877951 856128 893434 981825
-## 3 CHIS      277515 242756 249594 212029 342161 324816</code></pre>
-<pre class="r"><code># we can also make park units the columns and fill it with visitor data for each year
-medn_visits_wide &lt;- medn_visits %&gt;%
-                    pivot_wider(names_from = unit_code, values_from = visitors)
-medn_visits_wide</code></pre>
-<pre><code>## # A tibble: 6 x 4
-##    year   SAMO   CABR   CHIS
-##   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-## 1  2010 568371 763140 277515
-## 2  2011 609636 813351 242756
-## 3  2012 649471 877951 249594
-## 4  2013 633054 856128 212029
-## 5  2014 694714 893434 342161
-## 6  2015 797126 981825 324816</code></pre>
-</details>
-<br>
-<details open>
-<summary class="drop">
-pivot_longer()
-</summary>
-<p>Now that we have our data in wide format, it is time to revert back to pivoting longer. Here’s the reference material for pivot_longer() <a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="uri">https://tidyr.tidyverse.org/reference/pivot_longer.html</a>.</p>
-<pre class="r"><code># check out the original data (medn_visits_wide) in wide format
-medn_visits_wide</code></pre>
-<pre><code>## # A tibble: 6 x 4
-##    year   SAMO   CABR   CHIS
-##   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;
-## 1  2010 568371 763140 277515
-## 2  2011 609636 813351 242756
-## 3  2012 649471 877951 249594
-## 4  2013 633054 856128 212029
-## 5  2014 694714 893434 342161
-## 6  2015 797126 981825 324816</code></pre>
-<pre class="r"><code># if we want to make each row an observation, with an associated park and year, we&#39;ll pivot_longer
-medn_visits_long &lt;- medn_visits_wide %&gt;%
-                    pivot_longer(
-                                # first argument is the columns you&#39;d like to transform
-                                SAMO:CHIS,
-                                # next is what you&#39;d like to name the former name cols
-                                names_to = &#39;unit_code&#39;,
-                                # last is what you&#39;d like to name the former values cols
-                                values_to = &#39;visitors&#39;)
-
-# check out the result
-medn_visits_long</code></pre>
-<pre><code>## # A tibble: 18 x 3
-##     year unit_code visitors
-##    &lt;dbl&gt; &lt;chr&gt;        &lt;dbl&gt;
-##  1  2010 SAMO        568371
-##  2  2010 CABR        763140
-##  3  2010 CHIS        277515
-##  4  2011 SAMO        609636
-##  5  2011 CABR        813351
-##  6  2011 CHIS        242756
-##  7  2012 SAMO        649471
-##  8  2012 CABR        877951
-##  9  2012 CHIS        249594
-## 10  2013 SAMO        633054
-## 11  2013 CABR        856128
-## 12  2013 CHIS        212029
-## 13  2014 SAMO        694714
-## 14  2014 CABR        893434
-## 15  2014 CHIS        342161
-## 16  2015 SAMO        797126
-## 17  2015 CABR        981825
-## 18  2015 CHIS        324816</code></pre>
-<pre class="r"><code># this should look familiar - like the original medn_visits data</code></pre>
-</details>
-<br>
-<details open>
-<summary class="drop">
-pivot challenge
-</summary>
-<p>This is a more involved challenge that will draw on your knowledge of both dplyr (from Module 3) and pivoting.</p>
-<p>Using the state_pop data, accomplish the following tasks:</p>
-<ol style="list-style-type: decimal">
-<li>Get data for 3 states of your choice for the years 2010-2015 (note - there is no ‘total’ values in the year column)</li>
-<li>Create a data.frame in long format</li>
-<li>Pivot wider to make a human-friendly table with states as rows and years as columns</li>
-<li>Pivot longer, returning to the original layout</li>
-</ol>
-<p>Hint: if your column names are numbers, like years, you must refer to them using back-ticks. A column called 2020 would be `2020`</p>
-</details>
-<br>
-<details open>
-<summary class="drop">
-pivot solution
-</summary>
-<pre class="r"><code># get 3 states of choice (FL, CA, AK) for years 2010-2015
-solution_original &lt;- state_pop %&gt;%
-                     filter(state %in% c(&#39;FL&#39;, &#39;AK&#39;, &#39;CA&#39;) &amp; 
-                            year &gt;= 2010 &amp; year &lt;= 2015) 
-# pivot wider
-solution_wide &lt;- solution_original %&gt;%
-                 pivot_wider(names_from = &#39;year&#39;,
-                             values_from = &#39;pop&#39;)
-
-# pivot longer to return to format of solution_original
-solution_long &lt;- solution_wide %&gt;%
-                 pivot_longer(`2010`:`2015`, names_to = &#39;year&#39;, values_to = &#39;pop&#39;)</code></pre>
-</details>
-<p><br></p>
-<hr />
+<table style="width:6%;">
+<colgroup>
+<col width="5%" />
+</colgroup>
+<tbody>
+<tr class="odd">
+<td>#### Intro to Data Wrangling - Pivoting Tables {.tabset}</td>
+</tr>
+<tr class="even">
+<td></td>
+</tr>
+<tr class="odd">
+<td>This section will go over the use of functions to change data from wide to long format and vice-versa.</td>
+</tr>
+<tr class="even">
+<td>We will:</td>
+</tr>
+<tr class="odd">
+<td>1. Explain what these formats are and why anyone cares 2. pivot_longer() 3. pivot_Wider()</td>
+</tr>
+<tr class="even">
+<td>If you’re starting with this section, run the following code chunk to get caught up.</td>
+</tr>
+<tr class="odd">
+<td>```r # call packages library(‘readr’) library(‘janitor’) library(‘tidyverse’)</td>
+</tr>
+<tr class="even">
+<td># get data park_visits &lt;- read_csv(“<a href="https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/national_parks.csv" class="uri">https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/national_parks.csv</a>”) state_pop &lt;- read_csv(“<a href="https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/state_pop.csv" class="uri">https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/state_pop.csv</a>”) gas_price &lt;- read_csv(“<a href="https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/gas_price.csv" class="uri">https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/gas_price.csv</a>”)</td>
+</tr>
+<tr class="odd">
+<td># cut some columns from park_visits data park_visits &lt;- park_visits %&gt;% select(year, parkname, unit_code, state, visitors) ```</td>
+</tr>
+<tr class="even">
+<td></td>
+</tr>
+<tr class="odd">
+<td>Depending on your goal, you may want to have your data formatted in multiple ways. For example, it is much easier for humans to read wide format data, while most R functions rely on long format data. Here is a quick demonstration using park visits data:</td>
+</tr>
+<tr class="even">
+<td>```r # we’ll first take a subset of the park visits data medn_visits &lt;- park_visits %&gt;% # get parks in MEDN and no totals, years 2010-2015 filter(unit_code %in% c(‘CABR’, ‘CHIS’, ‘SAMO’) &amp; year != ‘Total’) %&gt;% # make year a number, since no more text mutate(year = as.numeric(year)) %&gt;% # get years 2010:2015 filter(year &gt;= 2010 &amp; year &lt;=2015) %&gt;% # arrange in ascending order arrange(year) %&gt;% # select relevant columns select(unit_code, year, visitors)</td>
+</tr>
+<tr class="odd">
+<td># if we take a look at the data, it is in long format, each observation is a row # this isn’t the most human-friendly way to look at data, but it is really helpful if we want to use dplyr group_by() functions like mutate() and summarize() medn_visits ```</td>
+</tr>
+<tr class="even">
+<td><code>## # A tibble: 18 x 3 ##    unit_code  year visitors ##    &lt;chr&gt;     &lt;dbl&gt;    &lt;dbl&gt; ##  1 SAMO       2010   568371 ##  2 CABR       2010   763140 ##  3 CHIS       2010   277515 ##  4 SAMO       2011   609636 ##  5 CABR       2011   813351 ##  6 CHIS       2011   242756 ##  7 SAMO       2012   649471 ##  8 CABR       2012   877951 ##  9 CHIS       2012   249594 ## 10 SAMO       2013   633054 ## 11 CABR       2013   856128 ## 12 CHIS       2013   212029 ## 13 SAMO       2014   694714 ## 14 CABR       2014   893434 ## 15 CHIS       2014   342161 ## 16 SAMO       2015   797126 ## 17 CABR       2015   981825 ## 18 CHIS       2015   324816</code></td>
+</tr>
+<tr class="odd">
+<td><code>r # conversely, we can pivot longer to make the data wide format # it is more human-friendly but you can&#39;t use dplyr functions on it easily medn_visits_wide &lt;- pivot_wider(medn_visits, names_from = year, values_from = visitors) medn_visits_wide</code></td>
+</tr>
+<tr class="even">
+<td><code>## # A tibble: 3 x 7 ##   unit_code `2010` `2011` `2012` `2013` `2014` `2015` ##   &lt;chr&gt;      &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; ## 1 SAMO      568371 609636 649471 633054 694714 797126 ## 2 CABR      763140 813351 877951 856128 893434 981825 ## 3 CHIS      277515 242756 249594 212029 342161 324816</code></td>
+</tr>
+<tr class="odd">
+<td>There are two functions we’ll discuss today:</td>
+</tr>
+<tr class="even">
+<td>1. pivot_wider() : converts from long –&gt; wide 2. pivot_longer() : converts from wide –&gt; long</td>
+</tr>
+<tr class="odd">
+<td></td>
+</tr>
+<tr class="even">
+<td>Full disclosure, I almost always have to google the arguments that go into the pivot_ functions. Here’s the website for pivot_wider() <a href="https://tidyr.tidyverse.org/reference/pivot_wider.html" class="uri">https://tidyr.tidyverse.org/reference/pivot_wider.html</a></td>
+</tr>
+<tr class="odd">
+<td>Here’s a short example - pivoting the MEDN visits from long to wide, with more detail than the prior code chunk.</td>
+</tr>
+<tr class="even">
+<td><code>r # check out the original data (medn_visits) in long format medn_visits</code></td>
+</tr>
+<tr class="odd">
+<td><code>## # A tibble: 18 x 3 ##    unit_code  year visitors ##    &lt;chr&gt;     &lt;dbl&gt;    &lt;dbl&gt; ##  1 SAMO       2010   568371 ##  2 CABR       2010   763140 ##  3 CHIS       2010   277515 ##  4 SAMO       2011   609636 ##  5 CABR       2011   813351 ##  6 CHIS       2011   242756 ##  7 SAMO       2012   649471 ##  8 CABR       2012   877951 ##  9 CHIS       2012   249594 ## 10 SAMO       2013   633054 ## 11 CABR       2013   856128 ## 12 CHIS       2013   212029 ## 13 SAMO       2014   694714 ## 14 CABR       2014   893434 ## 15 CHIS       2014   342161 ## 16 SAMO       2015   797126 ## 17 CABR       2015   981825 ## 18 CHIS       2015   324816</code></td>
+</tr>
+<tr class="even">
+<td>```r # if we want to make each row a park and each column a year, we can pivot wider medn_visits_wide &lt;- medn_visits %&gt;% pivot_wider( # names from is the thing you want to be the columns names_from = year, # values from is what you want to fill the columns with values_from = visitors)</td>
+</tr>
+<tr class="odd">
+<td># check out the result medn_visits_wide ```</td>
+</tr>
+<tr class="even">
+<td><code>## # A tibble: 3 x 7 ##   unit_code `2010` `2011` `2012` `2013` `2014` `2015` ##   &lt;chr&gt;      &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; ## 1 SAMO      568371 609636 649471 633054 694714 797126 ## 2 CABR      763140 813351 877951 856128 893434 981825 ## 3 CHIS      277515 242756 249594 212029 342161 324816</code></td>
+</tr>
+<tr class="odd">
+<td><code>r # we can also make park units the columns and fill it with visitor data for each year medn_visits_wide &lt;- medn_visits %&gt;% pivot_wider(names_from = unit_code, values_from = visitors) medn_visits_wide</code></td>
+</tr>
+<tr class="even">
+<td><code>## # A tibble: 6 x 4 ##    year   SAMO   CABR   CHIS ##   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; ## 1  2010 568371 763140 277515 ## 2  2011 609636 813351 242756 ## 3  2012 649471 877951 249594 ## 4  2013 633054 856128 212029 ## 5  2014 694714 893434 342161 ## 6  2015 797126 981825 324816</code></td>
+</tr>
+<tr class="odd">
+<td></td>
+</tr>
+<tr class="even">
+<td>Now that we have our data in wide format, it is time to revert back to pivoting longer. Here’s the reference material for pivot_longer() <a href="https://tidyr.tidyverse.org/reference/pivot_longer.html" class="uri">https://tidyr.tidyverse.org/reference/pivot_longer.html</a>.</td>
+</tr>
+<tr class="odd">
+<td><code>r # check out the original data (medn_visits_wide) in wide format medn_visits_wide</code></td>
+</tr>
+<tr class="even">
+<td><code>## # A tibble: 6 x 4 ##    year   SAMO   CABR   CHIS ##   &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt;  &lt;dbl&gt; ## 1  2010 568371 763140 277515 ## 2  2011 609636 813351 242756 ## 3  2012 649471 877951 249594 ## 4  2013 633054 856128 212029 ## 5  2014 694714 893434 342161 ## 6  2015 797126 981825 324816</code></td>
+</tr>
+<tr class="odd">
+<td>```r # if we want to make each row an observation, with an associated park and year, we’ll pivot_longer medn_visits_long &lt;- medn_visits_wide %&gt;% pivot_longer( # first argument is the columns you’d like to transform SAMO:CHIS, # next is what you’d like to name the former name cols names_to = ‘unit_code’, # last is what you’d like to name the former values cols values_to = ‘visitors’)</td>
+</tr>
+<tr class="even">
+<td># check out the result medn_visits_long ```</td>
+</tr>
+<tr class="odd">
+<td><code>## # A tibble: 18 x 3 ##     year unit_code visitors ##    &lt;dbl&gt; &lt;chr&gt;        &lt;dbl&gt; ##  1  2010 SAMO        568371 ##  2  2010 CABR        763140 ##  3  2010 CHIS        277515 ##  4  2011 SAMO        609636 ##  5  2011 CABR        813351 ##  6  2011 CHIS        242756 ##  7  2012 SAMO        649471 ##  8  2012 CABR        877951 ##  9  2012 CHIS        249594 ## 10  2013 SAMO        633054 ## 11  2013 CABR        856128 ## 12  2013 CHIS        212029 ## 13  2014 SAMO        694714 ## 14  2014 CABR        893434 ## 15  2014 CHIS        342161 ## 16  2015 SAMO        797126 ## 17  2015 CABR        981825 ## 18  2015 CHIS        324816</code></td>
+</tr>
+<tr class="even">
+<td><code>r # this should look familiar - like the original medn_visits data</code></td>
+</tr>
+<tr class="odd">
+<td></td>
+</tr>
+<tr class="even">
+<td>This is a more involved challenge that will draw on your knowledge of both dplyr (from Module 3) and pivoting.</td>
+</tr>
+<tr class="odd">
+<td>Using the state_pop data, accomplish the following tasks:</td>
+</tr>
+<tr class="even">
+<td>1. Get data for 3 states of your choice for the years 2010-2015 (note - there is no ‘total’ values in the year column) 2. Create a data.frame in long format 3. Pivot wider to make a human-friendly table with states as rows and years as columns 4. Pivot longer, returning to the original layout</td>
+</tr>
+<tr class="odd">
+<td>Hint: if your column names are numbers, like years, you must refer to them using back-ticks. A column called 2020 would be `2020`</td>
+</tr>
+<tr class="even">
+<td></td>
+</tr>
+<tr class="odd">
+<td>```r # get 3 states of choice (FL, CA, AK) for years 2010-2015 solution_original &lt;- state_pop %&gt;% filter(state %in% c(‘FL’, ‘AK’, ‘CA’) &amp; year &gt;= 2010 &amp; year &lt;= 2015) # pivot wider solution_wide &lt;- solution_original %&gt;% pivot_wider(names_from = ‘year’, values_from = ‘pop’)</td>
+</tr>
+<tr class="even">
+<td># pivot longer to return to format of solution_original solution_long &lt;- solution_wide %&gt;% pivot_longer(<code>2010</code>:<code>2015</code>, names_to = ‘year’, values_to = ‘pop’) ```</td>
+</tr>
+</tbody>
+</table>
 </div>
 <div id="intro-to-data-wrangling---joining-tables" class="section level4 tabset">
 <h4 class="tabset">Intro to Data Wrangling - Joining Tables</h4>
@@ -2071,10 +1974,12 @@ park_visits_filtered</code></pre>
 </div>
 <div id="day-4-best-practices-wrap-up" class="section level3 tabset">
 <h3 class="tabset">Day 4: Best Practices &amp; Wrap-up</h3>
-<p>####Good Coding Practices {.tabset}</p>
+<div id="good-coding-practices" class="section level4 tabset">
+<h4 class="tabset">Good Coding Practices</h4>
 <p>Sarah will take a first crack at this</p>
 <p>Good coding practices - being consistent</p>
 <p>DRY principles</p>
+</div>
 <div id="control-structures" class="section level4 tabset">
 <h4 class="tabset">Control Structures</h4>
 <p>Sarah Vectorization Thomas if/else Thomas for, apply family purrr????</p>
@@ -2084,7 +1989,9 @@ park_visits_filtered</code></pre>
 <p>-vectorization - examples of vectorized functions -gsub, grep family (avoid regex) -basic vector math -rowsums vs colsums -inequalities ==, &lt;, &gt;, %in% -&amp; , |, (maybe get into &amp;&amp;, || )</p>
 <p>-other control structures to be aware of.</p>
 <p>NOT FOR TAB: Break to discuss other hard questions from previous days - especially how you integrate it into iteration.</p>
-<p>####Troubleshooting Iteration {.tabset}</p>
+</div>
+<div id="troubleshooting-iteration" class="section level4 tabset">
+<h4 class="tabset">Troubleshooting Iteration</h4>
 <p>Jointly, Thomas take first crask. SARAH will doe breakpoints. Thomas Do examples and posting to Stack for iteration troubleshooting Both sarah and Thomas useful resources</p>
 <p>Troubleshooting and good resources -Troubleshooting iteration -How???? -Simple and complex approaches -in development use verbose iteration -print() to give an update -breakpoints debugging tool in r studio -traceback - certainly an option -should you just ignore warnings()?</p>
 <p>-Minimum reproducible examples -Your problem might not be as complex as it seems</p>

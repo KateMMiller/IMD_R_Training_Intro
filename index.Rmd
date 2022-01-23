@@ -7,6 +7,7 @@ title: "NPS IMD R Training I"
 
 <h2>NPS Inventory and Monitoring Division R Training I: January 31 -- February 2, 2022</h2> {.tabset .tabset-pills}
 --------------------------------------------------
+
 ### Prep for Training{.tabset}
 
 ```{r Install_instructions, child = "D0_Install_R_and_RStudio.Rmd"}
