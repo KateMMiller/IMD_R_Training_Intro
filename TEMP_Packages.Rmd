@@ -1,0 +1,193 @@
+
+While base R (everything that comes with the installation from CRAN) comes with a lot of useful functions, there are also a lot of great packages (aka libraries) out there that make data wrangling, analysis and plotting easier and more efficient.
+The packages we will rely on the most during this training are:
+
+<ul>
+
+<li>
+
+<i>dplyr:</i> data wrangling functions including filtering (subsetting), arranging, and summarizing
+
+</li>
+
+<li>
+
+<i>tidyr:</i> reshaping data from long to wide and vice versa
+
+</li>
+
+<li>
+
+<i>ggplot2:</i> the most widely used package for plotting in R
+
+</li>
+
+<li>
+
+<i>rgdal:</i> to set coordinate systems and to load or create shapefiles
+
+</li>
+
+<li>
+
+<i>devtools:</i> required to install packages from github, including the ones listed below.
+
+</li>
+
+</ul>
+
+Note that <i>dplyr</i> <i>ggplot2</i> and <i>tidyr</i> are part of the <i>tidyverse</i>, which is a collection of a lot of really useful packages that are designed to work with a specific format of data and have similar function structures that allow you to chain processes together (more on that later).
+Instead of only installing <i>dplyr</i> and <i>tidyr</i> individually, I recommend installing and loading the <i>tidyverse</i>, which will load those packages, along with several other useful packages.
+
+There are also a number of packages NETN or collaborators have built to work with the monitoring data we're collecting, including:
+
+<ul>
+
+<li>
+
+<i>forestNETN:</i> for importing, filtering, and summarizing forest data specific to NETN
+
+</li>
+
+<li>
+
+<i>NCRNWater:</i> for importing, filtering, and summarizing water data collected by NETN (initially developed by National Capital Region Network)
+
+</li>
+
+<li>
+
+<i>wetlandACAD:</i> for working with water level data collected in ACAD sentinel wetlands
+
+</li>
+
+</ul>
+
+<p class="code">
+
+<b>If you haven't already installed these packages </b>(directions are also in the Prep for Training tap), run the code chunk below:
+
+</p>
+
+</ul>
+
+```{r orgD1M1, echo=F, eval=F, include=F}
+#--------------------
+#    Day 1 Mod 1
+#--------------------
+```
+
+```{r, c1, echo=T, eval=FALSE}
+install.packages(c("tidyverse", "rgdal", "devtools"))
+devtools::install_github("katemmiller/forestNETNarch")
+devtools::install_github("NCRN/NCRNWater")
+```
+
+You only need to run the previous code chunk once.
+After these packages are installed, you can just load them via library(package_name).
+A couple of notes about packages.
+
+<ul>
+
+<li>
+
+Best practices for writing code are to load all of the packages you will use at the top of the script, so that it's obvious to another user if they need to install a package to make the code work.
+
+</li>
+
+<li>
+
+You only need devtools to install the NETN-specific packages from github.
+Once the NETN-specific packages are installed (eg forestNETN), you don't need to load devtools again.
+
+</li>
+
+<li>
+
+The tidyverse and rgdal can take awhile to install, but once they're installed they're relatively quick to load.
+
+</li>
+
+<li>
+
+Note the use of :: in the code chunk above.
+That's another way to use functions in a package without loading the package.
+I only use this for packages like devtools, which I only use once in a script and I use it early.
+The :: symbol also comes in handy if you happen to be using a function where multiple packages have the same named function.
+For example, <u>filter</u> is a named function in the base R <i>stats</i> package and in <i>dplyr</i>.
+If you want the filter function from dplyr, type dplyr::filter.
+
+</li>
+
+<li>
+
+To install a package, the name needs to be in quotes.
+To load the package via library(), you don't quote the package name.
+Don't ask me why...
+
+</li>
+
+</ul>
+
+<p class="code">
+
+To load the packages, run the code chunk below:
+
+</p>
+
+```{r, c2, echo=T, results='hide', message=FALSE, eval=FALSE}
+library(tidyverse)
+library(rgdal)
+library(forestNETNarch)
+library(NCRNWater)
+```
+
+```{r, c2c, echo=F, results='hide', message=FALSE}
+library(tidyverse)
+library(rgdal)
+```
+
+If you get an error that says there is no package called "x", it means that package didn't install properly, and you should try installing the package again.
+
+If you run into issues installing from GitHub (eg using install_github function), here are a couple of tips for troubleshooting:
+
+<ol>
+
+<li>
+
+Install Rtools for Windows 64-bit.
+The download page is <a href="https://cran.r-project.org/bin/windows/Rtools/">here.</a>
+
+</li>
+
+<ol style="list-style-type:upper-alpha">
+
+<li>
+
+Download the <a href="https://cran.r-project.org/bin/windows/contrib/4.0/backports_1.1.10.zip">Windows Binaries</a> for backports.
+
+</li>
+
+<li>
+
+Install backports from file in RStudio by going to <i>Tools\> Install Packages\> Install From:</i> Change the Install From option to "Package Archive File" and select backports_1.1.10.zip.
+
+</li>
+
+</ol>
+
+<li>
+
+Now try installing devtools and forestNETN (install.packages("devtools"); devtools::install_github('katemmiller/forestNETNarch'))
+
+</li>
+
+</li>
+
+</ol>
+
+</details>
+
+<br>
+
+<hr>

@@ -1,0 +1,43 @@
+#### Working with columns
+
+R is great at working with vectors because they are the fundamental data structure of the language. Since data frame columns are vectors, they are typically easy to operate on.
+
+Basic statistical summary functions aren't too different from what you'd do in Excel.
+
+```{r SummarizingData}
+#to calculate the mean of the 'age' column in the original dataframe:
+mean(tree_data$Age_yr)
+
+#or to calculate the mean of the DBH vector we created:
+dbh <- tree_data$DBH_in
+mean(dbh)
+
+#like-wise for the median, standard deviation, and minimum:
+median(tree_data$Age_yr)
+sd(tree_data$Age_yr)
+min(tree_data$Age_yr)
+```
+
+Another useful way to summarize a column is to get the unique values it contains. This is typically most useful with character columns (e.g. species) but works with any data type.
+
+```{r Unique}
+unique(tree_data$Species)  # in this line, we are printing all of the unique species names in the dataset (in this case 2).
+species_names <- unique(tree_data$Species)  # assign unique species names to a variable
+```
+
+Summarizing data is useful but we also want to be able to modify it.
+So let's say we want to convert the 'Height_ft' column in `tree_data` from feet to inches. We'll start by assigning a conversion factor to the variable `in_per_ft`.
+
+```{r InchesPerFoot}
+in_per_ft <- 12  # Since there are 12 inches in a foot
+```
+
+We can then use this conversion factor to convert the 'Height_ft' column to inches, and place this converted value in a new column we will create in the data frame. Notice below that if you assign a vector to a column that doesn't exist yet, R will automatically create that column. We'll use the `head()` function to verify that the `Height_in` column was created correctly.
+
+```{r HeightConversion}
+# here we are specifying the new column on the left side of the '<-', and telling R what we want put into it on the right side of the '<-'.
+tree_data$Height_in <- tree_data$Height_ft * in_per_ft
+
+# we can now use the 'head function to check our work, and make sure the proper conversion was carried out:
+head(tree_data)
+```

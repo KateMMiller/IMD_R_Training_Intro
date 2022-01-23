@@ -1,0 +1,14 @@
+#### Getting Help
+
+##### Getting Help
+
+There are a number of options to get help with R. If you're trying to figure out how to use a function, you can type ?function_name. For example <i>?plot</i> will show the R documentation for that function in the Help panel.
+
+```{r, c4, echo=T, eval=F}
+?plot
+?dplyr::filter
+```
+
+If you have a question, online resources include [Stackexchange]("https://stackexchange.com/") and [Stackoverflow]("https://stackoverflow.com//") are extremely helpful. Google searches are a great first step. It helps to include "in R" in every search related to R code.
+
+Don't hesitate to reach out to colleagues for help as well! If you are stuck on something and the answers on Google are more confusing than helpful, don't be afraid to ask a human. Every experienced R programmer was a beginner once, so chances are they've encountered the same problem as you at some point. There is an R-focused data science community of practice for I&M folks, which anyone working in R (regardless of experience!) is invited and encouraged to join. The Teams join code will be shared with course participants.

@@ -19,26 +19,33 @@ title: "NPS IMD R Training I"
 
 ```
 
-```{r Project_setup, child = "D1_M2_Project_and_file_setup.Rmd"}
+```{r Start_coding, child = "D1_M2_Lets_start_coding.Rmd"}
 
 ```
 
-```{r Getting_help, child = "D1_M3_Getting_help.Rmd"}
+```{r Vars_Fns, child = "D1_M3_Variables_and_functions.Rmd"}
 
 ```
 
-```{r Types_of_data, child = "D1_M4_Types_of_Data.Rmd"}
+```{r Examining_data, child = "D1_M4_Examining_data.Rmd"}
 
 ```
 
-```{r Data_summary_I, child = "D1_M5_Data_summary_I.Rmd"}
+```{r Data_structures, child = "D1_M5_Data_structures.Rmd"}
 
 ```
 
-```{r Data_importing_and_subsetting, child = "D1_M6_Importing_and_Subsetting.Rmd"}
+```{r Working_with_columns, child = "D1_M6_Working_with_columns.Rmd"}
 
 ```
 
+```{r Basic_data_viz, child = "D1_M7_Basic_data_viz.Rmd"}
+
+```
+
+```{r Getting_help, child = "D1_M8_Getting_help.Rmd"}
+
+```
 
 ### Day 2: Data Wrangling {.tabset}
 ```{r Intro_and_Packages, child = "IMD_D2_M1_Intro_and_Packages.Rmd"}
@@ -115,4 +122,3 @@ There's a lot of great online material for learning new applications of R. The o
 ```{r about, child = "IMD_Meet_the_Trainers.Rmd"}
 
 ```
-
