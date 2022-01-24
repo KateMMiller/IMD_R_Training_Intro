@@ -1,6 +1,6 @@
 ####Troubleshooting Iteration {.tabset}
 
-Jointly, Thomas take first crask. SARAH will doe breakpoints.
+Jointly, Thomas take first crack. SARAH will do breakpoints.
 Thomas Do examples and posting to Stack for iteration troubleshooting
 Both sarah and Thomas useful resources
 
@@ -29,10 +29,13 @@ Troubleshooting iteration is often challenging and frustrating. Somtimes errors 
 
 **Unexpected behavior** - If you expect that ```1+1=2``` but your code returns ```3```, that is a good indicator you need to troubleshoot. It is always good to feed your code some data for which you already know the answer or output. Both positive and negative examples shoule be used. A positive example is one where you know it should work normally and a negative example is one where you know it should break. I often do this during code development as I am building different modules or chunks. Fundamentally I have two checks: 1) Is it doing what I expect it to do? 2) What happens if I slip an NA/NaN/Inf or an empty dataframe in there?
 
-####Tracking down the error
+#### Tracking down the error
 Tracking the error down is usually the first step in fixing it. Once you track it down you can see which functions are involved in it or which data are involved in it. There are some simple tools you can use. 
 
 **Traceback** - this is a somewhat newer feature of RStudio. Upon encountering an error, initiating the traceback and take you back up to the error. I find that it only sort of gets you close and isn't super helpful in saying 'this is what is wrong'. I look at it to get to the general location of the error. Sometimes that is the problem spot, sometimes the error is actually upstream and the spot it identifies just can't handle the output from the error upstream.
+
+#Thomas note ot self point the group to Kate's debugging session.
+
 
 **Make your code verbose** - Iteration usually works until it doesn't - it will loop up to the point or dateset that breaks it. Depending on how you have written your code, you likely don't know where it actually failed. That is a fact of life with R and iteration. Iteration tends to hide errors and warnings and makes it difficult to see where things went wrong. We can fix that. The lowly ```print()``` command is your friend. During development phase, I have print statements that return some indicator of code progress. It may be the name of the data it is on, might be a case it is on, I set it to return whatever I think I want to know.
 
