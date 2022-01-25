@@ -2,10 +2,10 @@
 output: 
   html_document:
     css: custom_styles.css
-title: "NPS IMD R Training I"
+title: "NPS IMD Intro to R"
 ---
 
-<h2>NPS Inventory and Monitoring Division R Training I: January 31 -- February 2, 2022</h2> {.tabset .tabset-pills}
+<h2>NPS Inventory and Monitoring Division Intro to R Training: January 31 -- February 2, 2022</h2> {.tabset .tabset-pills}
 --------------------------------------------------
 
 ### Prep for Training{.tabset}
@@ -75,6 +75,11 @@ title: "NPS IMD R Training I"
 ```{r data_viz1, child = "IMD_D3_M1_Data_Viz.Rmd"}
 
 ```
+
+```{r data_viz4, child = "IMD_D3_M4_Data_Viz.Rmd"}
+
+```
+
 
 
 ### Day 4: Best Practices & Wrap-up {.tabset}

@@ -1,0 +1,187 @@
+---
+author: "Kate Miller & Ellen Cheng"
+date: "1/11/2022"
+output: 
+  html_document:
+    css: custom_styles.css
+---
+#### Vizualizing Spatial Data
+<details open><summary class = 'drop'>GIS in R</summary>
+If you've tried to do GIS and make maps in R even a few years ago, you probably encountered the same frustrations I did. There were a ton of packages out there, each with its own file format and coding convention, and each package rarely had all the features I needed. It was not easy to navigate, and I often found myself eventually exporting my work out of R and doing the rest in ArcGIS. Enter the `sf` and `tmap` packages, which are the latest and greatest R packages devoted to GIS and map making! Most of the frustrations I had with earlier packages have been resolved with these two packages.
+
+The `sf` package is the workhorse for anything you need to do with spatial vector data. File types with `sf` are called <b>simple features</b> and it's becoming the universal GIS file type in R that most GIS vector-related packages are now pointing to. The `sf` package is also superseding the `rgdal` package, which used to be the main GIS package in R. The more I use this package, the more impressed I am with how intuitive and well documented it is. For vector data, I have yet to need to perform a task that `sf` couldn't do.
+
+The main application of `tmap` package is making maps, and it was designed using a grammar of graphics philosophy similar to `ggplot2`. There are also tmap-enabled functions that you can use in `ggplot2` plots, although you can do a lot more in `tmap`. I also prefer the look of tmap's built-in compass, legends, etc. over the ones available in `ggspatial`, which connects to `ggplot2`.    
+
+The `raster` package is also an excellent package for working with raster data. For large jobs, I find the `raster` package easier to work with than ESRI tools, and it tends to run a lot faster than ESRI built-in tools (I haven't compared with python).   
+
+Finally, the leaflet package in R allows you to create interactive maps as html widgets. These are often included in R shiny apps, but they can also be used in R Markdown with HTML output (attend next Wednesday's session to learn R Markdown). Obviously, an internet connection is required for the maps to be interactive. Without an internet connection the map will show the default extent defined by the code. 
+
+The leaflet package is relatively easy to use for basic mapping. For more advanced features or to customize it further, you often end up having to code in JavaScript, which is the language leaflet was originally programmed in. There's also a lot more online help available for the JavaScript version of the leaflet library than the R version. If you're really stumped about something, you may find your answer with the JavaScript help.
+</details>
+
+<details open><summary class = 'drop'> Using sf and tmap </summary>
+My two favorite features of sf are that the attribute table of a simple feature (sf's equivalent of a shapefile) is a dataframe, and that functions are pipeable. That means, if you want to delete points in your layer, you can use dplyr's `filter()` function to filter out those points. The sf package will update the geometry of the layer to remove the points that were filtered out. 
+
+To demonstrate the use of sf and tmap, I'm going to generate a simple GRTS sample using `spsurvey`, which now connects to `sf` instead of `sp` and `rgdal`. Then we'll filter out points that don't fall in a forest habitat. Finally we'll plot the results using `tmap`. 
+
+I wasn't able to figure out how to host a shapefile you could easily download in R with a url. To follow along, I posted all of the files to our Scientists Team. They can be downloaded using the following link: <a href="https://doimspp.sharepoint.com/:f:/s/ScientistsTraining2022/EiXOTYV1l4RCk1sMr5yXhZUB1ZFEaAlAN4elvsYbBfYHRg?e=ktVy5n">https://doimspp.sharepoint.com/:f:/s/ScientistsTraining2022/EiXOTYV1l4RCk1sMr5yXhZUB1ZFEaAlAN4elvsYbBfYHRg?e=ktVy5n</a>. To follow along, you'll need to download the shapefiles in this data folder and save them to your working directory. Note also that I'm using hex color codes. To find your own, check out <a href="https://htmlcolorcodes.com/">htmlcolorcodes.com</a>
+
+<h3>Step 1. Load and prep shapefiles using sf</h3>
+Here we're going to read in the shapefiles and prepare them for plotting. We'll perform a couple of tasks using `sf` functions, to give you an idea of how it works. 
+
+```{r sfimports, echo = T, results = 'hide', message = F, warning = F, fig.keep = 'none'}
+#install.packages(c("sf", "spsurvey"))
+library(dplyr) # for filter, select, mutate and %>%  
+library(sf)
+library(tmap)
+library(spsurvey)
+# Read in shapefiles from teams data folder
+sara_bound1 <- st_read("./shapefiles/SARA_boundary_4269.shp")
+sara_veg1 <- st_read("./shapefiles/SARA_Veg.shp")
+
+# Check that the projections match; fix the one that doesn't match
+st_crs(sara_bound1) == st_crs(sara_veg1) # FALSE- projections don't match.
+# sara_bound1 needs to be reprojected to UTM Zone 18N NAD83. 
+sara_bound <- st_transform(sara_bound1, crs = 26918)
+st_crs(sara_bound) == st_crs(sara_veg1) # TRUE
+
+# Quick plot
+plot(sara_bound[1])
+plot(sara_veg1[1]) # bigger extent than boundary
+
+# Intersect boundary and veg to be same extend
+sara_veg <- st_intersection(sara_veg1, sara_bound)
+plot(sara_veg[1])
+# View attribute table of layers
+head(sara_bound) # 1 feature with 95 fields
+
+str(sara_veg)
+head(sara_veg)
+names(sara_veg)
+table(sara_veg$ANDERSONII)
+
+# Simplify vegetation types for easier plotting
+dev <- c("1. Urban or Built-up Land", "11. Residential", 
+         "12. Commercial and Services", "13. Industrial",
+         "14. Transportation, Communications, and Utilities", 
+         "17. Other Urban or Built-up Land")
+crop <- c("21. Cropland and Pasture", 
+          "22. Orchards, Groves, Vineyards, and Nurseries", 
+          "31. Herbaceous Rangeland")
+shrubland <- c("32. Shrub and Brush Rangeland")
+forest_up <- c("41. Deciduous Forest Land", "42. Evergreen Forest Land", 
+               "43. Mixed Forest Land")
+forest_wet <- c("61. Forested Wetland")
+open_wet <- c("62. Nonforested wetland", "62. Nonforested Wetland")
+water <- c("5. Water", "51. Streams and Canals", "53. Reservoirs")
+unk <- "Unclassified"
+
+# Create 2 fields in the veg attribute table: simp_veg, and fills
+sara_veg <- sara_veg %>% 
+  mutate(simp_veg = case_when(ANDERSONII %in% dev ~ "Developed",
+                              ANDERSONII %in% crop ~ "Open field",
+                              ANDERSONII %in% shrubland ~ "Shrublands",
+                              ANDERSONII %in% forest_up ~ "Forest",
+                              ANDERSONII %in% forest_wet ~ "Forested wetland",
+                              ANDERSONII %in% open_wet ~ "Open wetland",
+                              ANDERSONII %in% water ~ "Open water",
+                              ANDERSONII %in% unk ~ "Unclassified",
+                              TRUE ~ "Unknown"),
+         fill_col = case_when(simp_veg == "Developed" ~ "#D8D8D8",
+                              simp_veg == "Open field" ~ "#f5f0b0",
+                              simp_veg == "Shrublands" ~ "#F29839",
+                              simp_veg == "Powerline ROW" ~ "#F9421D",
+                              simp_veg == "Forest" ~ "#55785e",
+                              simp_veg == "Forested wetland" ~ "#9577a6",
+                              simp_veg == "Open wetland" ~ "#c497d4",
+                              simp_veg == "Open water" ~ "#AFD0F2",
+                              simp_veg == "Unclassified" ~ "#ffffff"))
+
+```
+
+<h3>Step 2. Generate GRTS Sample</h3>
+The `spsurvey` package has been updated to point to `sf` instead of `rgdal`. It's a code-breaking change if you have old R scripts that generated GRTS samples. However, the process is even easier now. 
+
+```{r grts, echo = T, results = 'hide'}
+# generate random sample
+  #sample(1:100000, 1) #62051
+set.seed(62051)
+sara_grts <- grts(sara_bound, n_base = 100) # generate 100 points within SARA boundary
+sara_grts$sites_base$priority <- as.numeric(row.names(sara_grts$sites_base)) # add priority number (same as row.name)
+```
+
+<h3>Step 3. Spatial join to and filter</h3>
+We're going to spatially join the GRTS points to the ANDERSONII field in the vegetation layer, so that we can then filter the GRTS points to only include those that fall in forest habitat.
+```{r grtsfilt, echo = T, results = 'hide'}
+# Spatial join
+grts_veg <- st_join(sara_grts$sites_base, sara_veg %>% select(ANDERSONII))
+
+# Create list of forest habitats
+sort(unique(sara_veg$ANDERSONII))
+forest_veg <- c("41. Deciduous Forest Land", "42. Evergreen Forest Land", 
+                "43. Mixed Forest Land", "61. Forested Wetland")
+
+# Filter out non-forest points
+grts_forest <- grts_veg %>% filter(ANDERSONII %in% forest_veg)
+nrow(grts_veg) # 100 points
+nrow(grts_forest) # fewer points
+```
+
+<h3>Step 4. Create map </h3>
+```{r tmap, echo = T, results = 'hide', warning = F, message = F, fig.keep = 'none'}
+library(tmap)
+# Creating list of simp_veg types and their fill colors for easier legend
+for_legend <- unique(data.frame(simp_veg = sara_veg$simp_veg, fill_col = sara_veg$fill_col)) 
+
+sara_map <- 
+  # Vegetation map
+  tm_shape(sara_veg, projection = 26918, bbox = sara_bound) +
+  tm_fill("fill_col") +
+  tm_add_legend(type = 'fill', labels = for_legend$simp_veg, 
+                col = for_legend$fill_col, z = 3) +
+
+  # Park boundary
+  tm_shape(sara_bound, projection = 26918) +
+  tm_borders('black', lwd = 2) +
+  tm_add_legend(type = 'line', labels = "Park Boundary", col = "black",
+                z = 2)+
+    
+  # GRTS points  
+  tm_shape(grts_forest) +
+  tm_symbols(shapes = 21, col = "#EAFF16", border.lwd = 0.5, size = 0.3) + 
+  tm_add_legend(type = 'symbol', labels = "GRTS points", shape = 21, 
+                col = "#EAFF16", border.lwd = 0.5, size = 0.3, 
+                z = 1) +
+  
+  # Other map features
+  tm_compass(size = 1, type = 'arrow', 
+             text.size = 0.6, position = c('left', 'bottom')) +
+  tm_scale_bar(position = c("left", "bottom")) + 
+  tm_layout(inner.margins = c(0.35, 0.02, 0.02, 0.02), # make room for legend
+            outer.margins = c(0.01, 0.01, 0.01, 0.01),
+            legend.text.size = 0.5,
+            legend.just = 'right',
+            legend.position = c("right", "bottom")) 
+
+sara_map
+```
+
+```{r, echo = F, results = 'show'}
+sara_map
+```
+
+</details>
+
+<details open><summary class = 'drop'> Using leaflet and parktiles </summary>
+
+By default, layers and basemaps that feed into leaflet need to be specified in latitude and longitude using WGS84 projection (EPSG:4326). This projection may introduce some inaccuracies if projecting UTM to WGS84, such as plots that are at the edge of park boundaries appearing outside of the boundary. It has to do with the geographic transformation used to go from UTM to WGS. Recent improvements, including the Proj4Leaflet plugin, allow you to change coordinate systems, which may improve this. For more on that see the <a href="https://rstudio.github.io/leaflet/projections.html">Projections section</a> of R Studio's leaflet page. For the purposes here, we'll use the default WGS84, and reproject our data to match the projection.  
+
+</details>
+
+
+#### Resources
+R Studio's <a href="http://rstudio.github.io/leaflet/">leaflet for R</a> page shows the basics of how to use leaflet.
+
+<a href="https://geocompr.robinlovelace.net/">Geocomputation in R</a> is an excellent online book on the `sf` and `tmap` packages.
+
