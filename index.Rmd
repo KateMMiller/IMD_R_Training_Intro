@@ -65,7 +65,6 @@ title: "NPS IMD Intro to R"
 
 ```
 
-
 ```{r D2_Joining_Tables, child = "IMD_D2_M5_Joining_Tables.Rmd"}
 
 ```
