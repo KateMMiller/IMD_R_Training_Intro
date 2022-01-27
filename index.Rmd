@@ -80,8 +80,6 @@ title: "NPS IMD Intro to R"
 
 ```
 
-
-
 ### Day 4: Best Practices & Wrap-up {.tabset}
 
 ```{r Good_Practices, child = "D4_M1_Good_Practices.Rmd"}
