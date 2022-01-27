@@ -49,7 +49,8 @@ park_visits <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidyt
 state_pop <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/state_pop.csv")
 gas_price <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/gas_price.csv")
 ```
-
+</details>
+<br>
 <details open><summary class='drop'> Working with dplyr</summary>
 
 Dplyr is a package that is part of the tidyverse, which is used with data.frames. It makes tasks like filtering and summarizing data easier. Many of the functions within the package are "verb-like" so they are easy to understand and remember. 
