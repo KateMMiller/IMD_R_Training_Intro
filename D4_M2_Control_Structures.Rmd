@@ -96,7 +96,7 @@ What are some kinds of tasks you find yourself doing that you are wanting to do 
 
 There are a lot of ways to accomplish iteration and we are not going to cover them all. We are gong to cover some of the most basic and commonly used approaches.
 
-The first one you may be familiar with is the for loop. You give this a list of items and tell it what you want it to do and it will do that thing for each item on the list. In simplest terms that looks like:
+The first one you may be familiar with is the `for` loop. You give this a list of items and tell it what you want it to do and it will do that thing for each item on the list. In simplest terms that looks like:
 
 for(i in vector){ do thing 1
                 do thing 2
@@ -123,6 +123,8 @@ for(i in 1:9){
               OutDat[i]<-i+1    #store that in the ith position of the variable OutDat   
               }   
 ```
+
+Before we move on to more interestig code, I want to pause and note that you will hear us tell you that there are better ways to iterate than a for_loop. However, for loops are a fundamental skill and almost everyone teaching these trainings will tell you that they will fall back on a for loop when they can't get something else to work.
 
 So let's make a useful for loop. We are going to use the hobo data and we want to do 3 things with that. First we want to calculate some summary statistics, second we want to do a rudimentary QAQC check and flag potentially bad data, then we want to save it to a file so we can do some further visual assessment. That kind of task may sound familiar. I would note we are also going to write this as the 'do everything all at once' loop which is a pretty common way to start using a for loop. We will come back to whether or not that is the 'best' way to iterate a little later. 
 
