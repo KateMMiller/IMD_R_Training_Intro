@@ -4,8 +4,6 @@ author: "Lauren Pandori & John Paul Schmit"
 date: "12/15/2021"
 output: html_document
 ---
-
----
 #### Pivoting Tables {.tabset}
 
 <details open><summary class='drop'> Pivoting Tables</summary>
