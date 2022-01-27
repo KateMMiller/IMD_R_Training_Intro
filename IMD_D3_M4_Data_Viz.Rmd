@@ -28,7 +28,7 @@ To demonstrate the use of sf and tmap, I'm going to generate a simple GRTS sampl
 
 I wasn't able to figure out how to post a shapefile that you could easily download in R with a url. I emailed them to you as data.zip the previous week. I also posted all of the files to our Scientists Team, which can be downloaded using the following link: <a href="https://doimspp.sharepoint.com/:f:/s/ScientistsTraining2022/EiXOTYV1l4RCk1sMr5yXhZUB1ZFEaAlAN4elvsYbBfYHRg?e=ktVy5n">https://doimspp.sharepoint.com/:f:/s/ScientistsTraining2022/EiXOTYV1l4RCk1sMr5yXhZUB1ZFEaAlAN4elvsYbBfYHRg?e=ktVy5n</a>. To follow along, you'll need to download (and unzip if you're using the email attachment) the shapefiles and save them to your working directory. 
 
-<details open><summary class='drop2'>Step 1. Load and prep shapefiles using sf</summary>
+<h3>Step 1. Load and prep shapefiles using sf</h3>
 The code chunk below has a lot going on, but bare with me. This is the easiest way I've found to customize the layers in tmap plots. The basic steps in the code chunk below are: 
 <ol>
 <li>Load libraries</li>
@@ -40,9 +40,7 @@ The code chunk below has a lot going on, but bare with me. This is the easiest w
 <li>Add 2 columns to the veg layer to simplify the habitats (simp_veg) and set their colors (fill_col) </li>
 </ol>
 
-Once those steps are completed, we're ready to generate a GRTS sample and start making a map. 
-
-Note that I'm using 6-digit hex colors (i.e., "#ffffff" is white) to define the fill color for each habitat type. To find your own or see what color these look like, check out <a href="https://htmlcolorcodes.com/">htmlcolorcodes.com</a>
+Once those steps are completed, we're ready to generate a GRTS sample and start making a map. Note that I'm using 6-digit hex colors (i.e., "#ffffff" is white) to define the fill color for each habitat type. To find your own or see what color these look like, check out <a href="https://htmlcolorcodes.com/">htmlcolorcodes.com</a>
 
 ```{r sfimports, echo = T, results = 'hide', message = F, warning = F, fig.keep = 'none'}
 #install.packages(c("sf", "spsurvey"))
@@ -118,10 +116,7 @@ sara_veg <- sara_veg %>%
                               simp_veg == "Unclassified" ~ "#ffffff"))
 
 ```
-</details>
 <br>
-
-<details open><summary class='drop2'>Sidebar on simple features and shapefiles</summary>
 Before moving to the next step, I wanted to show how easy it is to create simple features from dataframes that contain X/Y coordinates. We'll read in a fake dataset in the GitHub repo for this training, and call it wetdat. The dataset contains fake species composition data for wetland monitoring sites in ACAD and includes X and Y coordinates. We'll use dplyr functions to calculate the number of invasive and protected species in each site by year combination. Then we'll make it a simple feature, and save it as a shapefile. Note that there are multiple formats you can save simple features as. I show the shapefile version, in case you find yourself going between R and ArcGIS. 
 
 ```{r impwetd, echo = T, eval = F}
@@ -139,15 +134,14 @@ head(wetsum)
 
 # Convert dataframe to sf
 wetsum_sf <- st_as_sf(wetsum, coords = c("X_Coord", "Y_Coord"), crs = 26919) 
-  # ACAD is UTM Zone 19N NAD83, hence the different EPSG than SARA, which is 18N.
+  # ACAD is UTM Zone 19N NAD83, hence the difference between SARA, which is 18N.
 
 # Write sf to disk as shapefile
 st_write(wetsum_sf, "ACAD_wetland_data.shp")
 ```
-</details>
 <br>
 
-<details open><summary class='drop2'>Step 2. Generate GRTS Sample</summary>
+<h3>Step 2. Generate GRTS Sample</h3>
 The `spsurvey` package has been updated to point to `sf` instead of `rgdal`. It's a code-breaking change if you have old R scripts that generated GRTS samples. However, the process is even easier now, as you can see below. Here we're just going to use the simplest of GRTS designs. The output from `grts()` has multiple slots. The one we want is `sites_base`, and you can see how we get that slot in the code below.
 
 <b>Note:</b> While I followed the approach documented in the <a href="https://cran.r-project.org/web/packages/spsurvey/vignettes/sampling.html">`spsurvey` vignette</a> to generate reproducable GRTS samples, it does not appear to be working as I'm testing it. Despite running `set.seed(62051)` after loading `spsurvey` and then running the code chunk below, each sample appears to be different. 
@@ -156,10 +150,9 @@ The `spsurvey` package has been updated to point to `sf` instead of `rgdal`. It'
 sara_grts <- grts(sara_bound, n_base = 100) # generate 100 points within SARA boundary
 sara_grts$sites_base$priority <- as.numeric(row.names(sara_grts$sites_base)) # add priority number (same as row.name)
 ```
-</details>
 <br>
 
-<details open><summary class='drop2'>Step 3. Spatial join and filter</summary>
+<h3>Step 3. Spatial join and filter</h3>
 First step here is to spatially join the sara_grts layer to the sara_veg layer. Here we only cared about the sara_veg's simp_veg field, so I used dplyr's `select()` function. After joining, you should see a simp_veg field added to the end of the grts layer (it's actually to the left of geometry, which is the last). In the next step, we then filter the points in the newly created grts_veg layer to only include points that fall in forest habitat.
 ```{r grtsfilt, echo = T, results = 'hide'}
 # Spatial join
@@ -175,10 +168,9 @@ grts_forest <- grts_veg %>% filter(simp_veg %in% forest_veg)
 nrow(grts_veg) # 100 points
 nrow(grts_forest) # fewer points
 ```
-</details>
 <br>
 
-<details open><summary class='drop2'>Step 4. Create map </summary>
+<h3>Step 4. Create map </h3>
 Now it's time to plot. The code below may seem a bit much, but we'll break it down piece by piece. The great thing about building maps this way is that you're essentially building a template in code that you can steal from and adapt for future maps. You can even turn these into a function that's even easier to use in future maps. That's beyond what we can cover here, but it's another great benefit of making maps in R instead of ArcGIS. 
 
 The code below is broken into the various pieces that make up the map. The way `tmap` works is that first, you have to add the layer via `tm_shape()`, and then you specify how you want that layer to look, `like tm_fill()`, or `tm_border()`. Each piece has its own legend as well. This is similar to how you start each `ggplot2` graph defining the data with `ggplot(data, aes(x = xvar, y = yvar))`, and then start adding `geom_point()`, or whatever else to define how the data are plotted. The difference with `tmap` is that every layer you want in the map has to be coded this way. Finally `tm_layout()` is similar to `theme()` in ggplot2, and is where you can customize the map layout. 
@@ -192,7 +184,8 @@ A couple of notes about the code below:
 <li>The `tm_layout()` code is where you can change the default settings of the figure, including font size, placement of the legend, and margins. The title name and position are also set in the `tm_layout()`.</li>
 <li>The `tmap_save()` allows you to write the map to disk and to specify the height and width of the map. I prefer to write maps to disk to see what the size looks like before changing any of the layout and font size settings, because the figure on your disk will look different (and often better) than the plot view in your R Studio session.</li>
 </ul>
-<br>
+
+
 ```{r tmap, echo = T, results = 'hide', warning = F, message = F, fig.keep = 'none'}
 # Creating list of simp_veg types and their fill colors for easier legend
 for_legend <- unique(data.frame(simp_veg = sara_veg$simp_veg, fill_col = sara_veg$fill_col)) 
@@ -232,34 +225,29 @@ sara_map <-
 tmap_save(sara_map, "SARA_GRTS.png", height = 10.5, width = 8, units = 'in')
 ```
 <br>
-Here's what sara_map looks like in the plot viewer:
-```{r, plotvw, echo = T, out.width = '50%', message = F, warning = F}
+Here's what sara_map looks like in your plot viewer
+```{r, plotvw, echo = T, out.width = '60%'}
 sara_map
 ```
 <br>
-<br>
-Here's what the map looks like after it's written to disk and the dimensions are set using `tmap_save()`:
-```{r, discvw, echo = F, results = 'show', out.width = '50%'}
+Here's what the map looks like after it's written to disk and the dimensions are set using `tmap_save()`.
+```{r, discvw, echo = F, results = 'show', out.width = '60%'}
 knitr::include_graphics("SARA_GRTS.png")
 ```
-</details>
 <br>
-
-<details open><summary class='drop2'>Interactive mode in `tmap`</summary>
 The last cool thing to show with tmap, is that you can include interactive HTML widgets similar to what leaflet can do (coming next). With the interactive mode, you can change baselayers, turn your layers off/on, and zoom to different extent. The legend in the interactive mode is a bit limited to only show fills, but it's still pretty cool. 
-```{r tmview, echo = T, warning = F, message = F}
+```{r tmview, echo = T}
 tmap_mode("view") # turn interactive mode on
 sara_map
 tmap_mode("plot") # return to default plot view
 ```
 </details>
 <br>
-</details>
-<br>
 
-<details open><summary class = 'drop'> Using `leaflet` and parktiles </summary>
-Now I'll show you how to create a simple `leaflet` map including NPS parktiles as a basemap. By default, layers and basemaps that feed into leaflet need to be specified in latitude and longitude using WGS84 projection (EPSG:4326). This projection may introduce some inaccuracies if projecting UTM to WGS84, such as plots that are at the edge of park boundaries appearing outside of the boundary. It has to do with the geographic transformation used to go from UTM to WGS. Recent improvements, including the Proj4Leaflet plugin, allow you to change coordinate systems, which may improve this. For more on that see the <a href="https://rstudio.github.io/leaflet/projections.html">Projections section</a> of R Studio's leaflet page. For the purposes here, we'll use the default WGS84, and reproject our data to match the projection.  
-We're going to use some of the SARA layers we used with tmap, but we have to reproject the layers to WGS84. First we'll define the four different park tiles that are available. These are the same tiles you see if you view the map on a given park's website.
+<details open><summary class = 'drop'> Using leaflet and parktiles </summary>
+Now I’ll show you how to create a simple leaflet map including NPS parktiles as a basemap. By default, layers and basemaps that feed into leaflet need to be specified in latitude and longitude using WGS84 projection (EPSG:4326). This projection may introduce some inaccuracies if projecting UTM to WGS84, such as plots that are at the edge of park boundaries appearing outside of the boundary. It has to do with the geographic transformation used to go from UTM to WGS. Recent improvements, including the Proj4Leaflet plugin, allow you to change coordinate systems, which may improve this. For more on that see the Projections section of R Studio’s leaflet page. For the purposes here, we’ll use the default WGS84, and reproject our data to match the projection.
+
+We’re going to use some of the SARA layers we used with tmap, but we have to reproject the layers to WGS84. First we’ll define the four different park tiles that are available. These are the same tiles you see if you view the map on a given park’s website.
 
 ```{r leafprep, echo = T, results = 'hide', warning = F, message = F}
 # Load library
@@ -281,23 +269,22 @@ grts_forest_wgs <- st_transform(grts_forest, crs = 4326)
 # Calculate centroid for leaflet map view
 sara_cent <- st_centroid(sara_bnd_wgs)$geometry
 str(sara_cent) # -73.63459, 42.99543
-
 ```
 <br>
-Now we add the pieces together. The leaflet package operates similar to tmap and ggplot2, in that you build the map by adding consecutive layers and connecting the code with pipes. 
+Now we add the pieces together. The leaflet package operates similar to tmap and ggplot2, in that you build the map by adding consecutive layers and connecting the code with pipes.
 
 A couple of notes on the code below:
 <ul>
-<li>The `setView()` allows you to set the center (in WGS84) and the zoom of the map. A zoom of 0 is the entire world. The higher the zoom, the closer the zoom. You can also set the min/max zoom a user can view in a map, along with a maximum bounding box that a user can pan or zoom within.</li>
-<li>`addTiles()` is how you add individual tiles. The `group = "text"` names the tiles, which are then shown in the map's layer control via `addLayersControl()`. </li>
-<li>`addCircleMarkers()` is how the GRTS points are added to the map. I also had to specify the lat/lng coordinates for each point, and I used sf's `st_coordinates()` to extract them.</li>
+<li>The setView() allows you to set the center (in WGS84) and the zoom of the map. A zoom of 0 is the entire world. The higher the zoom, the closer the zoom. You can also set the min/max zoom a user can view in a map, along with a maximum bounding box that a user can pan or zoom within.</li>
+<li>addTiles() is how you add individual tiles. The group = "text" names the tiles, which are then shown in the map’s layer control via addLayersControl().</li>
+<li>addCircleMarkers() is how the GRTS points are added to the map. I also had to specify the lat/lng coordinates for each point, and I used sf’s st_coordinates() to extract them.</li>
 <li>The radius of the point is how you specify the size of the markers.</li>
 <li>The stroke refers to the outline. I turned it off in this case.</li>
-<li>I also added a scalebar and set the width and units of it using `addScaleBar()`, and `scaleBarOptions()`.</li>
-<li>There are all kinds of bells and whistles you can add to a leaflet plot, including popups on hover or click, custom colors and symbols based on the data, etc. For more examples, check out <a href="http://rstudio.github.io/leaflet/">Leaflet for R</a>.</li>
+<li>I also added a scalebar and set the width and units of it using addScaleBar(), and scaleBarOptions().</li>
+<li>There are all kinds of bells and whistles you can add to a leaflet plot, including popups on hover or click, custom colors and symbols based on the data, etc. For more examples, check out Leaflet for R.</li>
 </ul>
-```{r leafmap, echo = T, results = 'hide', warning = F, message = F}
 
+```{r leafmap, echo = T, results = 'hide', warning = F, message = F}
 sara_map_lf <-
   leaflet() %>% 
   setView(lng = -73.63, lat = 42.99, zoom = 13) %>% 
@@ -328,18 +315,21 @@ sara_map_lf <-
   addScaleBar(position = 'bottomright') %>% 
   scaleBarOptions(maxWidth = 10, metric = TRUE) 
 
+```
+```{r leafmap2, echo = T, message = F, warnings = F, eval = F}
 sara_map_lf
 ```
 
-Note that I can't figure out why I'm not able to make this map render on the website, but I'll demonstrate it in R Studio.
-
-</details>
-<br>
+Note that I can’t figure out why I’m not able to make this map render on the website, but I’ll demonstrate it in R Studio.
+<hr>
 
 #### Resources
-R Studio's <a href="http://rstudio.github.io/leaflet/">leaflet for R</a> page shows the basics of how to use leaflet.
+<h2>Using ggplot2</h2>
+- <a href="https://ggplot2-book.org//">ggplot2: Elegant Graphics for Data Analysis</a> is a great reference on ggplot2 also by Hadley Wickham.
+- <a href="https://rkabacoff.github.io/datavis/">Data Visualization in R</a> is another online book that has a ton of examples for plotting and customizing plots with ggplot2. 
 
-<a href="https://geocompr.robinlovelace.net/">Geocomputation in R</a> is an excellent online book on the `sf` and `tmap` packages.
-
-
-<a href="http://rstudio.github.io/leaflet/">Leaflet for R</a> covers a lot of the mroe common features for making leaflet maps in R. 
+<h2>Visualizing Spatial Data</h2>
+- <a href="https://geocompr.robinlovelace.net/">Geocomputation in R</a> is an excellent online book on the `sf` and `tmap` packages.
+- R Studio's <a href="http://rstudio.github.io/leaflet/">leaflet for R</a> page shows the basics of how to use leaflet.
+<br>
+<hr>
