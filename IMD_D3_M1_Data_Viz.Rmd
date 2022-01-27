@@ -20,7 +20,3 @@ Topics to cover
 - saving ggplot graphs
 - creating your own theme
 
-#### Leaflet and parktiles
-
-#### sf and tmap 
-- packages for spatial figures
