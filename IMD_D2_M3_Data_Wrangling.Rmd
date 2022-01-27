@@ -4,7 +4,7 @@ author: "Lauren Pandori & John Paul Schmit"
 date: "12/15/2021"
 output: html_document
 ---
-#### Intro to Data Wrangling  - Dplyr functions {.tabset}
+#### Dplyr functions {.tabset}
 
 <details open><summary class='drop'> Data Wrangling</summary>
 

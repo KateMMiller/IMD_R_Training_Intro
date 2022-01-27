@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ---
-#### Intro to Data Wrangling  - Pivoting Tables {.tabset}
+#### Pivoting Tables {.tabset}
 
 <details open><summary class='drop'> Pivoting Tables</summary>
 

@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ---
-#### Intro to Data Wrangling  - Joining Tables {.tabset}
+#### Joining Tables {.tabset}
 
 <details open><summary class='drop'> Joining Tables</summary>
 

@@ -5,7 +5,7 @@ date: "1/4/21"
 output: html_document
 ---
 
-#### Intro to Data Wrangling - Intro and Packages {.tabset}
+#### Intro and Packages {.tabset}
 
 <details open><summary class='drop'>Data Wrangling Intro</summary>
  

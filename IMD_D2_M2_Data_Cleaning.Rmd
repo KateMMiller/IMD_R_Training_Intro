@@ -5,7 +5,7 @@ date: "12/15/2021"
 output: html_document
 ---
 
-#### Intro to Data Wrangling  - Data Cleaing {.tabset}
+#### Data Cleaing {.tabset}
 
 <details open><summary class='drop'> Data Cleaning</summary>
 
