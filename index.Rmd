@@ -10,7 +10,7 @@ title: "NPS IMD Intro to R"
 
 ### Prep for Training{.tabset}
 
-```{r Install_instructions, child = "D0_Install_R_and_RStudio.Rmd"}
+```{r Install_instructions, child = "IMD_D0_Install_R_and_RStudio.Rmd"}
 
 ```
 
@@ -49,6 +49,7 @@ title: "NPS IMD Intro to R"
 ```
 
 ### Day 2: Data Wrangling {.tabset}
+
 ```{r Intro_and_Packages, child = "IMD_D2_M1_Intro_and_Packages.Rmd"}
 
 ```
