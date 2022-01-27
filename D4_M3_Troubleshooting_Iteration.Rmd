@@ -1,4 +1,4 @@
-<h> Troubleshooting Iteration </h>
+<h3> Troubleshooting Iteration </h3>
 
 Jointly, Thomas take first crack. SARAH will do breakpoints.
 Thomas Do examples and posting to Stack for iteration troubleshooting
@@ -16,13 +16,13 @@ Troubleshooting and good resources
 -Minimum reproducible examples #covered
   
   
-<h> Overview </h>
+<h3> Overview </h3>
 Believe it or not, there are only two types of errors and both are human. 1) Your code is written incorrectly (let's go find that missing ')'...). 2) You are telling your code to do something with data that it can't do with that data (let's figure out where we need to set `na.rm=T`). Another branch of troubleshooting is optimization - "why is my code so slow?" We will cover that next week.
 
 Troubleshooting iteration is often challenging and frustrating. Sometimes errors are obvious sometimes errors only show up when you start digging into outputs. Sometimes it works fine on the test data and fails on the real data. Ultimately, debugging is an exercise in hypothesis testing "If I do this, I should get this result. Where did I not get the expected result and why?" We present you with some basic manual approaches and resources here that should help you debug iteration. As you code you will find the approach that works best for you in each situation.
 
 #### Trouble cues
-<h> Clues you need to troubleshoot </h>
+<h3> Clues you need to troubleshoot </h3>
 **Warnings** - Warnings are you prompt to check if there is a problem. Code will seldom fail to provide output on a warning, the question is whether or not it is the output you are after. When you see warnings you should run `warnings()` and see if it makes sense as to why there are warnings. ggplot, for example, will issue warnings for each incomplete record (e.g. a value for y, but not x) and will continue to plot everything that is complete. It is always good to pay attention to the number of warnings and periodically check that they are expected. If they are unexpected you may wish to dig deeper.
 
 **Errors** - In short, errors occur when the functions used in your code encounter data that they can't use. Sometimes an error tells you what the problem is, more often it doesn't. Many errors are general and not specific to a function so you will want to Google the function and the  error to see what people are saying. May take a few *iterations* to get the right search terms. 
@@ -30,11 +30,10 @@ Troubleshooting iteration is often challenging and frustrating. Sometimes errors
 **Unexpected behavior** - If you expect that `1+1=2` but your code returns `3`, that is a good indicator you need to troubleshoot. It is always good to feed your code some data for which you already know the answer or output. Both positive and negative examples should be used. A positive example is one where you know it should work normally and a negative example is one where you know it should break. I often do this during code development as I am building different modules or chunks. Fundamentally I have two checks: 1) Is it doing what I expect it to do? 2) What happens if I slip an NA/NaN/Inf or an empty dataframe in there?
 
 #### Finding Errors
-<h> Tracking down the error </h>
+<h3> Tracking down the error </h3>
 Tracking the error down is usually the first step in fixing it. Once you track it down you can see which functions are involved in it or which data are involved in it. There are generally two approaches to this: manual and R-assisted. I am going to focus on the manual, because at some point you will have to fall back on that so it is good to have a solid understanding of that approach before you branch out to R-assisted approaches. For more on R-assisted approaches see 
 
 #add HTML hyperlink to Kate's session on debugging. 
-
 
 0) Don't try and pack too much into your code. Writing 'everything loops' means that you will have a lot of functions. Different functions have different inputs and outputs. The more different data structures and outputs your iteration will have to handle the more likely it is to break or provide unexpected results. Iteration works really well when it has 1 input structure and 1 output structure. 
 
@@ -43,65 +42,83 @@ Tracking the error down is usually the first step in fixing it. Once you track i
 As an example let's look at a early version of the super for loop we looked at earlier.
 ```{r Day4TroubleVerbose, echo=T, eval=F}
 
-library(magrittr);library(ggplot2)
-fNames<-paste0("https://raw.githubusercontent.com/KateMMiller/IMD_R_Training_Intro/master/Data/",
-             c("APIS01_20548905_2021_temp.csv",
-               "APIS02_20549198_2021_temp.csv",
-               "APIS03_20557246_2021_temp.csv",
-               "APIS04_20597702_2021_temp.csv",
-               "APIS05_20597703_2021_temp.csv")) 
+library(magrittr)
+library(ggplot2)
+fNames <- paste0(
+  "https://raw.githubusercontent.com/KateMMiller/IMD_R_Training_Intro/master/Data/",
+  c(
+    "APIS01_20548905_2021_temp.csv",
+    "APIS02_20549198_2021_temp.csv",
+    "APIS03_20557246_2021_temp.csv",
+    "APIS04_20597702_2021_temp.csv",
+    "APIS05_20597703_2021_temp.csv"
+  )
+)
 
-OutPath<-choose.dir() #note, no trailing '\\' in path
-TempUpper<-40
-TempLower<-(-40)
+OutPath <- choose.dir() # note, no trailing '\\' in path
+TempUpper <- 40
+TempLower <- (-40)
 
-SummaryData<-NULL #make sure this gets cleared before rerunning this code
-for(i in fNames){d<-read.csv(i, skip=1, header=T)[1:3]
-                  fName<-basename(i)
-                  print(fName)#dev/debug 
-                  names(d)<-c("idx","DateTime","T_F")
-                  d$DateTime2<-as.POSIXct(d$DateTime, "%m/%d/%y %H:%M:%S", tz="UCT")
-            #summarize the data
-                OutDat<-data.frame(FileName=fName,
-                                   T_F_mean=mean(d$T_F, na.rm=T),
-                                   T_F_min=min(d$T_F, na.rm=T),
-                                   T_F_max=max(d$T_F, na.rm=T),
-                                   nObs=nrow(d),
-                                   nDays=(d$DateTime2[nrow(d)]-d$DateTime2[1])[[1]]) #days
-            #Append new summary data to old summary data
-                SummaryData<-rbind(SummaryData,OutDat) 
-            }
+SummaryData <- NULL # make sure this gets cleared before rerunning this code
+for (i in fNames) {
+  d <- read.csv(i, skip = 1, header = T)[1:3]
+  fName <- basename(i)
+  print(fName) # dev/debug
+  names(d) <- c("idx", "DateTime", "T_F")
+  d$DateTime2 <- as.POSIXct(d$DateTime, "%m/%d/%y %H:%M:%S", tz = "UCT")
+  # summarize the data
+  OutDat <- data.frame(
+    FileName = fName,
+    T_F_mean = mean(d$T_F, na.rm = T),
+    T_F_min = min(d$T_F, na.rm = T),
+    T_F_max = max(d$T_F, na.rm = T),
+    nObs = nrow(d),
+    nDays = (d$DateTime2[nrow(d)] - d$DateTime2[1])[[1]]
+  ) # days
+  # Append new summary data to old summary data
+  SummaryData <- rbind(SummaryData, OutDat)
+}
 ```
 
 In this case, the code was "fine," but it was not equipped to handle the data being thrown at it and it stopped on the dataset/loop step that was the problem. This, manual approach can be used to detect both code problems and data problems. 
 
-A few rules of thumb: if it returns an error on the first step of iteration, then it is a code *or* a data-code match problem. If it can iterate properly at least once, then the code 'works', but there is a code-data mismatch. 
+A few rules of thumb: if it returns an error on the first step of iteration, then it is a code *or* a data-code match problem. If it can iterate properly at least once, then the code 'works', but there is a code-data mismatch.
 
 **Step away from the iteration** - The problem is seldom the iteration itself. In this approach you set the input data to the known issue or case you want to test and don't attempt to iterate over all the data. Without invoking the iteration, you then run each step of your code line by line to determine where the error occurs. This is used for fixing a code error and for troubleshooting a dataset. What does that look like?
 
 ```{r Day4TroubleStepByStep, echo=TRUE, eval=F}
+#effectively these are manual "breakpoints"
 
-#i=fNames[3] #code dev/debugging fragment
-#rm(i) #debug.dev frag
-SummaryData<-NULL #make sure this gets cleared before rerunning this code
-#for(i in fNames){
-                  d<-read.csv(i, skip=1, header=T)[1:3]
-                  d #check output
-                  fName<-basename(i)
-                  #print(fName)#dev/debug frag
-                  names(d)<-c("idx","DateTime","T_F")
-                  d$DateTime2<-as.POSIXct(d$DateTime, "%m/%d/%y %H:%M:%S", tz="UCT")
-            #summarize the data
-                OutDat<-data.frame(FileName=fName,
-                                   T_F_mean=mean(d$T_F, na.rm=T),
-                                   T_F_min=min(d$T_F, na.rm=T),
-                                   T_F_max=max(d$T_F, na.rm=T),
-                                   nObs=nrow(d),
-                                   nDays=(d$DateTime2[nrow(d)]-d$DateTime2[1])[[1]]) #days
-            #Append new summary data to old summary data
-                SummaryData<-rbind(SummaryData,OutDat) 
-          #  }
+i=fNames[3] #code dev/debugging fragment
+# rm(i) #debug.dev frag
+SummaryData <- NULL # make sure this gets cleared before rerunning this code
+# for(i in fNames){
+d <- read.csv(i, skip = 1, header = T)[1:3]
+d # check output
+fName <- basename(i)
+# print(fName)#dev/debug frag
+names(d) <- c("idx", "DateTime", "T_F")
+d$DateTime2 <- as.POSIXct(d$DateTime, "%m/%d/%y %H:%M:%S", tz = "UCT")
+# summarize the data
+OutDat <- data.frame(
+  FileName = fName,
+  T_F_mean = mean(d$T_F, na.rm = T),
+  T_F_min = min(d$T_F, na.rm = T),
+  T_F_max = max(d$T_F, na.rm = T),
+  nObs = nrow(d),
+  nDays = (d$DateTime2[nrow(d)] - d$DateTime2[1])[[1]]
+) # days
+# Append new summary data to old summary data
+SummaryData <- rbind(SummaryData, OutDat)
+#  }
+
 ```
+
+!!!!!!!!!!!!!!!!!Add breakpoints discussion here!!!!!!!!!!!!!!!!!!!!!!!!
+-live demo
+-use uncommented out look an do some screenshots
+    -to link to an image, use ![alt-text goes here](image url goes here)
+
 
 **Step away from your data** - Sometimes we let our data over-complicate the coding task. There are few coding sessions where I don't end up trying to see if I can make something work on a built in dataset (e.g. `mtcars`). Often when trying to do the same thing, but with different data, I end up seeing and solving the problem. This approach also forces you to reduce your code to the bare basics... which you may need when you go to ask for help.
 
@@ -114,19 +131,20 @@ Process wise (you will develop your own):
 
 Lastly, don't spin your wheels by yourself for too long. Coding is a team effort.
 
-<h> Ask for help </h>
+<h3> Ask for help </h3>
 We have talked about getting help before, but here we want to cover the "Minimim Reproducible Example (MRE)" and asking for help on Stack Overflow. This is actually a crucial part of debugging. Often the process of developing the MRE will actually answer your question.
 
 #### Reproducible Examples
 
 When you ask for help (on stackoverflow or in your office) you should provide an example of the problem you are having complete with data. This is called the minimal reproducible example (MRE). It is easiest on you and the people trying to help you if it does not use your data.  In the end you want to be able to create a fairly simple statement: "I am trying to _____. Here is the code I have so far. I want it to produce output that looks like ____. However, it is not currently doing that, instead it is providing this output _____. What did I do wrong?"
 
-<h>Steps for getting help / developing an MRE on Stackoverflow**:</h>
+<h3>Steps for getting help / developing an MRE on Stackoverflow**:</h3>
   1.  Identify a common built-in dataset that has a structure that is vaguely similar to your data or write some simple code that mimics what you are trying to deal with. A good one to use is often `mtcars` which is in ggplot2. It has integer data, continuous data, and categorical data. If you are using a random number generator for you data (e.g. `rnorm` then using `set.seed()` is advisable.) Don't try to reproduce your entire dataset, reproduce only what your code is using. If you have 40 variables, and your code only operates on 8, provide a dataframe with 8 variables (or 9 in the unlikely event the problem is in the unused variable). 
   
   2.  Strip your code down to the essentials - sometimes the bigger context of your code is relevant, usually it isn't. 
     A.  Remove variable names that are special to your data. Rename them simple things like `x` and `y`. 
-    B.  Decide which steps are 'bells and whistles' and what steps are essential to the problem you are having or essential to what the code needs to do. Remove the bells and whistles. Check to see if the code behavior changes with each removed step. 
+    B.  Decide which steps are 'bells and whistles' and what steps are essential to the problem you are having or essential to what the code needs to do. Remove the bells and whistles. Check to see if the code behavior changes with each removed step.
+    
   3.  Be able to clearly provide an example of what the code should produce as output. Your code does not need to be generating that output be doing that. 
   
   4.  Type your question in plain english avoiding jargon. Use proper punctuation, grammar, etc. Keep it short, but provide details. 
@@ -143,7 +161,7 @@ Is that solution better than what I had? Is it better than the other answer? May
 
 
 #### Useful resources
-<h>Resources</h>
+<h3>Resources</h3>
 https://stackoverflow.com/help/minimal-reproducible-example
 https://adv-r.hadley.nz/debugging.html
 

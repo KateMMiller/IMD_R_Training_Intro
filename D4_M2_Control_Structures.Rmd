@@ -3,6 +3,9 @@ Thomas if/else - mostly done needs some code touch-up
 Thomas for, apply family - This is mostly done, needs some code touch up
 
 
+!!!!!!!move vectorization up here
+
+
 #### Control Structures 
 <h4> Control Structures</h4>
 What are control structures? The simplest way to think about this is that these are programming elements that control the flow of data in your code dependng on the value of logical conditions. There are two control structures we are going to focus on: `for` loops and `ifelse` statements. `for` loops are a control structure that sets the number of times and the data code should perform an operation on. 'ifelse' statements control what code is run under different conditions. 
@@ -130,71 +133,92 @@ Before we move on to more interestig code, I want to pause and note that you wil
 
 So let's make a useful for loop. We are going to use the hobo data and we want to do 3 things with that. First we want to calculate some summary statistics, second we want to do a rudimentary QAQC check and flag potentially bad data, then we want to save it to a file so we can do some further visual assessment. That kind of task may sound familiar. I would note we are also going to write this as the 'do everything all at once' loop which is a pretty common way to start using a for loop. We will come back to whether or not that is the 'best' way to iterate a little later. 
 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! add some code to introduce dataframe . 
+str 
+head
+
+
 ```{r ForLoop.2, echo=TRUE, eval=TRUE}
-library(magrittr);library(ggplot2)
-fNames<-paste0("https://raw.githubusercontent.com/KateMMiller/IMD_R_Training_Intro/master/Data/",
-             c("APIS01_20548905_2021_temp.csv",
-               "APIS02_20549198_2021_temp.csv",
-               "APIS03_20557246_2021_temp.csv",
-               "APIS04_20597702_2021_temp.csv",
-               "APIS05_20597703_2021_temp.csv")) 
+library(magrittr)
+library(ggplot2)
+fNames <- paste0(
+  "https://raw.githubusercontent.com/KateMMiller/IMD_R_Training_Intro/master/Data/",
+  c(
+    "APIS01_20548905_2021_temp.csv",
+    "APIS02_20549198_2021_temp.csv",
+    "APIS03_20557246_2021_temp.csv",
+    "APIS04_20597702_2021_temp.csv",
+    "APIS05_20597703_2021_temp.csv"
+  )
+)
 
-OutPath<-choose.dir() #note, no trailing '\\' in path
-TempUpper<-40
-TempLower<-(-40)
+OutPath <- choose.dir() # note, no trailing '\\' in path
+TempUpper <- 40
+TempLower <- (-40)
 
-#i=fNames[1] #code dev/debugging fragment
-#rm(i) #debug.dev frag
-SummaryData<-NULL #make sure this gets cleared before rerunning this code
-for(i in fNames){d<-read.csv(i, skip=1, header=T)[1:3]
-                  fName<-basename(i)
-                  print(fName)#dev/debug frag
-            #begin if...else control structure
-                  if(nrow(d)>0){
-            #What to do if there is at least 1 record in the dataframe
-                  names(d)<-c("idx","DateTime","T_F")
-                  d$DateTime2<-as.POSIXct(d$DateTime, "%m/%d/%y %H:%M:%S", tz="UCT")
-            #summarize the data
-                OutDat<-data.frame(FileName=fName,
-                                   T_F_mean=mean(d$T_F, na.rm=T),
-                                    T_F_min=min(d$T_F, na.rm=T),
-                                    T_F_max=max(d$T_F, na.rm=T),
-                                       nObs=nrow(d),
-                                      nDays=(d$DateTime2[nrow(d)]-d$DateTime2[1])[[1]]) #days
-            #Append new summary data to old summary data
-                SummaryData<-rbind(SummaryData,OutDat) 
-            #Do some QA/QC flagging
-           d<-d%>%
-              dplyr::mutate(TChangeFlag = ifelse(c(abs(diff(T_F, lag = 1)) > 10, FALSE), "D10", NA),
-                     Flag = case_when(is.na(T_F) ~ "MISSING",
-                                            T_F > TempUpper ~ "High",
-                                            T_F < TempLower ~ "Low")) %>%
-              tidyr::unite("Flag", c(TChangeFlag, Flag), sep = "_", remove = TRUE, na.rm = TRUE)
-            #Write out the flagged dataset
-             write.csv(d[,c("DateTime","T_F","Flag")],       
-                        paste0(OutPath,"/",gsub(".csv","_QC.csv",fName)), 
-                        row.names=F, quote=F)
-            #Make some quick plots for visual QA/QC
-                p<-ggplot(d, aes(x=DateTime2, y=T_F))+
-                   geom_point(size=0.5)+
-                   ggtitle(fname)
-                ggsave(filename=gsub(".csv","_plot.pdf",fName), path=OutPath, device="pdf",
-                       plot=p,  
-                       width=5,height=5,units="in")
-            #What to do when the dataframe is empty.
-                }else{  
-                     OutDat<-data.frame(FileName=fname,
-                                        T_F_mean=NA,
-                                         T_F_min=NA,
-                                         T_F_max=NA,
-                                            nObs=NA,
-                                           nDays=NA)
-            SummaryData<-rbind(SummaryData,OutDat)
-                }
+# i=fNames[1] #code dev/debugging fragment
+# rm(i) #debug.dev frag
+SummaryData <- NULL # make sure this gets cleared before rerunning this code
+for (i in fNames) {
+  d <- read.csv(i, skip = 1, header = T)[1:3]
+  fName <- basename(i) # extract the filename from a filepath
+  print(fName) # dev/debug frag
+  # begin if...else control structure
+  if (nrow(d) > 0) {
+    # What to do if there is at least 1 record in the dataframe
+    names(d) <- c("idx", "DateTime", "T_F")
+    d$DateTime2 <- as.POSIXct(d$DateTime, "%m/%d/%y %H:%M:%S", tz = "UCT")
+    # summarize the data
+    OutDat <- data.frame(
+      FileName = fName,
+      T_F_mean = mean(d$T_F, na.rm = T),
+      T_F_min = min(d$T_F, na.rm = T),
+      T_F_max = max(d$T_F, na.rm = T),
+      nObs = nrow(d),
+      nDays = (d$DateTime2[nrow(d)] - d$DateTime2[1])[[1]]
+    ) # days
+    # Append new summary data to old summary data
+    SummaryData <- rbind(SummaryData, OutDat)
+    # Do some QA/QC flagging
+    d <- d %>%
+      dplyr::mutate(
+        TChangeFlag = ifelse(c(abs(diff(T_F, lag = 1)) > 10, FALSE), "D10", NA),
+        Flag = case_when(
+          is.na(T_F) ~ "MISSING",
+          T_F > TempUpper ~ "High",
+          T_F < TempLower ~ "Low"
+        )
+      ) %>%
+      tidyr::unite("Flag", c(TChangeFlag, Flag), sep = "_", remove = TRUE, na.rm = TRUE)
+    # Write out the flagged dataset
+    write.csv(d[, c("DateTime", "T_F", "Flag")],
+      paste0(OutPath, "/", gsub(".csv", "_QC.csv", fName)),
+      row.names = F, quote = F
+    )
+    # Make some quick plots for visual QA/QC
+    p <- ggplot(d, aes(x = DateTime2, y = T_F)) +
+      geom_point(size = 0.5) +
+      ggtitle(fname)
+    ggsave(
+      filename = gsub(".csv", "_plot.pdf", fName), path = OutPath, device = "pdf",
+      plot = p,
+      width = 5, height = 5, units = "in"
+    )
+    # What to do when the dataframe is empty.
+  } else {
+    OutDat <- data.frame(
+      FileName = fname,
+      T_F_mean = NA,
+      T_F_min = NA,
+      T_F_max = NA,
+      nObs = NA,
+      nDays = NA
+    )
+    SummaryData <- rbind(SummaryData, OutDat)
+  }
 }
 #write out the summary data. Not run, included for fun.
 #write.csv(SummaryData, paste0(OutPath,"/SummaryData.csv"),row.names=F, quote=F)           
-
 
 ```
 That is most of what you might end up doing in some routine QA/QC task. We can take some time now to deconstruct what in this is new to you and what questions you have on it. 
@@ -203,10 +227,9 @@ That is most of what you might end up doing in some routine QA/QC task. We can t
 
 + There are only rare instances where you want to wrap stuff up in that complicated of a for loop. The more complex the loop the harder it is to debug. Complex for loops are also hard to build flexibility into. 
 
-+`for` is pretty hard to get data out of if you want to work with it further in the environment. It has probably been my single greatest frustration. You have to tell it exactly what to give you and set that up beforehand otherwise you aren't going to get anything. (okay fine, this is a good thing and a bad thing)  
++ `for` is pretty hard to get data out of if you want to work with it further in the environment. It has probably been my single greatest frustration. You have to tell it exactly what to give you and set that up beforehand otherwise you aren't going to get anything. (okay fine, this is a good thing and a bad thing) 
 
 + ...
-
 
 The good news is that there are many other ways to iterate in R. Often you will start with a for loop and then refine it with approaches that are more suited to your needs. One family of functions that often replaces "for" is the apply family of functions. 
 
@@ -214,7 +237,7 @@ The good news is that there are many other ways to iterate in R. Often you will 
 
 `mapply` - Is a way to vectorize a function that isn't vectorized. I don't think I have used this in the past year, but it is in the apply family and you might encounter it. 
 
-`lapply` - Apparently, this is a special case of mapply and it operates on lists of things and `stores` the output in a list of things. sapply and vapply are variations on this theme.
+`lapply` - Apparently, this is a special case of mapply and it operates on lists of things and stores the output in a list of things. sapply and vapply are variations on this theme.
 
 `tapply` - apply by groups. This lets you apply functions by a group. So, quick summary statistics, but you will quickly outgrow this and there are better ways to do this. 
 
@@ -222,13 +245,15 @@ We are going to focus on apply and lapply.
 `apply` - Going back to that definition, when might you use it?
   
  Let's calculate the mean value for each site across sampling years
-```{r ApplyFamily.1, echo=TRUE, eval=TRUE}
+ !!!!!! print d to the console so people can look at what they are woring on.
+```{r ApplyFamily.1, echo=T, eval=F}
 apply(d[],MARGIN=1, FUN=mean)
 #need data still
 ``` 
+ 
  Now, let's calculate the mean value for each sampling year across sites
-```{r ApplyFamily.1, echo=TRUE, eval=TRUE}   
-     apply(d[],MARGIN=2, FUN=mean)
+```{r ApplyFamily.1, echo=T, eval=F}   
+apply(d[],MARGIN=2, FUN=mean)
 #need data still
 ```
 
@@ -238,18 +263,18 @@ In the previous for loop we operated on our hobos one at a time. What we can do 
 
 You should still have fname hanging out somewhere. This is that list of hobos. 
 
-```{r ApplyFamily.3, echo=TRUE, eval=TRUE}
+```{r ApplyFamily.3, echo=T, eval=F}
 fNames
 ```
 
 What we will do next is iterate through that list of names and store it in a list. We do that with lapply.
 
-```{r ApplyFamily.4, echo=TRUE, eval=FALSE}
+```{r ApplyFamily.4, echo=T, eval=F}
 HoboList<-lapply(fNames,read.csv, skip=1, header=T)%>% #read hobo data into a list
           lapply(.,"[",,1:3)%>% #Grab only first 3 columns
           lapply(.,setNames, c("idx","DateTime","T_F")) #fix column names
 
-#check to see if we can make this a purrr example?
+
 ```
 
 So now all of those hobo files are available in this list and we made it pretty. So let's redo that previous for loop as an lapply.
@@ -257,15 +282,17 @@ So now all of those hobo files are available in this list and we made it pretty.
 First we can create that summary data
 
 ```{r ApplyFamily.5, echo=TRUE, eval=FALSE}
-OutDat<-lapply(HoboList, function(x){data.frame(gmean=mean(),
-                                     gmin=min(),
-                                     gmax=max(),
-                                     nObs=nrow()
-                                    nDays=(...posix math...)
-                                    )
-               })
-#insert some simplification step
-write.csv(outDat, file.choose(), row.names=F, quote=F)
+OutDat <- lapply(HoboList, function(x) {
+  data.frame(
+    gmean = mean(),
+    gmin = min(),
+    gmax = max(),
+    nObs = nrow(),
+    nDays = ("...posix math...")
+  )
+})
+# insert some simplification step
+write.csv(outDat, file.choose(), row.names = F, quote = F)
 ```
 
 We can then do the flagging step
@@ -279,16 +306,17 @@ lapply(HoboList, function(x){
 ```
 Finally we can do some plotting. 
 ```{r ApplyFamily.7, echo=TRUE, eval=TRUE}
-          library(ggplot2)
-  lapply(HoboList, function(x){
-                p<-ggplot(x, aes(x=DateTime, y=T_F))+
-                   geom_point()+
-                   ggtitle()
-                ggsave(filename=  ,path=  ,plot=p, device="pdf", width=5,height=5,units="in")
-                            
-                #still some stuff to fix here. filename is not defined in the list. List needs to be named.
-                   }
-          )
+library(ggplot2)
+lapply(HoboList, function(x) {
+  p <- ggplot(x, aes(x = DateTime, y = T_F)) +
+    geom_point() +
+    ggtitle()
+  ggsave(
+    filename = , path = , plot = p, device = "pdf",
+    width = 5, height = 5, units = "in"
+  )
+  # still some stuff to fix here. filename is not defined in the list. List needs to be named.
+})
 ```
 
 So how is this different from the super for loop that does everything? 
@@ -307,6 +335,8 @@ do.call(rbind, HoboList)
 And do.call was another example of iteration. That just took all of our files and glued them together instead of having to loop thorugh them and put them together one by one or call separate isntances of rbind. Of course you will want to make sure you know what each list element was before you glue them together.
 
   -purrr - This exists and I know nothing about it. Covered more in depth on day 6 
+
+
 
 ##### Vectorization
 
@@ -391,6 +421,7 @@ So what happened? When we added the vector `[1, 2]` to the vector `[1, 1, 1, 1, 
     -inequalities  ==, <, >, %in%
     -& , |, (maybe get into &&, || )
 
--other control structures to be aware of.
+-other control structures to be aware of?
+    while - it exists
 
 NOT FOR TAB: Break to discuss other hard questions from previous days - especially how you integrate it into iteration.
