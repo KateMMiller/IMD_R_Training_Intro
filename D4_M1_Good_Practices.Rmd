@@ -6,7 +6,7 @@ As you continue to work in R, your code projects will quickly become bigger and 
 
 ##### Organize your files
 
-Like we learned earlier in this class, you should always use RStudio projects to organize your code projects. If you have a lot of files, it's often helpful to include sub-folders within your project folder for things like raw data and final outputs. Avoid using `setwd()` in your code, as this will likely cause your code to break when it's run from a different computer or user account. Instead, make sure any file paths in your code are relative to the project folder. That means that if you have a folder called `data` inside your project folder, you would just refer to it using the path `./data` (the '.' is shorthand for your current working directory). A file inside the `data` folder called `my_raw_data.csv` would have a relative path of `./data/my_raw_data.csv`.
+As we learned earlier in this class, you should always use RStudio projects to organize your code projects. If you have a lot of files, it's often helpful to include sub-folders within your project folder for things like raw data and final outputs. Avoid using `setwd()` in your code, as this will likely cause your code to break when it's run from a different computer or user account. Instead, make sure any file paths in your code are relative to the project folder. That means that if you have a folder called `data` inside your project folder, you would just refer to it using the path `./data` (the '.' is shorthand for your current working directory). A file inside the `data` folder called `my_raw_data.csv` would have a relative path of `./data/my_raw_data.csv`.
 
 ![example of project folder](images/PathExample.PNG)
 
@@ -35,21 +35,19 @@ SpecificConductance_2020 <- dplyr::filter(SpCond_Data_All, WaterYear == 2020)
 
 The code above should work fine, assuming that the datasets `pH_Data_All`, `DO_Data_All`, and `SpCond_Data_All` are defined somewhere. But let's imagine what this code would look like if we translated it into an email. It would go something like this:
 
-*Dear Dr. Hydrologist,*
-
-*I would like a copy of your pH data from 2020. Please send me the pH dataset from 2020. I need your dissolved oxygen data from 2020. Please send me the dissolved oxygen dataset from 2020. I need your specific conductance data from 2020. Please send me the specific conductance dataset from 2020.*
-
-*Best,*
-*An aspiring R programmer*
+>*Dear Dr. Hydrologist,*
+>
+>*I would like a copy of your pH data from 2020. Please send me the pH dataset from 2020. I need your dissolved oxygen data from 2020. Please send me the dissolved oxygen dataset from 2020. I need your specific conductance data from 2020. Please send me the specific conductance dataset from 2020.*
+>
+>---*An aspiring R programmer*
 
 Well, we certainly got the information across. But our collaborator might look at us funny the next time we see them. We only wanted data from one year, but we wrote it six times! Let's make some minor edits.
 
-*Dear Dr. Hydrologist,*
-
-*I need a copy of your most current pH, dissolved oxygen, and specific conductance data. Please send me the 2020 datasets for pH, dissolved oxygen, and specific conductance.*
-
-*Best,*
-*An aspiring R programmer*
+>*Dear Dr. Hydrologist,*
+>
+>*I need a copy of your most current pH, dissolved oxygen, and specific conductance data. Please send me the 2020 datasets for pH, dissolved oxygen, and specific conductance.*
+>
+>---*An aspiring R programmer*
 
 That's a big improvement. We could keep editing but let's call that good enough for now. Translating back into R code, we get something like this:
 
@@ -67,6 +65,6 @@ This is an example of the *DRY (Don't Repeat Yourself) Principle*. If you find y
 
 \*The caveat: Don't optimize your code too early. As with most types of writing, it's usually best to produce a working draft and *then* edit it until you're satisfied with the result. Trying to get it perfect on the first try usually just leads to [analysis paralysis](https://xkcd.com/1445/)! But the more you practice writing DRY code, the more naturally it will come.
 
-There are a number of ways you can structure your code to make it less redundant and save yourself some work. We'll introduce that in the next section, *Control Structures*.
+There are a number of ways you can structure your code to make it less redundant and save yourself some work. We'll talk more about this in *Control Structures*.
 
 

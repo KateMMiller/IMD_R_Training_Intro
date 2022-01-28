@@ -3,16 +3,16 @@ Thomas for, apply family - This is mostly done, needs some code touch up
 
 #### Control Structures 
 <h3> Control Structures</h3>
-What are control structures? The simplest way to think about this is that these are programming elements that control the flow of data in your code dependng on the value of logical conditions. There are two control structures we are going to focus on: `for` loops and `if/else` statements. `for` loops are a control structure that sets the number of times and the data code should perform an operation on. `if/else` statements control what code is run under different conditions. 
+What are control structures? The simplest way to think about this is that these are programming elements that control the flow of data in your code depending on the value of logical conditions. There are two control structures we are going to focus on: `for` loops and `if/else` statements. `for` loops are a control structure that allow you to repeat a section of code multiple times (*without* copy-pasting it over and over!). `if/else` statements control whether or not a section of code is run based on certain conditions.
 
 <h3> if/else Statements </h3>
 Most of you are probably familiar with this. It has 3 pieces (in order):
   
-  1.  A statement ("if") to evaluate as a (T/F), e.g. (x>1) 
-  2.  An action to perform if it is TRUE  
-  3.  An action to perform if it is FALSE 
+  1.  A conditional statement ("if") to evaluate as a (T/F), e.g. `(x>1)` 
+  2.  An action to perform if it is `TRUE`  
+  3.  An action to perform if it is `FALSE` 
   
-On any individual data point or set of data, only two of these code pieces will be applied. The if statement (1) will always be evaluated. Then only the appropriate T or F action (2 or 3) will be applied - the other will be skipped. There are a two different ways to invoke this in R and they do different things:
+On any individual data point or set of data, only two of these code pieces will be applied. The conditional statement (1) will always be evaluated. Then only the appropriate T or F action (2 or 3) will be applied - the other will be skipped. There are a two different ways to invoke this in R and they do different things:
 
 This is the 'vectorized' version - you might use this to recode data. 
 
