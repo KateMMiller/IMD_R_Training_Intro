@@ -4,6 +4,9 @@ output:
     css: custom_styles.css
 title: "NPS IMD Intro to R"
 ---
+```{r globaloptions, include = FALSE}
+knitr::opts_chunk$set(warning=FALSE, message=FALSE)
+```
 
 <h2>NPS Inventory and Monitoring Division Intro to R Training: January 31 -- February 2, 2022</h2> {.tabset .tabset-pills}
 --------------------------------------------------
@@ -72,11 +75,11 @@ title: "NPS IMD Intro to R"
 
 ### Day 3: Data Viz {.tabset}
 
-```{r data_viz1, child = "IMD_D3_M1_Data_Viz.Rmd"}
+```{r data_viz1, child = "IMD_D3_M1_Intro_Data_Viz.Rmd"}
 
 ```
 
-```{r data_viz4, child = "IMD_D3_M4_Data_Viz.Rmd"}
+```{r data_viz4, child = "IMD_D3_M4_Data_Viz_GIS.Rmd"}
 
 ```
 
@@ -98,28 +101,36 @@ title: "NPS IMD Intro to R"
 
 ```
 
+### Resources
+There's a lot of great online material for learning new applications of R. The ones we've used the most are listed below. 
 
-### Useful websites
-There's a lot of great online material for learning new applications of R. The ones I've used the most are listed below. 
-
-<u>Online Books</u><br>
+<h3>Online Books</h3>
 <ul>
-<li><a href="https://r4ds.had.co.nz/">R for Data Science</a> First author is Hadley Wickham, the programmer behind the tidyverse. There's a lot of good stuff in here, including a chapter on using R Markdown, which is what I used to generate the website we used for training.</li>
+<li><a href="https://r4ds.had.co.nz/">R for Data Science</a> First author is Hadley Wickham, the programmer behind the tidyverse. There's a lot of good stuff in here, including a chapter on using R Markdown, which is what we used to generate this training website.</li>
 <li><a href="https://ggplot2-book.org//">ggplot2: Elegant Graphics for Data Analysis</a> A great reference on ggplot2 also by Hadley Wickham.</li> 
-<li><a href="https://bookdown.org/rdpeng/RProgDA/">Mastering Software Development in R</a> First author is Roger Peng, a Biostatistics professors at John Hopkins, who has taught a lot of undergrad/grad students how to use R. He's also one of the hosts of Not So Standard Deviations podcast. I like his intro to ggplot a lot. He's also got a lot of more advanced topics in this book, like making functions and packages.</li>
+<li><a href="https://bookdown.org/rdpeng/RProgDA/">Mastering Software Development in R</a> First author is Roger Peng, a Biostatistics professors at John Hopkins, who has taught a lot of undergrad/grad students how to use R. He's also one of the hosts of Not So Standard Deviations podcast. His intro to ggplot is great. He's also got a lot of more advanced topics in this book, like making functions and packages.</li>
 <li><a href="https://r-pkgs.org/">R Packages</a> Another book by Hadley Wickham that teaches you how to build, debug, and test R packages.</li>
 <li><a href="http://adv-r.had.co.nz/">Advanced R</a> Yet another book by Hadley Wickham that helps you understand more about how R works under the hood, how it relates to other programming languages, and how to build packages.</li>
 <li><a href="https://mastering-shiny.org/">Mastering Shiny</a> And another Hadley Wickham book on building shiny apps.</li>
 </ul>
 
-<u>Other useful sites</u><br>
+<h3>Other useful sites</h3>
 <ul>
-<li><a href="https://stat545.com/index.html">STAT545</a> Jenny Bryan's site that accompanies the graduate level stats class of the same name. I like that she includes topics on best practices for coding, and not just how to make scripts work.</li> 
+<li><a href="https://teams.microsoft.com/l/channel/19%3a278f30e624114373a65d9611498bd4fe%40thread.skype/Community%2520of%2520Practice?groupId=e4a2e021-b4cf-4cf6-acef-d0978b86c1a0&tenantId=0693b5ba-4b18-4d7b-9341-f32f400a5494">NPS_IMD_Data_Science_and_Visualization > Community of Practice</a> is an IMD work group that meets once a month talk about R and Data Science. There are also notes, materials and recordings from previous meetings, a Wiki with helpful tips, and the chat is a great place to post questions or cool tips you've come across. </li>
+<li><a href="https://stat545.com/index.html">STAT545</a> Jenny Bryan's site that accompanies the graduate level stats class of the same name. She includes topics on best practices for coding, and not just how to make scripts work. It's really well done.</li> 
 <li><a href="https://rstudio.com/">RStudio home page</a> There's a ton of info in the Resources tab on this site, including cheatsheets for each package developed by RStudio (ie tidyverse packages), webinars, presentations from past RStudio Conferences, etc.</li>
 <li><a href="https://support.rstudio.com/hc/en-us/articles/201057987-Quick-list-of-useful-R-packages">RStudio list of useful R packages by topic</a></li>
 <li><a href="https://happygitwithr.com/">Happy Git with R</a> If you find yourself wanting to go down the path of hosting your code on github, this site will walk you through the process of linking github to RStudio.</li>
-<li><a href="https://www.r-spatial.org/r/2018/10/25/ggplot2-sf.html">R-spatial mapping in ggplot</a> The r-spatial.org site is a blog with lots of interesting topics covered. The blog I linked to helped me figure out how to map shapefiles in ggplot.</li>
 </ul>
+
+<hr>
+<h3>Resources by Day:</h3>
+
+<h4>Day 3: Data Visualization</h4>
+```{r data_viz_res2, child = "IMD_Resources_D3_Data_Viz.Rmd"}
+
+```
+
 
 ### Code printout {.tabset}
 ```{r Code_printout, child = "IMD_Code_Printout.Rmd"}

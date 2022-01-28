@@ -10,7 +10,7 @@ Most of you are probably familiar with this. It has 3 pieces (in order):
   
   1.  A statement ("if") to evaluate as a (T/F), e.g. (x>1) 
   2.  An action to perform if it is TRUE  
-  3.  An action to perform if it is FALSE
+  3.  An action to perform if it is FALSE 
   
 On any individual data point or set of data, only two of these code pieces will be applied. The if statement (1) will always be evaluated. Then only the appropriate T or F action (2 or 3) will be applied - the other will be skipped. There are a two different ways to invoke this in R and they do different things:
 
@@ -25,23 +25,24 @@ This is not vectorized but is very useful where you need a 'switch'. This can ev
 Let's see how `ifelse` works to recode some data. 
 
 ```{r Day4Recode.1, echo=T, eval=F}
-d<-c(1,2,3,4,100,200,300,400)
-ifelse(d<mean(d)/10, "verify","OK")
+d <- c(1, 2, 3, 4, 100, 200, 300, 400)
+ifelse(d < mean(d) / 10, "verify", "OK")
 ```
 
 Now, let's see what happens if we have some missing data.
 
 ```{r Day4Recode.2, echo=T, eval=F}
-d<-c(1,2,3,4,100,200,300,400,NA)
-ifelse(d<mean(d, na.rm=T)/10, "verify","OK")
-help(ifelse) #so no surprises there...
+d <- c(1, 2, 3, 4, 100, 200, 300, 400, NA)
+ifelse(d < mean(d, na.rm = T) / 10, "verify", "OK")
+help(ifelse) # so no surprises there...
 ```
 
 That `NA`, gets passed through. Maybe we want that, but if we don't we can try to have two nested `ifelse` conditions. 
 
 ```{r Day4Recode.3, echo=T, eval=F}
-ifelse(is.na(d)==T,"verify",
-       ifelse(d<mean(d, na.rm=T)/10,"verify","OK"))
+ifelse(is.na(d) == T, "verify",
+  ifelse(d < mean(d, na.rm = T) / 10, "verify", "OK")
+)
 ```       
 
 Nesting is useful, but chances are if you find yourself nesting more than 2 or 3 conditions deep, there is probably a better way to do things. 
@@ -63,7 +64,7 @@ if(...){thing to do if TRUE
         thing to do if FALSE
         }
 
-This statements expects a single boolean in the if() statement. Sometimes I like to use this to create switches or bypasses when I am writing loops/iteration. For example: If I have a dataframe that is non-empty, then do the analysis. If the data frame is empty do something else. 
+This statements expects a single boolean in the `if()` statement. Sometimes I like to use this to create switches or bypasses when I am writing loops/iteration. For example: If I have a dataframe that is non-empty, then do the analysis. If the data frame is empty do something else. 
 
 ```{r Day4Flagging.1, echo=T, eval=F}
 d<-c(1:4,1:4*100,NA)
@@ -133,7 +134,7 @@ str
 head
 
 
-```{r ForLoop.2, echo=TRUE, eval=TRUE}
+```{r ForLoop.2, echo=TRUE, eval=F}
 library(magrittr)
 library(ggplot2)
 fNames <- paste0(
@@ -178,7 +179,7 @@ for (i in fNames) {
     d <- d %>%
       dplyr::mutate(
         TChangeFlag = ifelse(c(abs(diff(T_F, lag = 1)) > 10, FALSE), "D10", NA),
-        Flag = case_when(
+        Flag = dplyr::case_when(
           is.na(T_F) ~ "MISSING",
           T_F > TempUpper ~ "High",
           T_F < TempLower ~ "Low"
@@ -193,7 +194,7 @@ for (i in fNames) {
     # Make some quick plots for visual QA/QC
     p <- ggplot(d, aes(x = DateTime2, y = T_F)) +
       geom_point(size = 0.5) +
-      ggtitle(fname)
+      ggtitle(fName)
     ggsave(
       filename = gsub(".csv", "_plot.pdf", fName), path = OutPath, device = "pdf",
       plot = p,
@@ -202,7 +203,7 @@ for (i in fNames) {
     # What to do when the dataframe is empty.
   } else {
     OutDat <- data.frame(
-      FileName = fname,
+      FileName = fName,
       T_F_mean = NA,
       T_F_min = NA,
       T_F_max = NA,
@@ -247,7 +248,7 @@ apply(d[],MARGIN=1, FUN=mean)
 ``` 
  
  Now, let's calculate the mean value for each sampling year across sites
-```{r ApplyFamily.1, echo=T, eval=F}   
+```{r ApplyFamily.2, echo=T, eval=F}   
 apply(d[],MARGIN=2, FUN=mean)
 #need data still
 ```
@@ -256,7 +257,7 @@ Let's change gears a little bit. Let's look at lapply. Let's review what a list 
 
 In the previous for loop we operated on our hobos one at a time. What we can do instead is open all of the data into an object and operate it on it as needed. 
 
-You should still have fname hanging out somewhere. This is that list of hobos. 
+You should still have fName hanging out somewhere. This is that list of hobos. 
 
 ```{r ApplyFamily.3, echo=T, eval=F}
 fNames
@@ -292,7 +293,7 @@ write.csv(outDat, file.choose(), row.names = F, quote = F)
 
 We can then do the flagging step
 
-```{r ApplyFamily.6, echo=TRUE, eval=TRUE}
+```{r ApplyFamily.6, echo=TRUE, eval=F}
 lapply(HoboList, function(x){
  #put that mutate-unite thing in here                
 }
@@ -300,7 +301,7 @@ lapply(HoboList, function(x){
 #need to put in the on the fly naming with the orignal file names.
 ```
 Finally we can do some plotting. 
-```{r ApplyFamily.7, echo=TRUE, eval=TRUE}
+```{r ApplyFamily.7, echo=TRUE, eval=F}
 library(ggplot2)
 lapply(HoboList, function(x) {
   p <- ggplot(x, aes(x = DateTime, y = T_F)) +
@@ -323,7 +324,7 @@ So how is this different from the super for loop that does everything?
 
 Let's say you don't like the list structure and you need to crate a dataframe (e.g. for a multi-panel GGplot). It is pretty simple to collapse a list into a dataframe assuming you are collapsing things that are equivalent dimensions.
 
-```{r ApplyFamily.8, echo=TRUE, eval=TRUE}
+```{r ApplyFamily.8, echo=TRUE, eval=F}
 do.call(rbind, HoboList) 
 ```
 
