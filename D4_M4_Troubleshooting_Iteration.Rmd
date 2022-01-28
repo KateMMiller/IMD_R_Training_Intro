@@ -117,7 +117,7 @@ SummaryData <- rbind(SummaryData, OutDat)
 !!!!!!!!!!!!!!!!!Add breakpoints discussion here!!!!!!!!!!!!!!!!!!!!!!!!
 -live demo
 -use uncommented out look an do some screenshots
-    -to link to an image, use ![alt-text goes here](image url goes here)
+    <!-- -to link to an image, use ![alt-text goes here](image url goes here) -->
 
 
 **Step away from your data** - Sometimes we let our data over-complicate the coding task. There are few coding sessions where I don't end up trying to see if I can make something work on a built in dataset (e.g. `mtcars`). Often when trying to do the same thing, but with different data, I end up seeing and solving the problem. This approach also forces you to reduce your code to the bare basics... which you may need when you go to ask for help.
