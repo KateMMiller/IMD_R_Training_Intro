@@ -178,7 +178,7 @@ for (i in fNames) {
     d <- d %>%
       dplyr::mutate(
         TChangeFlag = ifelse(c(abs(diff(T_F, lag = 1)) > 10, FALSE), "D10", NA),
-        Flag = case_when(
+        Flag = dplyr::case_when(
           is.na(T_F) ~ "MISSING",
           T_F > TempUpper ~ "High",
           T_F < TempLower ~ "Low"
@@ -202,7 +202,7 @@ for (i in fNames) {
     # What to do when the dataframe is empty.
   } else {
     OutDat <- data.frame(
-      FileName = fname,
+      FileName = fName,
       T_F_mean = NA,
       T_F_min = NA,
       T_F_max = NA,
