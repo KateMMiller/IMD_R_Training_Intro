@@ -5,7 +5,7 @@ body {
 
 h1 {
    font-family: "Arial",Arial,sans-serif;
-   font-size: 24px;
+   font-size: 22px;
    padding-top:5px;
    margin-top:5px;
 }
@@ -31,7 +31,7 @@ h3.title{
 
 h4 {
   font-family: "Times New Roman",Times, sans-serif;
-  font-size:18px;
+  font-size:16px;
   font-style: italic;
 }
 
@@ -39,6 +39,12 @@ h5 {
   font-family: "Arial",Arial,sans-serif;
   font-size: 18px;
   font-weight: bold;
+}
+
+h6 {
+  font-family: "Arial",Arial,sans-serif;
+  font-size: 14px;
+  font-style: underline;
 }
 
 hr {
