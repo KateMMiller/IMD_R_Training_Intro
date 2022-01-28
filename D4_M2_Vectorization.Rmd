@@ -71,21 +71,39 @@ Operating on vectors of different lengths is often useful. However, it's easy to
 
 As you may remember from working with data frames, lots of operations in R are vectorized, not just basic arithmetic. This includes comparison operators (`<`, `>`, `==`, `<=`, `>=`, `!=`), logical operators (`&`, `|`, `!`), and many functions (`is.na()`, `gsub()`, `grep()`, and too many others to list).
 
-Here's another example. It's fairly common to end up with data that was entered as text and has extra whitespace.
+Here's another example. It's fairly common to end up with data that was entered as text and has extra whitespace:
 
-```{r LogicalVectorOps}
-# Create two random vectors of length 10 containing integers from 1 to 20
-
+```{r MessyData}
+messy_data <- tibble::tibble(plot_id = c("1 ", " 2 ", " ", " 4", "5."),
+                             year_monitored = c(2019, 2019, 2019, 2020, 2020))
+messy_data
 ```
 
+The `dplyr` way to fix this might look something like this:
 
+```{r FixMessyDataDplyr}
+clean_data <- messy_data %>% dplyr::mutate(plot_id = trimws(plot_id),  # Get rid of leading and trailing spaces
+                                           plot_id = gsub(pattern = ".", replacement = "", x = plot_id, fixed = TRUE)) %>%  # Replace the stray "." with nothing
+  dplyr::filter(plot_id != "") %>%
+  dplyr::mutate(plot_id = as.integer(plot_id))
+clean_data
+```
 
-**Consider mentioning how to do matrix math if you don't want vectorization
+`trimws`, `gsub`, and `!=` are all vectorized operations being applied to the column plot_id. Let's see what's happening to just the `plot_id` column step by step under the hood.
 
-    -gsub, grep family (avoid regex)
-    -basic vector math
-      -rowsums vs colsums
-    -inequalities  ==, <, >, %in%
-    -& , |, (maybe get into &&, || )
+```{r FixMessyDataVector}
+plot_id_vec <- messy_data$plot_id
+plot_id_vec
+plot_id_vec <- trimws(plot_id_vec)
+plot_id_vec
+plot_id_vec <- gsub(pattern = ".", replacement = "", x = plot_id_vec, fixed = TRUE)
+plot_id_vec
+id_is_valid <- plot_id_vec != ""
+id_is_valid
+plot_id_vec <- plot_id_vec[id_is_valid]
+plot_id_vec
+plot_id_vec <- as.integer(plot_id_vec)
+```
 
-NOT FOR TAB: Break to discuss other hard questions from previous days - especially how you integrate it into iteration.
+Vectorization in R is a powerful tool. However, not everything is vectorized. One common example is `read.csv()`. `read.csv()` takes the path to a .csv file and returns a data frame of the data in the csv. But what if the data is stored across multiple .csv files? `read.csv(c(file_path_1, file_path_2, file_path_3))` doesn't work because `read.csv` isn't vectorized. Fortunately, vectorization isn't the only way to avoid repeating yourself in R.
+
