@@ -66,7 +66,7 @@ Use the table above to answer these questions:
 2. What product and month had the lowest average monthly revenue?
 
 <br>
-
+<details open><summary class='drop2'>Table as Heat Map</summary>
 Let's display the table as a heat map, with larger numbers represented by darker color cells. Now how quickly can we answer those same two questions? What patterns can we see in the heat map that were not obvious in the table above?
 
 ```{r acme_heatmap, echo = FALSE, fig.width = 9, fig.align="center", message = FALSE, warning = FALSE}
@@ -84,7 +84,8 @@ ggplot(acme, aes(x=month, y=product, fill=revenue)) +
   theme_bw(base_size = 12) +
   facet_grid(rows = vars(category), scales = "free") # set scales to free so each facet only shows its own levels
 ```
-
+</details>
+<br>
 <h3>Example 3</h3>
 
 In 1973, Francis Anscombe published ["Graphs in statistical analysis"](https://garstats.files.wordpress.com/2016/08/anscombe-as-1973.pdf), a paper describing four bivariate datasets with identical means, variances, and correlations.
@@ -104,10 +105,13 @@ sapply(ansc, function(x) c(mean=round(mean(x), 2), var=round(var(x), 2))) %>%
   kableExtra::kable_styling(full_width = F)
 ```
 
+<br>
+<details open><summary class='drop2'>Anscombe data as plots</summary>
 Despite their identical statistics, when we actually plot the data we see the four datasets are very different. 
 
 <center>![](../images/anscombe_plots.png))</center>
  
+</details>
 <br>
 Anscombe's point? TO UNDERSTAND THE DATA, WE MUST PLOT THE DATA!
 <br>
@@ -158,7 +162,7 @@ First steps:
 4. Merge in the gas price data
 5. Check and clean/tidy the data
 
-<h3>Step 1. Load packages</h3>
+<details open><summary class='drop2'>Step 1. Load packages</summary>
 
 ```{r load_packages, results = FALSE, message = FALSE, warning = FALSE}
 # This is a useful chunk of code that installs any missing packages and then loads all of them. Useful if we're sharing code with others who may have older versions of RStudio installed (more recent versions have pop-up prompts that ask if we want to install missing packages)
@@ -172,7 +176,8 @@ if (length(pkgs[!installed_pkgs]) > 0) install.packages(pkgs[!installed_pkgs],de
 lapply(pkgs, library, character.only = TRUE) # ...then load all the packages and their dependencies
 ```
 
-<h3>Step 2. Import and view the data</h3>
+</details>
+<details open><summary class='drop2'>Step 2. Import and view the data</summary>
 
 ```{r import_data, echo = TRUE, message = FALSE, warning = FALSE}
 park_visits <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/national_parks.csv") # visits to US National Parks
@@ -188,7 +193,8 @@ View(park_visits); summary(park_visits)
 View(gas_price); summary(gas_price)
 ```
 
-<h3>Step 3. Extract a subset of data</h3>
+</details>
+<details open><summary class='drop2'>Step 3. Extract a subset of data</summary>
 
 Before we run more detailed data checks, let's extract a subset of the `park_visits` data to work with. 
 
@@ -233,7 +239,8 @@ glimpse(park_sub)
 
 </details>
 
-<h3>Step 4. Merge the `gas_constant` data with the `park_sub` data frame</h3>
+</details>
+<details open><summary class='drop2'>Step 4. Merge the `gas_constant` data with the `park_sub` data frame</summary>
 
 <div class="alert alert-info">
   <strong>CHALLENGE:  Join the `gas_constant` data (from `gas_price` data frame) to `park_sub`, matching records by year. Call the new data frame `joined_dat`.</strong>
@@ -268,7 +275,8 @@ glimpse(joined_dat)
 
 We now have all the data we need in a single data frame.
 
-<h3>Step 5. Check and clean/tidy the data</h3>
+</details>
+<details open><summary class='drop2'>Step 5. Check and clean/tidy the data</summary>
 
 We are primarily using `dplyr` to wrangle data and `ggplot2` to plot data. These two packages are part of the [Tidyverse](https://www.tidyverse.org/packages/) of packages for data science. Tidyverse packages share a common design philosophy centered on ideas like breaking down complex tasks into a series of simpler functions executed in sequence (e.g., piping `%>%`). Functions from tidyverse packages work together most seamlessly and efficiently when data are in a tidy format. Remember that a 'tidy' format means data have one variable per column and one observation per row. 
 
@@ -309,11 +317,18 @@ test_grades <- data.frame(
 )
 ```
 
+<div class = 'boxBorder'>
+<div class = 'row'>
+<div class = 'column3'>
+
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 # Plants 
 knitr::kable(plants, caption = "A) Plants That Grow", align = "c") %>%
   kableExtra::kable_styling(full_width = F)
 ```
+
+</div>
+<div class = 'column3'>
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 # Twitter Likes
@@ -321,15 +336,21 @@ knitr::kable(twitter_likes, caption = "B) Political Twitter Likes", align = "c")
   kableExtra::kable_styling(full_width = F)
 ```
 
+</div>
+<div class = 'column3'>
+
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 # Test Grades
 knitr::kable(test_grades, caption = "C) Test Grades and Lunch", align = "c") %>%
   kableExtra::kable_styling(full_width = F)
 ```
+</div>
+<br>
+</div></div>
 
 What about our `joined_dat` data frame? Is it in 'tidy' format? Yes, it is! No need to pivot_long anything today. But let's make two final changes to the data before we begin plotting. First, we will convert `region` to an ordered factor with more descriptive labels. Second, we will remove park units that don't have visitor data for every year from 2000 to 2015. We will end with a final check of the data to make sure it's ready for plotting.
 
-<h3>Convert `region` to a factor data type</h3>
+<details open><summary class='drop2'>Convert `region` to a factor data type</summary>
 
 Convert the variable `region` to a factor data type and rename and re-order the levels as Pacific West < Intermountain < and Southeast (the default order is alphabetical). This way, bar plots and color legends will order the region levels from west to east instead of alphabetically. 
 
@@ -355,7 +376,8 @@ str(joined_dat$region) # shows the values are coded as integers indicating facto
 summary(joined_dat) # the summary for `region` now counts the number of times each factor level occurs
 ```
 
-<h3>Remove park units with missing years of data</h3>
+</details>
+<details open><summary class='drop2'>Remove park units with missing years of data</summary>
 
 We will be creating plots to see if trends in park visits differ by region or unit type, so we want to exclude park units for which we don't have complete data for the years 2000 to 2015. 
 
@@ -399,7 +421,9 @@ joined_dat %<>%
 
 Note that a report of our findings should explain how and why we selected this subset of data to work with.
 
-<h3>Final data check</h3>
+</details>
+<details open><summary class='drop2'>Final data check</summary>
+
 Always do a final check of the data to look for missing data, duplicated records, funny numbers or category levels, etc. It helps to create summary tables that decompose the data in various ways. These tables can identify oddities (e.g., category levels with only one record) and also give us an idea of the sample sizes we'll be working with if we create plots with subsets of the data. 
 
 <div class="alert alert-info">
@@ -422,5 +446,6 @@ The new data frame (if you have it in wide format) should look like this:
 ```{r view_tab_count, echo = FALSE, message = FALSE, warning = FALSE}
 tab_count
 ```
-
+</details>
+<br>
 We're ready to start plotting the data.
