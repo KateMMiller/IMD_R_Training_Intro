@@ -1,24 +1,24 @@
 body {
   font-family: "TimesNewRoman", TimesNewRoman, serif;
-  font-size: 11px;
+  font-size: 12px;
 }
 
 h1 {
    font-family: "Arial",Arial,sans-serif;
-   font-size: 20px;
+   font-size: 24px;
    padding-top:5px;
    margin-top:5px;
 }
 
 h2 {
   font-family: "Arial",Arial,sans-serif;
-  font-size: 16px;
+  font-size: 20px;
   font-weight: bold;
 }
 
 h3 {
   font-family: "Arial",Arial,sans-serif;
-  font-size:14px;
+  font-size:16px;
   font-style: italic;
   font-weight: bold;
   padding:0px 0px 0px 0px;
@@ -31,16 +31,14 @@ h3.title{
 
 h4 {
   font-family: "Times New Roman",Times, sans-serif;
-  font-size:14px;
+  font-size:18px;
   font-style: italic;
-  padding-bottom:0px;
 }
 
 h5 {
-  font-family: "Times New Roman",Times,sans-serif;
-  font-size:12px;
-  padding:0px 0px 0px 0px;
-  margin:0px 0px 0px 0px;
+  font-family: "Arial",Arial,sans-serif;
+  font-size: 18px;
+  font-weight: bold;
 }
 
 hr {
@@ -65,6 +63,15 @@ hr {
   margin:0px 0px 0px 0px;
 }
 
+.drop2{
+  font-family: "Arial",Arial,sans-serif;
+  font-size:14px;
+  font-style: italic;
+  font-weight: bold;
+  padding:0px 0px 0px 0px;
+  margin:0px 0px 0px 0px;
+}
+
 .ques2{
   font-family: "Arial",Arial,sans-serif;
   font-size: 14px;
@@ -84,4 +91,22 @@ font-size: 16px;
 
 .title{
   display:none;
+}
+
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  padding: 0 4px;
+}
+
+/* Create two equal columns that sits next to each other */
+.column {
+  flex: 30%;
+  padding: 0 4px;
+}
+
+.column img {
+  margin-top: 8px;
+  vertical-align: middle;
 }

@@ -1,0 +1,105 @@
+#### Data structures
+
+We're going to take a little detour into data structures at this point. It'll all tie back in to our tree data.
+
+The data frame we just examined is a type of data structure. A data structure is what it sounds like: it's a structure that holds data in an organized way. There are multiple data structures in R, including vectors, lists, arrays, matrices, data frames, and tibbles (more on this unfortunately-named data structure later). Today we'll focus on vectors and data frames.
+
+##### Vectors
+
+Vectors are the simplest data structure in R. You can think of vectors as one column of data in an Excel spreadsheet, and the elements are each row in the column. Here are some examples of vectors:
+
+```{r Vectors}
+digits <- 0:9  # Use x:y to create a sequence of integers starting at x and ending at y
+digits
+is_odd <- rep(c(FALSE, TRUE), 5)  # Use rep(x, n) to create a vector by repeating x n times 
+is_odd
+shoe_sizes <- c(7, 7.5, 8, 8.5, 9, 9.5, 10, 10.5, 11, 11.5)
+shoe_sizes
+favorite_birds <- c("greater roadrunner", "Costa's hummingbird", "kakapo")
+favorite_birds
+```
+
+Note the use of `c()`. The `c()` function stands for *combine*, and it combines elements into a single vector. The c() function is a fairly universal way to combine multiple elements in R, and you’re going to see it over and over.
+
+Let's play around with vectors a little more. We can use `is.vector()` to test whether something is a vector. We can get the length of a vector with `length()`. Note that single values in R are just vectors of length one.
+
+```{r Vectors_II}
+is.vector(digits)  # Should be TRUE
+is.vector(favorite_birds)  # Should also be TRUE
+
+length(digits)  # Hopefully this is 10
+length(shoe_sizes)
+
+# Even single values in R are stored as vectors
+length_one_chr <- "length one vector"
+length_one_int <- 4
+is.vector(length_one_chr)
+is.vector(length_one_int)
+length(length_one_chr)
+length(length_one_int)
+```
+
+In the examples above, each vector contains a different type of data. `digits` contains integers, `is_odd` contains logical (true/false) values, `favorite_birds` contains text, and shoe_sizes contains decimal numbers. That's because a given vector can only contain a single type of data. In R, there are four *data types* that we will typically encounter:
+
+  - **character**  Regular text, denoted with double or single quotation marks (e.g. `"hello"`, `"3"`, `"R is my favorite programming language"`)
+  - **numeric**  Decimal numbers (e.g. `23`, `3.1415`)
+  - **integer**  Integers. If you want to explicitly denote a number as an integer in R, append `L` to it or use `as.integer()` (e.g. `5L`, `as.integer(30)`).
+  - **logical**  True or false values (`TRUE`, `FALSE`). Note that `TRUE` and `FALSE` must be all-uppercase.
+  
+There are two more data types, complex and raw, but you are unlikely to encounter these so we won't cover them here.
+
+You can use the `class()` function to get the data type of a vector:
+
+```{r}
+class(favorite_birds)
+class(shoe_sizes)
+class(digits)
+class(is_odd)
+```
+
+If you need to access a single element of a vector, you can use the syntax `my_vector[x]` where `x` is the element's *index* (the number corresponding to its position in the vector). You can also use a vector of indices to extract multiple elements from the vector. Note that in R, indexing starts at 1 (i.e. `my_vector[1]` is the first element of `my_vector`). If you've coded in other languages, you may be used to indexing starting at 0.
+
+```{r SubsettingVectors}
+second_favorite_bird <- favorite_birds[2]
+second_favorite_bird
+top_two_birds <- favorite_birds[c(1,2)]
+top_two_birds
+```
+
+Logical vectors can also be used to subset a vector. The logical vector must be the length of the vector you are subsetting. 
+
+```{r SubsettingVectorsLogical}
+odd_digits <- digits[is_odd]
+odd_digits
+```
+
+
+##### Data frames
+
+Let's revisit our trees data frame. We've explored the data frame as a whole, but it's often useful to look at one column at a time. To do this, we'll use the `$` syntax:
+
+```{r DataFrameColumns}
+tree_data$Species
+tree_data$Age_yr
+```
+
+You can also use square brackets `[]` to access data frame columns. You can specify columns by name or by index (integer indicating position of column). It's almost always best to refer to columns by name when possible - it makes your code easier to read, and it prevents your code from breaking if columns get reordered.
+
+The square bracket syntax allows you to select multiple columns at a time and to select a subset of rows.
+
+```{r DataFrameColumns_II}
+tree_data[, "Species"]  # Same as tree_data$Species
+tree_data[, c("Species", "Age_yr")]  # Data frame with only Species and Age_yr columns
+tree_data[1:5, "Species"]  # First five elements of Species column
+```
+
+Now that we've learned about vectors, these data frame columns might look familiar. A data frame is just a collection of vectors of the same length, where each vector is a column.
+
+```{r ColumnsAreVectors}
+is.vector(tree_data$Species)
+class(tree_data$Species)
+is.vector(tree_data$Age_yr)
+class(tree_data$Age_yr)
+
+str(tree_data)  # Check out the abbreviations next to the column names: chr, num, and int. These are the data types of the columns.
+```

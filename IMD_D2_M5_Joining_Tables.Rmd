@@ -1,81 +1,348 @@
 ---
-title: "Day 2 Mod 5"
-author: "Laurne Pandori & John Paul Schmit"
+title: "Day 2 Module 5"
+author: "Lauren Pandori & John Paul Schmit"
 date: "12/15/2021"
 output: html_document
 ---
 
 ---
-#### Intro to Data Wrangling  - Joining Tables {.tabset}
+#### Joining Tables {.tabset}
 
 <details open><summary class='drop'> Joining Tables</summary>
 
-This section will go over the use of functions to combine two tables into one.
+Oftentimes we want to use data that is split into two or more data.frames. This section will go over the use of functions to "join" or combine data from two tables into one.
 
 
-We will do:
+We will:
 
-1) bind_rows and bind_columns for simple cases
-2) Dplyr commands: 
-  a) left_join (and right join)
-  b) full join
-  c) inner_join
-  d) semi_join
-  e) anti_join
+1) Use `bind_rows()` and `bind_columns()` for simple cases
+
+2) Used dplyr commands for more complicated joins
+  a) `left_join()` and `right join())`
+  b) `full join()`
+  c) `inner_join()`
+  
+3) Use filtering joins to filter data in one data.frame based on what is in another data.frame 
+  a) `semi_join()`
+  b) `anti_join()`
+
+
+If you're starting with this section, run the following code chunk to get caught up. 
+
+```{r joins_data, echo=TRUE, message = FALSE, warning = FALSE}
+# call packages
+library("readr")
+library("janitor")
+library("tidyverse")
+
+# get data
+park_visits <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/national_parks.csv")
+state_pop <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/state_pop.csv")
+gas_price <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/gas_price.csv")
+
+# cut some columns from park_visits data and make sure year is nuemric data only
+park_visits <- park_visits %>%
+  select(year, parkname, unit_code, state, visitors) %>%
+  filter(year != "Total") %>%
+  mutate(year = as.integer(year))
+```
+
 
 </details>
 <br>
 
-<details open><summary class='drop'> Joining Table - binding</summary>
+<details open><summary class='drop'> Binding Rows and Columns</summary>
 
-bind_rows() and bind_columns() simply merge two data.frames directly
+`bind_rows()` and `bind_columns()` simply merge two `data.frames` directly. 
 
-bind_rows() adds the rows in the second df to the end of the first df
-generally only makes sense if they have identical columns. 
+1. `bind_rows()`
+
+`bind_rows()` adds the rows in the second data.frame to the bottom of the first data.frame. This generally only makes sense if they have many identical columns. Make sure that columns with the same data have the same name! 
+
+```{r bind_rows, eval = TRUE, include = TRUE, message = FALSE, warning = FALSE}
+
+# we'll first make two subsets of the park_visits data
+SHEN_visits <- park_visits %>%
+  # get data from Shenandoah.
+  filter(unit_code == "SHEN")
+
+SHEN_visits
+
+ACAD_visits <- park_visits %>%
+  # get data from Acadia.
+  filter(unit_code == "ACAD")
+
+ACAD_visits
+
+# now we will combine the 2 data.frames into one.
+SHEN_ACAD_visits <- bind_rows(SHEN_visits, ACAD_visits)
+
+# check that data from both parks is there
+SHEN_ACAD_visits %>%
+  pull(unit_code) %>%
+  table()
+
+rm(SHEN_ACAD_visits, SHEN_visits, ACAD_visits)
+```
+
+You generally would not split up a data.frame and then put it together again like this, but it can be useful if you have data that has the same data structure but starts out broken up by site, date, park etc. and you wish to combine it into one data.frame.
+
+2. `bind_columns()`
+
+`bind_columns()` adds the columns from the second data.frame to the right of the first data.frame. 
 
 
-bind_columns() adds the colunms from the second df to the right of the 
-first df
-generally only makes sense if rows mean the same things and are in the same order'
-in each df. 
+```{r bind_columns, eval = TRUE, include = TRUE, message = FALSE, warning = FALSE}
+
+# we'll first make two subsets of the park_visits data
+visits_left <- park_visits %>%
+  # get first 2 columns.
+  select(year, parkname)
+
+visits_left
+
+visits_right <- park_visits %>%
+  #  get last 3 columns.
+  select(unit_code, state, visitors)
+
+visits_right
+
+visits_bound <- bind_cols(visits_left, visits_right)
+
+visits_bound
+
+rm(visits_left, visits_right, visits_bound)
+```
+
+`bind_columns()` assumes that the rows are in the same order in each data.frame, and that there are no rows in one data.frame that are missing in the other. Unless you are sure that these are true, you should avoid using this function. 
 
 </details>
 <br>
 
-<details open><summary class='drop'> Joining Table - left and right joins</summary>
+<details open><summary class='drop'> `bind_rows()` challenge </summary>
 
-left_join() and right_join()
-take all rows from one df and join with matching rows in other df
-indicate key columns in the command
-order of rows is not relevant
-Ok if some rows don't match or there are double matches
+Using the `park_visits` data, make 2 smaller `data.frames`:
 
-examples
-</detials>
-<br>
+1) Atlantic will have just  data from Puerto Rico (PR) and the Virign Islands (VI).
+2) Pacific will just have data from American Samoa (AS), Guam (GU) and Hawaii (HI)
 
+Then, using `bind_rows()` combine the 2 data.frames.
 
-<details open><summary class='drop'> Joining Table - full and inner joins</summary>
-
-inner_join() - only rows that have  matches in both data frames are kept
-full_join() you get all the rows from both datasets even if some don't match.
-
-examples
-</details>
-<br>
-
-<details open><summary class='drop'> Joining Table - filtering joins</summary>
-
-These are not true joins.
-Rather they filter a table based on data in another table
-
-semi_join()  Only keep data from table 1 that has a match in table 2 
-
-anti_join() only keep data in table 1 that does not have a match in table 2
-
-examples
 
 </details>
 <br>
+<details><summary class='drop'> bind_rows Solution </summary>
 
+```{r bind_rows_solution, eval = TRUE, include = TRUE, message = FALSE, warning = FALSE}
+
+# Atlantic islands
+Atlantic <- park_visits %>%
+  filter(state %in% c("PR", "VI"))
+# Pacific Islands
+Pacific <- park_visits %>%
+  filter(state %in% c("AS", "GU", "HI"))
+
+# All islands
+Islands <- bind_rows(Atlantic, Pacific)
+
+
+rm(Atlantic, Pacific, Islands)
+
+```
+</details>
+<br>
+
+
+<details open><summary class='drop'> Basic Joins - `left_join()` and `right_join()`</summary>
+
+`left_join()` and `right_join()` are a safer way to join columns from one data.frame to the columns in another.
+
+For either of these functions, you need to specify one or more key columns using the by argument. Key columns are the data that is used to determine which rows in once data.frame match the rows in the other. The order of the rows in the data.frames does not matter.
+
+The syntax is `left_join(x,y, by="name")`   where `x` and `y` are `data.frames`.
+
+The only difference between `left_join()` and `right_join()` is what happens when the rows in the data.frames don't match up one to one. `left_join()` keeps all the rows in `x` and drops any rows in `y` that don't match, while `right_join()` keeps all the rows in `y` and drop any rows in `x` that don't match. 
+
+Let's combine the `gas_price` data with the `state_pop` data. The gas price data does not vary by state, so we just have to match the data by year. In order to make the way these functions work a little clearer, we will first filter the `state_pop` data to only include data before 2000, so that there is less of an overlap between the 2 data sources. 
+
+```{r left_join, eval = TRUE, include = TRUE, message = FALSE, warning = FALSE}
+# filter the state data
+state_pop2 <- state_pop %>% filter(year < 2000)
+
+# left_join example
+state_pop_gas1 <- left_join(
+  x = state_pop2, # first data.frame
+  y = gas_price, # second data.frame
+  by = "year" # key column
+)
+
+state_pop_gas1
+```
+A couple of thing to notice. The `state_pop_gas1` `data.frame` has 5100 rows because that is what is in the `state_pop2` `data.frame`. Every year is repeated 51 times (once for each state + DC) so the gas price data for a given year gets repeated 51 times as well. The `gas_price` data only goes back to 1929, so for years before that, the data just has `NA` for gas prices.
+
+Here is the exact same thing, but this time using `right_join()`
+
+```{r right_join, eval = TRUE, include = TRUE, message = FALSE, warning = FALSE}
+
+# left_join example
+state_pop_gas2 <- right_join(
+  x = state_pop2, # first data.frame
+  y = gas_price, # second data.frame
+  by = "year" # key column
+)
+
+state_pop_gas2
+
+```
+
+Now the data is very different. It has 3637 rows, which seems pretty random. What has happened is:
+
+1) All data pre-1929 was dropped.
+2) Data for the 71 years from 1929 to 1999 has been repeated 51 times to match the 51 states (=3621 records).
+3) The years 2000 to 2015 (15 records) each appear once as there is no matching data in the `state_pop2` `data.frame`.
+
+So, all the data from `gas_price` is present, if necessary it was repeated to match up with the `state_pop2` data.
+
+</details>
+<br>
+
+<details open><summary class='drop'> Basic Joins - `inner_join()` and `full_join()`</summary>
+
+
+In the previous section we used left and right joins to get all of the data from one data.frame with matching data from a second `data.frame`. Now we will look at 2 other joins:
+
+1) `inner_join()` - only rows that have matches in both `data.frames` are kept
+2) `full_join()` - you get all the rows from both datasets even if some don't match.
+
+inner join:
+```{r inner_join, eval = TRUE, include = TRUE, message = FALSE, warning = FALSE}
+# inner_join example 
+
+state_pop_gas3 <- inner_join(
+  x = state_pop2, # first data.frame
+  y = gas_price, # second data.frame
+  by = "year" # key column
+)
+
+state_pop_gas3
+
+```
+
+<br>
+
+Now the data.frame has 3621 rows = there are 71 years of data from 51 states. This is the smallest `data.frame` from these joins. The years in `state_pop_gas3` are only those that are found in both `data.frames`. 
+
+
+full join:
+```{r full_foin, eval = TRUE, include = TRUE, message = FALSE, warning = FALSE}
+# full_join example 
+
+state_pop_gas4 <- full_join(
+  x = state_pop2, # first data.frame
+  y = gas_price, # second data.frame
+  by = "year" # key column
+)
+
+state_pop_gas4
+
+rm(state_pop_gas1, state_pop_gas2, state_pop_gas3, state_pop_gas4)
+
+```
+This `data.frame` has 5116 rows, there most of all the `data.frames`. This includes all data from either `data.frame` regardless of if there is a match.
+
+</details>
+<br>
+
+
+<details open><summary class='drop'> Basic Joins Challenge </summary>
+
+Using the `park_visits` and the `state_pop` data create a new `data.frame` with all the data from `park_visits` and any matching data from `state_pop`.
+
+
+Hint if you need to use 2 columns as keys the you write the `by=` argument like so: `by=c("Column1","Column2")`.
+
+</details>
+<br>
+<details><summary class='drop'> Basic Join Solution </summary>
+
+```{r basic_join_solution, eval = TRUE, include = TRUE, message = FALSE, warning = FALSE}
+
+park_visits_pop <- left_join(park_visits, state_pop, by = c("state", "year"))
+
+rm(park_visits_pop)
+
+```
+</details>
+<br>
+
+<details open><summary class='drop'> Filtering Joins </summary>
+
+Sometimes you don't want to combine two tables, but you do want to filter one table so that it only has data that can match data in another table. `semi_join()` is used for this
+
+semi join:
+```{r semi_join, eval = TRUE, include = TRUE, message = FALSE, warning = FALSE}
+# semi_join example 
+
+state_pop_gas5 <- semi_join(
+  x = state_pop2, # first data.frame
+  y = gas_price, # second data.frame
+  by = "year" # key column
+)
+
+state_pop_gas5
+
+```
+
+The columns in state_pop_gas4 are the same that are in `state_pop2`. However,all the data from year prior to 1929 has now been removed, because pre-1929 data is not in the `gas_price` data. 
+
+
+`anti_join()` is the opposite of `semi_join()`. It will keep the data one `data.frame` that does not have a match in the second `data.frame`.
+
+anti_join:
+```{r anti_join, eval = TRUE, include = TRUE, message = FALSE, warning = FALSE}
+# anti_join example 
+
+state_pop_gas6 <- anti_join(
+  x = state_pop2, # first data.frame
+  y = gas_price, # second data.frame
+  by = "year" # key column
+)
+
+state_pop_gas6
+
+# clean up
+rm(state_pop2, state_pop_gas1, state_pop_gas2, state_pop_gas3, state_pop_gas4, state_pop_gas5, state_pop_gas6)
+
+```
+`state_pop_gas_6` only has 1479 rows, because it only contains data from before 1929 when the `gas_price` data starts. 
+
+</details>
+<br>
+
+<details open><summary class='drop'> Filtering Joins Challenge </summary>
+
+Filter the park_visits data so that it only contains data that can be joined with the data in and the state_pop data create a new `data.frame` with all the data from `park_visit` and any matching data from `state_pop` and `gas_price`. 
+
+Note that the `state_pop` data has some `NA`s for population for Alaska and Hawaii prior to 1949. For a bigger challenge, don't include data those state / year combinations in your final data set.
+
+Hint: the function `is.na(data)` will be `TRUE` when a value is `NA`. If you put an exclamation mark in front `!is.na(data)` it will tell you when the values are not `NA`. 
+
+</details>
+<br>
+<details><summary class='drop'> Filtering Joins Solution </summary>
+
+```{r eval = TRUE, include = TRUE, message = FALSE, warning = FALSE}
+
+## In this case we filter out the NA values in the semi_join function. You could also filter them our first and save that to a new data.frame and then do the join.
+
+park_visits_filtered<-semi_join(park_visits, state_pop %>% filter(!is.na(pop)), by=c("state", "year")) %>% 
+  semi_join(gas_price, by="year")
+
+park_visits_filtered
+
+
+rm(park_visits_filtered)
+```
+</details>
+<br>
 

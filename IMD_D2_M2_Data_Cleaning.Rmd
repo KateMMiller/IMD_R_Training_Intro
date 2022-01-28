@@ -1,61 +1,159 @@
 ---
-title: "Day 2 Mod 2"
-author: "Laurne Pandori & John Paul Schmit"
+title: "Day 2 Module 2"
+author: "Lauren Pandori & John Paul Schmit"
 date: "12/15/2021"
 output: html_document
 ---
 
-#### Intro to Data Wrangling  - Data Cleaing {.tabset}
+#### Data Cleaing {.tabset}
 
 <details open><summary class='drop'> Data Cleaning</summary>
 
-  Data wrangling is all the steps you have to take to prepare your data for analysis or plotting. Data munging or data cleaning are other terms used to describe this process.
+  Data wrangling is all the steps you have to take to prepare your data for analysis or plotting. Data munging or data cleaning are other terms used to describe this process.Material presented today can be found in Hadley Wickham's book "R for Data Science", which is free and online. <https://r4ds.had.co.nz/wrangle-intro.html>
 
-Material presented today can be found in Hadley Wickham's book "R for Data Science", which is free and online.
-<https://r4ds.had.co.nz/wrangle-intro.html>
+If you're starting from this tab of the lesson, you'll need to load two packages before proceeding.
 
-*note to self - drop link to book in the chat*
-
-Three Major Components to Data Wrangling
-
-- Step 1: Import (covered yesterday)
-- Step 2: Transform (get data in the form you'd like it)
-</details>
-<br>
-
-<details open><summary class='drop'> Topics</summary>
-Topics - notes
-
-  
-  Covered in Day 1?
-  
-- Getting familiar with data: glance, head, View, etc.
-- Parsing columns, data types
-- Numbers that don't mean numbers (ex - -99 = no data)
-
-Day 2 Topics: 
-
-- Consistent column names (take or leave) - packages aren't perfect; if have similar column names, can do by hand
-- The pipe operator '%>%' or '|>' (shortcuts)
-- Dplyr commands: filter (w/ boolean operators), arrange, select, mutate, rename, pull, table
-- Think of commands as verbs that do a thing, with pipes that string them together
-- What to do with NA's? - na.rm, na.omit, etc.
-- Group mutate/group summarize
-- Joining datasets (rbind + xx_join)
-- Pivoting
-
-</details>
-<br>
- 
-<details open><summary class='drop'> Tidying Data</summary>
-Tidying Data - Row/Column Names
-
-Sometimes you get data where the column names are messy...
-
-```{r, echo = TRUE}
-
-
-
+```{r echo=TRUE, message = FALSE, warning = FALSE}
+library('janitor')
+library('tidyverse')
 ```
 
-This section continues with cleaning data. 
+Major Components to Data Wrangling
+
+- Step 1: Import (covered yesterday)
+- Step 2+3: Tidy & Transform (get data into a useful format)
+
+</details>
+<br>
+</details><br><details open><summary class='drop'> Column Names</summary>
+
+Sometimes you get data where the column names are messy. For an example of data that needs tidying before exploration and analyses, we'll use fake data. Copy + paste the code chunk below into your script, and run it in the console to generate a dataframe called "messy_data". 
+
+Here, we'll clarify that we are using the word "data.frame" or "dataframe" to describe the data. The word "tibble" also shows up. We'll use these terms interchangeably.
+
+```{r, echo = TRUE}
+messy_data <- tibble(TrailName = c('Bayside', 'Coastal', 'Tidepools', 
+                                   'Monument', 'Tidepools', NA),
+                     Visitor_count = c(200, 300, 400, 500, 400, NA),
+                     `empty row` = NA)
+```
+
+This data.frame captures the hypothetical number of visitors across four trails at a park. There are a few qualities that make it difficult to interpret. Seeing this data, what would you change to make it most consistent?
+
+```{r, echo = TRUE}
+messy_data
+```
+
+There are four things I suggest fixing with these data: 
+
+1. The column names are inconsistently formatted
+2. There is an empty row
+3. There is an empty column
+4. There is a duplicated row
+
+The Janitor package has ways to fix all of these data situations and aid in data cleaning. Let's proceed with changing the column names.
+
+The clean_names() function in the janitor package will consistently format column names.
+
+```{r, echo = TRUE}
+clean_data <- clean_names(messy_data)
+clean_data
+```
+</details>
+<br>
+<details open><summary class='drop'> Empty Rows and Columns </summary>
+
+Now, we'll deal with the empty row and empty column. To remove empty rows or columns, we can use the remove_empty() function.
+
+The arguments for the function are as follows: 
+
+```{r eval=FALSE, include=TRUE}
+remove_empty(
+  # first argument is the data
+  dat, 
+  # the next specifies if you want to get rid of empty rows, columns, or both
+  which = c("rows", "cols"), 
+  # this last one asks whether (TRUE) or not (FALSE) you want R to tell you which rows or columns were removed
+  quiet = TRUE)
+```
+
+Let's give it a try
+
+Removing empty rows
+```{r, echo = TRUE}
+clean_data2 <- remove_empty(clean_data, which = c('rows'), quiet = FALSE)
+clean_data2
+```
+
+Removing empty rows and columns
+```{r, echo = TRUE}
+clean_data2 <- remove_empty(clean_data, which = c('rows', 'cols'), quiet = TRUE)
+clean_data2
+```
+</details>
+<br>
+<details open><summary class='drop'> The Pipe - Sequences of Functions </summary>
+
+
+What happens if you'd like to both clean_names() and remove_empty() on the same data?
+
+Solution 1 - run as a sequence
+
+```{r, echo = TRUE}
+clean_data <- clean_names(messy_data)
+clean_data <- remove_empty(clean_data, which = c('rows', 'cols'), quiet = TRUE)
+clean_data
+```
+
+Solution 2 - use the pipe operator
+
+Pipe operators (%>% or |>) can be read like the word "then".
+For example, clean_names() %>% remove_empty() can be read as "clean names, then remove empty".
+They allow for a more clean workflow.
+
+```{r, echo = TRUE}
+clean_data <- clean_names(messy_data) %>%
+              remove_empty(which = c('rows', 'cols'), quiet = TRUE)
+clean_data
+# note that replacing %>% with |> also works
+```
+
+Note that there is no data argument in the remove_empty() function. This is because, when using a pipe, the data argument is inherited from the prior function.
+
+</details>
+<br>
+<details open><summary class='drop'> Removing Duplicate Entries </summary>
+
+
+A final function we'll discuss is distinct() from the dplyr package, which is park of tidyverse. It removes duplicate rows from data.
+
+```{r, echo = TRUE}
+clean_data <- clean_names(messy_data) %>%
+              remove_empty(which = c('rows', 'cols'), quiet = TRUE) %>%
+              distinct()
+clean_data
+```
+
+A word of caution - sometimes you may not want to remove duplicate rows, or may not want to remove empty rows, because they are important to the data. You know your data best. Use functions responsibly. 
+
+</details>
+<br>
+<details open><summary class='drop'> Challenge </summary>
+
+The code chunk below creates messy data, called "messy_data2". Use functions from the Janitor package to tidy the data, and name the result "clean_data2". See if you can use the pipe operator to streamline the script.  
+
+```{r, echo = TRUE}
+messy_data2 <- tibble(`Park Code` = c(NA, NA, 'CABR', 'CHIS', 'SAMO', 'SAMO'),
+                     visitor_count = c(NA, NA, 400, 500, 400, 400),
+                     `empty row` = NA)
+```
+
+</details>
+<br>
+<details open><summary class='drop'> Solution </summary>
+
+```{r, echo = TRUE}
+clean_data2 <- clean_names(messy_data2) %>%
+               remove_empty(which = c('rows', 'cols'), quiet = TRUE) %>%
+               distinct()
+```

@@ -2,109 +2,96 @@
 output: 
   html_document:
     css: custom_styles.css
-title: "R training for ACAD"
+title: "NPS IMD Intro to R"
 ---
 
-ACAD R Training: November 3 -- 5, 2020 {.tabset .tabset-pills}
+<h2>NPS Inventory and Monitoring Division Intro to R Training: January 31 -- February 2, 2022</h2> {.tabset .tabset-pills}
 --------------------------------------------------
+
 ### Prep for Training{.tabset}
 
-```{r Install_instructions, child = "D0_Install_R_and_RStudio.Rmd"}
+```{r Install_instructions, child = "IMD_D0_Install_R_and_RStudio.Rmd"}
 
 ```
 
-### Day 1{.tabset}
+### Day 1: Intro to R {.tabset}
 
 ```{r Intro_to_R_tab, child = "D1_M1_Intro_to_R_tab.Rmd"}
 
 ```
 
-```{r Project_setup, child = "D1_M2_Project_and_file_setup.Rmd"}
+```{r Start_coding, child = "D1_M2_Lets_start_coding.Rmd"}
 
 ```
 
-```{r Getting_help, child = "D1_M3_Getting_help.Rmd"}
+```{r Vars_Fns, child = "D1_M3_Variables_and_functions.Rmd"}
 
 ```
 
-```{r Types_of_data, child = "D1_M4_Types_of_Data.Rmd"}
+```{r Examining_data, child = "D1_M4_Examining_data.Rmd"}
 
 ```
 
-```{r Data_summary_I, child = "D1_M5_Data_summary_I.Rmd"}
+```{r Data_structures, child = "D1_M5_Data_structures.Rmd"}
 
 ```
 
-```{r Data_importing_and_subsetting, child = "D1_M6_Importing_and_Subsetting.Rmd"}
+```{r Working_with_columns, child = "D1_M6_Working_with_columns.Rmd"}
 
 ```
 
-```{r D1_Assignments, child = "D1_Reading_Assignments.Rmd"}
+```{r Basic_data_viz, child = "D1_M7_Basic_data_viz.Rmd"}
 
 ```
 
-
-### Day 2{.tabset}
-```{r Data_wrangling_I, child = "D2_M1_Data_wrangling_I.Rmd"}
+```{r Getting_help, child = "D1_M8_Getting_help.Rmd"}
 
 ```
 
-```{r Joining_dataframes, child = "D2_M3_Joining_dataframes.Rmd"}
+### Day 2: Data Wrangling {.tabset}
+
+```{r Intro_and_Packages, child = "IMD_D2_M1_Intro_and_Packages.Rmd"}
 
 ```
 
-```{r Data_Summary_II, child = "D2_M4_Data_Summary_II.Rmd"}
+```{r Data_Cleaning, child = "IMD_D2_M2_Data_Cleaning.Rmd"}
 
 ```
 
-```{r Saving_data, child = "D2_M5_Saving_data_to_file.Rmd"}
+```{r Data_Wrangling, child = "IMD_D2_M3_Data_Wrangling.Rmd"}
 
 ```
 
-```{r D2_Assignments, child = "D2_Reading_Assignments.Rmd"}
+```{r Data_Reshaping, child = "IMD_D2_M4_Pivoting_Tables.Rmd"}
 
 ```
 
-### Day 3{.tabset}
-
-```{r Data_wrangling_II, child = "D3_M1_Data_wrangling_II.Rmd"}
+```{r D2_Joining_Tables, child = "IMD_D2_M5_Joining_Tables.Rmd"}
 
 ```
 
-```{r Plotting_with_ggplot2, child = "D3_M2_Plotting_with_ggplot2.Rmd"}
+### Day 3: Data Viz {.tabset}
+
+```{r data_viz1, child = "IMD_D3_M1_Data_Viz.Rmd"}
 
 ```
 
-```{r Saving_to_shapefile, child = "D3_M3_Saving_to_shapefile.Rmd"}
+```{r data_viz4, child = "IMD_D3_M4_Data_Viz.Rmd"}
 
 ```
 
-#### The Dream{.tabset}
-When I first started with NETN, the workflow below was how we operated. There's no shame in this workflow, and it's still what a lot of networks do. However, it's time-consuming, requires a lot of human intervention where errors can be introduced, and you nearly have to start from scratch every year you need to update your reports or do a new summary. 
+### Day 4: Best Practices & Wrap-up {.tabset}
 
-<center><img src="./images/DataWorkflow_1-0.jpg" alt="Database WF1.0" width="650px"></center>
-<br>
-<br>
-This is the dream. Again there's no judgment if you're not here. This is something to aspire to, as you have time and gain more skills in R. I'm proud to report that we're really close to achieving this with most of our protocols in NETN, but it's been a long road (4+ years). RStudio has also come a long way in the last 5 years and has made this transition easier with improvements to R Markdown (automated reporting), R Shiny (interactive websites), and the tidyverse.  
-
-<center><img src="./images/DataWorkflow_2-0.jpg" alt="Database WF2.0" width="650px"></center>
-<br>
-<hr>
-
-```{r D3_Assignments, child = "D3_Reading_Assignments.Rmd"}
+```{r Good_Practices, child = "D4_M1_Good_Practices.Rmd"}
 
 ```
-### Day 4{.tabset}
 
- 
+```{r Control_Structures, child = "D4_M2_Control_Structures.Rmd"}
 
-```{r Good_Practices, child= "D4_M1_Good_Practices.Rmd"}
 ```
 
-```{r Control_Structures, child= "D4_M2_Control_Structures.Rmd"}
-```
+```{r Troubleshooting_Iteration, child = "D4_M3_Troubleshooting_Iteration.Rmd"}
 
-```{r Troubleshooting_Iteration, child= "D4_M3_Troubleshooting_Iteration.Rmd"}
 ```
 
 
@@ -130,13 +117,12 @@ There's a lot of great online material for learning new applications of R. The o
 <li><a href="https://www.r-spatial.org/r/2018/10/25/ggplot2-sf.html">R-spatial mapping in ggplot</a> The r-spatial.org site is a blog with lots of interesting topics covered. The blog I linked to helped me figure out how to map shapefiles in ggplot.</li>
 </ul>
 
-
-### Answers
-```{r Answers, child = "D1-3_Answers.Rmd"}
+### Code printout {.tabset}
+```{r Code_printout, child = "IMD_Code_Printout.Rmd"}
 
 ```
 
-### Code printout {.tabset}
-```{r Code_printout, child = "D3_Code_Printout.Rmd"}
+### Meet the Instructors
+```{r about, child = "IMD_Meet_the_Trainers.Rmd"}
 
 ```

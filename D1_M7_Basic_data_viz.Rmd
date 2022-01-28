@@ -1,0 +1,28 @@
+#### Basic data visualization
+
+It's often easier to get a sense of our data by visualizing it, so let's explore the basic tools for taking a first glance at our data.
+
+##### Histogram
+
+We'll start with a histogram. The code below generates a basic histogram plot of a specific column in the dataframe (remember from earlier that this is denoted by the `$` sign) using the `hist()` function. We'll start by creating a histogram for the 'Age_yr' column.
+
+```{r Histogram}
+hist(x = tree_data$Age_yr)
+```
+
+Looking at the histogram, we can see that the age of most trees in the dataset fall in the 0-20 year old age class.
+
+##### Scatter plot
+
+The data frame also includes information on DBH, and height of the trees. What if we want to quickly take a look at how these two variables relate to one another? To get a basic plot, you can use the `plot()` function. A simple call to `plot()` takes two arguments: x (a vector of x coordinates) and y (a vector of y coordinates). You can learn more about `plot()` by typing `?plot` at the console. 
+
+```{r Scatter_I}
+# this should generate an ugly but effective scatterplot of tree height vs age. It would appear that older trees are taller!
+plot(x = tree_data$Age_yr, y = tree_data$Height_ft)
+```
+
+```{r Scatter_II}
+# let's try the same, but with DBH as the dependent variable on the y axis:
+# again, we should see a plot below showing that, even in a make-believe forest, older trees of both species tend to be thicker!
+plot(x = tree_data$Age_yr, y = tree_data$DBH_in)
+```

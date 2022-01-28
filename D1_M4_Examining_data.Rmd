@@ -1,0 +1,21 @@
+#### Examining datasets
+
+Compared to scrolling through a dataset in Excel, examining a dataset in R can feel unintuitive at first. Stick with it, though. Once you get used to exploring data in R, you'll find that R will help you learn more about your dataset in a more efficient manner.
+
+Let's see what we can learn about the dataset as a whole. The most useful functions for this are:
+  - `head()` Show only the first few lines of the dataframe in the console. The function is useful for taking a quick glance to ensure that column names were properly assigned, and to take a quick look a column names without printing the whole dataset.
+  - `summary()` Show a basic statistical summary of the dataset.
+  - `str()` Show information about the structure of the dataset, including number of rows and columns, column data types, and the first few values in each column.
+  - `View()` In a new tab, display a spreadsheet-like view of the full dataset with options to sort and filter. Note that you can't change the data in this view - it is read-only.
+  
+
+```{r ExaminingData}
+head(tree_data)  # Show the first few lines of the dataframe. Defaults to showing the first 6 rows
+head(tree_data, n = 10)  # Show the first 10 rows
+
+summary(tree_data)  # View a basic statistical summary
+
+str(tree_data)  # Get info about the structure of the data
+
+View(tree_data)  # Open a new tab with a spreadsheet view of the data
+```
