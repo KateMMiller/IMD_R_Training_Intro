@@ -75,7 +75,7 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE)
 
 ### Day 3: Data Viz {.tabset}
 
-```{r data_viz1, child = "IMD_D3_M1_Data_Viz.Rmd"}
+```{r data_viz1, child = "IMD_D3_M1_Intro_Data_Viz.Rmd"}
 
 ```
 
@@ -116,6 +116,7 @@ There's a lot of great online material for learning new applications of R. The o
 
 <h3>Other useful sites</h3>
 <ul>
+<li><a href="https://teams.microsoft.com/l/channel/19%3a278f30e624114373a65d9611498bd4fe%40thread.skype/Community%2520of%2520Practice?groupId=e4a2e021-b4cf-4cf6-acef-d0978b86c1a0&tenantId=0693b5ba-4b18-4d7b-9341-f32f400a5494">NPS_IMD_Data_Science_and_Visualization > Community of Practice</a> is an IMD work group that meets once a month talk about R and Data Science. There are also notes, materials and recordings from previous meetings, a Wiki with helpful tips, and the chat is a great place to post questions or cool tips you've come across. </li>
 <li><a href="https://stat545.com/index.html">STAT545</a> Jenny Bryan's site that accompanies the graduate level stats class of the same name. She includes topics on best practices for coding, and not just how to make scripts work. It's really well done.</li> 
 <li><a href="https://rstudio.com/">RStudio home page</a> There's a ton of info in the Resources tab on this site, including cheatsheets for each package developed by RStudio (ie tidyverse packages), webinars, presentations from past RStudio Conferences, etc.</li>
 <li><a href="https://support.rstudio.com/hc/en-us/articles/201057987-Quick-list-of-useful-R-packages">RStudio list of useful R packages by topic</a></li>
