@@ -444,7 +444,7 @@ We could then do the flagging step and the plotting steps. However, we are going
 
 Another type of loop you should be aware of is the `while` loop. It probably won't come up much when you're working with data in R, but as a programmer you should have it in your toolbox. While the `apply` family of functions is specific to R, `for` loops and `while` loops are present in most programming languages.
 
-In a `for` loop, you decide ahead of time how many times the code inside your loop should execute. The `for` loop iterates through a vector of a certain length and stops when it reaches the end. This is useful because having a vague criteria for ending iteration could end up with you code runnging a very long or infinite loop. 
+In a `for` loop, you decide ahead of time how many times the code inside your loop should execute. The `for` loop iterates through a vector of a certain length and stops when it reaches the end. 
 
 In a `while` loop, on the other hand, your loop executes *while* some condition is true. When that condition is no longer true, the loop stops. `while` loops are good for situations when you can't predict ahead of time how many times the loop needs to execute.
 
