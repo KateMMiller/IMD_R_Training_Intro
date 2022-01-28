@@ -4,6 +4,9 @@ output:
     css: custom_styles.css
 title: "NPS IMD Intro to R"
 ---
+```{r globaloptions, include = FALSE}
+knitr::opts_chunk$set(warning=FALSE, message=FALSE)
+```
 
 <h2>NPS Inventory and Monitoring Division Intro to R Training: January 31 -- February 2, 2022</h2> {.tabset .tabset-pills}
 --------------------------------------------------
@@ -76,7 +79,7 @@ title: "NPS IMD Intro to R"
 
 ```
 
-```{r data_viz4, child = "IMD_D3_M4_Data_Viz.Rmd"}
+```{r data_viz4, child = "IMD_D3_M4_Data_Viz_GIS.Rmd"}
 
 ```
 
