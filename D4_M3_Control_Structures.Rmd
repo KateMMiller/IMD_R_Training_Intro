@@ -133,7 +133,7 @@ str
 head
 
 
-```{r ForLoop.2, echo=TRUE, eval=TRUE}
+```{r ForLoop.2, echo=T, eval=F}
 library(magrittr)
 library(ggplot2)
 fNames <- paste0(
@@ -247,7 +247,7 @@ apply(d[],MARGIN=1, FUN=mean)
 ``` 
  
  Now, let's calculate the mean value for each sampling year across sites
-```{r ApplyFamily.1, echo=T, eval=F}   
+```{r ApplyFamily.2, echo=T, eval=F}   
 apply(d[],MARGIN=2, FUN=mean)
 #need data still
 ```
@@ -292,7 +292,7 @@ write.csv(outDat, file.choose(), row.names = F, quote = F)
 
 We can then do the flagging step
 
-```{r ApplyFamily.6, echo=TRUE, eval=TRUE}
+```{r ApplyFamily.6, echo=TRUE, eval=F}
 lapply(HoboList, function(x){
  #put that mutate-unite thing in here                
 }
@@ -300,7 +300,7 @@ lapply(HoboList, function(x){
 #need to put in the on the fly naming with the orignal file names.
 ```
 Finally we can do some plotting. 
-```{r ApplyFamily.7, echo=TRUE, eval=TRUE}
+```{r ApplyFamily.7, echo=TRUE, eval=F}
 library(ggplot2)
 lapply(HoboList, function(x) {
   p <- ggplot(x, aes(x = DateTime, y = T_F)) +
@@ -323,7 +323,7 @@ So how is this different from the super for loop that does everything?
 
 Let's say you don't like the list structure and you need to crate a dataframe (e.g. for a multi-panel GGplot). It is pretty simple to collapse a list into a dataframe assuming you are collapsing things that are equivalent dimensions.
 
-```{r ApplyFamily.8, echo=TRUE, eval=TRUE}
+```{r ApplyFamily.8, echo=TRUE, eval=F}
 do.call(rbind, HoboList) 
 ```
 
