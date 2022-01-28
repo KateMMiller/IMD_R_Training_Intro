@@ -212,7 +212,7 @@ Before we run more detailed data checks, let's extract a subset of the `park_vis
   
   <br>
   **Quick Tip!**  
-  Even though `park_visits$year` is classified as a character data type, `r` can sort these numbers-as-characters in numeric order. Try running `sort(unique(park_visits$year))` in the console to see for yourself. This means we can filter `park_visits` for a subset of years `"2000":"2015"` without first converting `park_visits$year` to a numeric data type (actually we can even omit the quotes and simply filter for years in `2000:2015`).
+  Even though `park_visits$year` is classified as a character data type, `R` can sort these numbers-as-characters in numeric order. Try running `sort(unique(park_visits$year))` in the console to see for yourself. This means we can filter `park_visits` for a subset of years `"2000":"2015"` without first converting `park_visits$year` to a numeric data type (actually we can even omit the quotes and simply filter for years in `2000:2015`).
 </div>
 
 ```{r subset_data, echo = FALSE, message = FALSE, warning = FALSE}
@@ -359,7 +359,7 @@ Convert the variable `region` to a factor data type and rename and re-order the 
 # NOTES:
 # 1. The factor data type is similar to (and often interchangeable with) the character data type, but limits entries to pre-specified values and allows us to specify an order to those values (other than the default alphabetical order)
 # 2. Factors are especially useful for ordered categories (e.g., low < medium < high) with a small number of possible values
-# 3. Under the hood, `r` store factors as integer vectors representing the order of the value (with character string labels)
+# 3. Under the hood, `R` store factors as integer vectors representing the order of the value (with character string labels)
 # 4. I usually classify categorical variables as character data types, unless I want to limit entries to a few pre-specified values, or if I want to enforce a particular order to the category levels
 
 unique(joined_dat$region) # check what values are in `region`
@@ -391,8 +391,6 @@ In our case, we have a simpler option. We can count the unique years of data for
 
 ```{r complete_data, message = FALSE, warning = FALSE}
 
-# NOTE: %<>% is a maggritr function that is reassigns a piped outcome to the original data frame. `joined_dat %<>%` is equivalent to `joined_dat <- joined dat %>%`
-
 length(2000:2015) # if we can't figure this out in our head, we probably need more sleep. But here is proof that there are 16 years in the range 2000 to 2015, inclusive
 
 # Check if we have multiple records for any combination of unit_code and year (e.g., ARCH should not have multiple records for the year 2016)
@@ -413,10 +411,13 @@ remove_units <- joined_dat %>%
 # View(joined_dat) to check results before you remove these park units from the data
 
 # Remove those park units from the data
-joined_dat %<>% 
+viz_dat <- joined_dat %>%
   dplyr::filter(!unit_code %in% remove_units$unit_code)
   
-# View(joined_dat) to make sure the park units have been removed
+# View(viz_dat) to make sure the park units have been removed. The final data frame should have 1856 rows and 7 columns.
+
+# If you want to save `viz_dat` to your working directory, uncomment and run the code below. This code saves `viz_dat` as an .RDS file, which just means it saves it as an `R` object instead of as a .csv file. When we save a data frame as an `R` object we retain the accompanying attribute information (e.g., the order of factor levels for `region`)--this information would not be saved in a .csv file.
+# saveRDS(viz_dat, "viz_dat.RDS")
 ```
 
 Note that a report of our findings should explain how and why we selected this subset of data to work with.
