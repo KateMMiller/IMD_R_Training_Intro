@@ -17,6 +17,8 @@ head(tree_data, n = 10)  # Show the first 10 rows
 summary(tree_data)  # View a basic statistical summary
 
 str(tree_data)  # Get info about the structure of the data
+```
 
+```{r ViewData, eval = FALSE}
 View(tree_data)  # Open a new tab with a spreadsheet view of the data
 ```
