@@ -10,7 +10,7 @@ Most of you are probably familiar with this. It has 3 pieces (in order):
   
   1.  A statement ("if") to evaluate as a (T/F), e.g. (x>1) 
   2.  An action to perform if it is TRUE  
-  3.  An action to perform if it is FALSE
+  3.  An action to perform if it is FALSE 
   
 On any individual data point or set of data, only two of these code pieces will be applied. The if statement (1) will always be evaluated. Then only the appropriate T or F action (2 or 3) will be applied - the other will be skipped. There are a two different ways to invoke this in R and they do different things:
 
@@ -25,23 +25,24 @@ This is not vectorized but is very useful where you need a 'switch'. This can ev
 Let's see how `ifelse` works to recode some data. 
 
 ```{r Day4Recode.1, echo=T, eval=F}
-d<-c(1,2,3,4,100,200,300,400)
-ifelse(d<mean(d)/10, "verify","OK")
+d <- c(1, 2, 3, 4, 100, 200, 300, 400)
+ifelse(d < mean(d) / 10, "verify", "OK")
 ```
 
 Now, let's see what happens if we have some missing data.
 
 ```{r Day4Recode.2, echo=T, eval=F}
-d<-c(1,2,3,4,100,200,300,400,NA)
-ifelse(d<mean(d, na.rm=T)/10, "verify","OK")
-help(ifelse) #so no surprises there...
+d <- c(1, 2, 3, 4, 100, 200, 300, 400, NA)
+ifelse(d < mean(d, na.rm = T) / 10, "verify", "OK")
+help(ifelse) # so no surprises there...
 ```
 
 That `NA`, gets passed through. Maybe we want that, but if we don't we can try to have two nested `ifelse` conditions. 
 
 ```{r Day4Recode.3, echo=T, eval=F}
-ifelse(is.na(d)==T,"verify",
-       ifelse(d<mean(d, na.rm=T)/10,"verify","OK"))
+ifelse(is.na(d) == T, "verify",
+  ifelse(d < mean(d, na.rm = T) / 10, "verify", "OK")
+)
 ```       
 
 Nesting is useful, but chances are if you find yourself nesting more than 2 or 3 conditions deep, there is probably a better way to do things. 
@@ -63,7 +64,7 @@ if(...){thing to do if TRUE
         thing to do if FALSE
         }
 
-This statements expects a single boolean in the if() statement. Sometimes I like to use this to create switches or bypasses when I am writing loops/iteration. For example: If I have a dataframe that is non-empty, then do the analysis. If the data frame is empty do something else. 
+This statements expects a single boolean in the `if()` statement. Sometimes I like to use this to create switches or bypasses when I am writing loops/iteration. For example: If I have a dataframe that is non-empty, then do the analysis. If the data frame is empty do something else. 
 
 ```{r Day4Flagging.1, echo=T, eval=F}
 d<-c(1:4,1:4*100,NA)
