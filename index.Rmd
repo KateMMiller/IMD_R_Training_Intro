@@ -86,11 +86,15 @@ title: "NPS IMD Intro to R"
 
 ```
 
-```{r Control_Structures, child = "D4_M2_Control_Structures.Rmd"}
+```{r Vectorization, child = "D4_M2_Vectorization.Rmd"}
 
 ```
 
-```{r Troubleshooting_Iteration, child = "D4_M3_Troubleshooting_Iteration.Rmd"}
+```{r Control_Structures, child = "D4_M3_Control_Structures.Rmd"}
+
+```
+
+```{r Troubleshooting_Iteration, child = "D4_M4_Troubleshooting_Iteration.Rmd"}
 
 ```
 
