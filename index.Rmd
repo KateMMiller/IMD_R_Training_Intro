@@ -1,6 +1,7 @@
 ---
 output: 
   html_document:
+    fig_caption: false
     css: custom_styles.css
 title: "NPS IMD Intro to R"
 ---
