@@ -3,6 +3,7 @@
 Compared to scrolling through a dataset in Excel, examining a dataset in R can feel unintuitive at first. Stick with it, though. Once you get used to exploring data in R, you'll find that R will help you learn more about your dataset in a more efficient manner.
 
 Let's see what we can learn about the dataset as a whole. The most useful functions for this are:
+
   - `head()` Show only the first few lines of the dataframe in the console. The function is useful for taking a quick glance to ensure that column names were properly assigned, and to take a quick look a column names without printing the whole dataset.
   - `summary()` Show a basic statistical summary of the dataset.
   - `str()` Show information about the structure of the dataset, including number of rows and columns, column data types, and the first few values in each column.
