@@ -337,12 +337,9 @@ Note that I can’t figure out why I’m not able to make this map render on the
 <hr>
 
 #### Resources
-<h2>Using ggplot2</h2>
-- <a href="https://ggplot2-book.org//">ggplot2: Elegant Graphics for Data Analysis</a> is a great reference on ggplot2 also by Hadley Wickham.
-- <a href="https://rkabacoff.github.io/datavis/">Data Visualization in R</a> is another online book that has a ton of examples for plotting and customizing plots with ggplot2. 
 
-<h2>Visualizing Spatial Data</h2>
-- <a href="https://geocompr.robinlovelace.net/">Geocomputation in R</a> is an excellent online book on the `sf` and `tmap` packages.
-- R Studio's <a href="http://rstudio.github.io/leaflet/">leaflet for R</a> page shows the basics of how to use leaflet.
-<br>
+```{r data_viz_res, child = "IMD_Resources_D3_Data_Viz.Rmd", eval = T}
+
+```
+
 <hr>
