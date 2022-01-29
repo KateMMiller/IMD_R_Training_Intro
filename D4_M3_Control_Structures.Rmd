@@ -420,12 +420,18 @@ system.time(for (i in 1:nIter) {
 }) #2.42 seconds on my system
 
 ```
-When do we preallocate? Pretty much just `for` loops `apply` family and `purrr` will take care of that for you.
-Should you always preallocate? Probably. 
-Do you really need to? Not until your code execution takes longer than you are willing to wait. 
-Why not get more memory? That will appear to solve the problem. But datasets will just get bigger over time.
-So I shouldn't use a for loop? No, you can when you need to, but there is an art to it. 
-
+<h4>Wrapping up</h4>
+<ul>
+  *When do we preallocate?* Pretty much just `for` loops `apply` family and `purrr` will take care of that for you.
+  
+  *Should you always preallocate?* Probably.<br> 
+  
+  *Do you really need to?* Not until your code execution takes longer than you are willing to wait.<br>
+  
+  *Why not install more memory?* This is the federal government. I had to beg someone to install RStudio. Any idea the kind of fight it will take to put more memory in my laptop? If it even has an open slot? **But seriously**, that will appear to solve the problem. But datasets will just get bigger over time.<br>
+  
+  *So I shouldn't use a for loop?* No, you can when you need to, but there is an art to it.<br> 
+</ul>
 #### Apply Family
 <h3>Other (better) ways to iterate in R</h3>
 Now that you have the basics down, we are going to forge ahead with better and better ways to iterate. One family of functions that often replaces `for()` is the `apply` family of functions. 
