@@ -152,7 +152,7 @@ Nothing happened because I did not actually tell it to return something from tha
 ```{r ForLoop.0b, echo=T, eval=T}
 i 
 ```
-i was created in the environment and it has a value of 9 the last value of the loop. Logically that means it seems to have made it to the end of vec.
+i was created in the environment and it has a value of 9 the last value of the loop. Logically that means it seems to have made it to the end of vec. An important thing to learn here is that `for` will not return information after each step on its own accord. You have to tell it to do that. 
 
 ```{r ForLoop.0a, echo=T, eval=T}
 for (i in vec) { # for the number 1 through 9
@@ -162,7 +162,7 @@ for (i in vec) { # for the number 1 through 9
 Now we can see it clearly walking though that loop and adding 1 to each value. But, what we really want is we want a vector of something out of it.
 ```{r ForLoop.1a, echo=T, eval=T}
 #alternatively predefine a container to receive the data
-OutDat <- NULL # define an empty variable. This is naughty, see discussion on 'growing' dataframes later on
+OutDat <- NULL # define an empty variable. 
 for (i in 1:9) {
   OutDat[i] <- i + 1 # store that in the ith position of the variable OutDat
 }
@@ -292,15 +292,10 @@ dplyr::bind_rows(SummaryData)
 ```   
 Lets take some time to pick this apart and understand what it is doing. 
 
-**1. The read and generate data step.** Is a pretty standard part of a loop where you define some variables that you are going to reuse later. Here, we are just parsing some metadata from the filename. Also a standard part of a loop is where you need to actually read in your data. `i` usually does not contain your data in a for construction
+1. The read and generate data step. Is a pretty standard part of a loop where you define some variables that you are going to reuse later. Here, we are just parsing some metadata from the filename. Also a standard part of a loop is where you need to actually read in your data. `i` usually does not contain your data in a for construction
+2. The getting stuff done step. This step is setting up where the data goes -- "list element i" -- and what data to put there. The nifty thing is that we are calling an if/else statement within the construction of the dataframe. There are dataframe elements that will be fixed and dataframe elements that will be variable. 
+3. The output step. Here, the output step is integrated into the output step. This is where we put the data into something we can access after the for loop is done. 
 
-**2. The getting stuff done step.** This step is setting up where the data goes -- "list element i" -- and what data to put there. The nifty thing is that we are calling an if/else statement within the construction of the dataframe. There are dataframe elements that will be fixed and dataframe elements that will be variable. 
-
-**3. The output step.** Here, the output step is integrated into the output step. This is where we put the data into something we can access after the for loop is done. 
-
-A note on the output technique. We output data into a `list` then simplify the `list` at the end. We could have built a dataframe directly, however, this would have required an approach called 'growing' a dataframe. This approach is simple, but is considered highly inefficient and is generally discouraged. It is ok with small dataframes, but with larger ones, it will bog down your system. 
-
-Let's carry on and loop up some other tasks. Next up we want to do some QA/QC flagging on the original data. 
 
 <h3>QA/QC Loop</h3>
 ```{r ForLoop.2d, echo=TRUE, eval=F}
@@ -394,6 +389,42 @@ At this stage you may be thinking. Ok, but you have read the data in multiple ti
 
 + There are only rare instances where you want to wrap stuff up in that complicated of a for loop. The more complex the loop the harder it is to debug. Complex for loops are also hard to build flexibility into. In general you should shoot for one task or task family per loop.  
 
+#### Preallocation
+<h3>Predefining For Loop Output Variables</h3>
+I want to now set up some guidelines for initializing and using for loop output variables. This primarily refers to dataframe-like loop output variables. There are many ways to initialize this, I have done it two ways -- there are more.  
+
+In the first method we defined `OutDat<-NULL` and in the body of the loop proceeded to assign each iteration's output to a specific location in `OutDat` using indexing `OutDat[i]<-i+1`. We did something similar in the above example where we created a list `SummaryData <- list()` and then added an new list element for each iteration's output `SummaryData[[i]] <- data.frame(...)`. These are both acceptable ways to capture output. 
+
+But, most of us think in dataframe most of the time so we expect a dataframe out. This means we need an extra step to ensure we have dataframe output. This leads some people to say 'hey, why don't we just put it into a dataframe to begin with?' The most natural thing in the world is to do:
+```{r Preallocation, echo=T, eval=F}
+#alternatively predefine a container to receive the data
+OutDat <- NULL # define an empty variable. 
+system.time(for (i in 1:10000) {
+  d <- data.frame(x=i + 1,y=i)
+  OutDat<-rbind(OutDat,d)# append the previous steps' outputs with this step's output
+}) #4.47 seconds on my system
+
+```
+Instant dataframe and everyone is happy. Or are they? They aren't. This is called `growing` an object. Doug Burns also refers to this as the "Second Circle of R Hell" in his book *The R Inferno*. Look it up, it is great (no really, it is). To do this 1,000 times requires 0.23 seconds, 1,000,000 time took... well I quit after 13 minutes. If this were a strictly linear process it should have taken around 4 minutes to do 1,000,000 iterations - clearly it did not. 
+
+Why? When you use `rbind` in this manner it copies the giant dataframe each time and tell's R to go look for/request another giant block of memory instead of the one that is already there. This slows your processing way down. So.... don't do that. Instead you should preallocate your dataframe, especially if it is going to be big, it even makes a difference on smaller dataframes.
+
+What does preallocate mean? `x<-data.frame()` just tells R you need an object that is a dataframe. What you really want to do is tell R the exact dimensions of the object you will need. If you want dataframe output, just generate a blank dataframe the same dimensions as your output. This is sometimes simple. The number of rows is probably the number of iterations `vec` and you already are defining columns so you could just start out with x<-data.frame(Mean=rep(NA,vec), Min=rep(NA,vec)) and use the iteration indexing to tell R which row to drop stuff in.  
+
+Our example above, becomes:
+```{r Preallocation.1, echo=T, eval=F}
+nIter=10000 # number of iterations
+OutDat <- data.frame(x=rep(NA,nIter),y=rep(NA,nIter)) # define an preallocated dataframe
+system.time(for (i in 1:nIter) {
+  OutDat[i,] <- data.frame(x=i + 1, y=i)
+}) #2.42 seconds on my system
+
+```
+Should you always preallocate? Yes. 
+Do you really need to? Not until your code execution takes longer than you are willing to wait. 
+Why not get more memory? That will appear to solve the problem. But datasets will just get bigger over time.
+
+#### Apply Family
 <h3>Other (better) ways to iterate in R</h3>
 Now that you have the basics down, we are going to forge ahead with better and better ways to iterate. One family of functions that often replaces `for()` is the `apply` family of functions. 
 
