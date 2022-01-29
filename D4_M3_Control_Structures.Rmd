@@ -1,10 +1,10 @@
-Thomas if/else - mostly done needs some code touch-up
-Thomas for, apply family - This is mostly done, needs some code touch up
-
 #### Control Structures 
 <h3> Control Structures</h3>
-What are control structures? The simplest way to think about this is that these are programming elements that control the flow of data in your code depending on the value of logical conditions. There are two control structures we are going to focus on: `for` loops and `if/else` statements. `for` loops are a control structure that allow you to repeat a section of code multiple times (*without* copy-pasting it over and over!). `if/else` statements control whether or not a section of code is run based on certain conditions.
+What are control structures? The simplest way to think about this is that these are programming elements that control the flow of data in your code depending on the value of logical conditions. There are six basic control strucutres and you can find them with `help("Control")`.  
 
+There are two control structures we are going to focus on: `for` loops and `if/else` statements. `for` loops are a control structure that allow you to repeat a section of code multiple times (*without* copy-pasting it over and over!). `if/else` statements control whether or not a section of code is run based on certain conditions. If we have time we are going to touch on `while` at the end, mostly for fun.
+
+#### if/else
 <h3> if/else Statements </h3>
 Most of you are probably familiar with this. It has 3 pieces (in order):
   
@@ -12,7 +12,7 @@ Most of you are probably familiar with this. It has 3 pieces (in order):
   2.  An action to perform if it is `TRUE`  
   3.  An action to perform if it is `FALSE` 
   
-On any individual data point or set of data, only two of these code pieces will be applied. The conditional statement (1) will always be evaluated. Then only the appropriate T or F action (2 or 3) will be applied - the other will be skipped. There are a two different ways to invoke this in R and they do different things:
+On any individual data point or set of data, only two of these code pieces will be applied. The conditional statement (1) will always be evaluated. Then only the appropriate `T` or `F` action (2 or 3) will be applied - the other will be skipped. There are a two different ways to invoke this in R and they do different things:
 
 This is the 'vectorized' version - you might use this to recode data. 
 
@@ -22,63 +22,79 @@ This is not vectorized but is very useful where you need a 'switch'. This can ev
 
 `if(...){}else{}` (hereafter `if/else`)
 
-Let's see how `ifelse` works to recode some data. 
+Let's see how `ifelse` works to recode some data. Let me build this up starting from the data:
+```{r Day4Recode.1, echo=T, eval=T}
+d <- c(1:4, 100*1:4)
+d
+```
+A simple vector of numbers.
 
-```{r Day4Recode.1, echo=T, eval=F}
-d <- c(1, 2, 3, 4, 100, 200, 300, 400)
-ifelse(d < mean(d) / 10, "verify", "OK")
+Now lets evaluate that dataframe in a logical expression:
+```{r Day4Recode.1a, echo=T, eval=T}
+q_logic<- d < (mean(d) / 10)
+q_logic
+```
+This will evaluate the expression and will return `TRUE` for all values of `d` that are less than the mean of `d` divided by 10. Do you remember PEMDAS? Well in R it is PEMDASL. Logicals are evaluated after the math expression.
+
+In reality this vector of logicals is what ifelse is actually evaluating. In fact, we can just drop that into the ifelse. 
+```{r Day4Recode.1b, echo=T, eval=T}
+ifelse(q_logic, yes="verify", no="OK") #yes is the true condition no is the false condition
+```
+It goes through and replaces every `TRUE` value in that vector of logicals with "verify" and all of the `FALSE` values with "OK".
+
+In reality we seldom develop this kind of statement step by step like that. We would normally just write it on a single line.
+```{r Day4Recode.1c, echo=T, eval=T}
+q<-ifelse(d < (mean(d) / 10), "verify", "OK")
 ```
 
 Now, let's see what happens if we have some missing data.
-
-```{r Day4Recode.2, echo=T, eval=F}
-d <- c(1, 2, 3, 4, 100, 200, 300, 400, NA)
+```{r Day4Recode.2, echo=T, eval=T}
+d <- c(1:4, 100*1:4, NA)
 ifelse(d < mean(d, na.rm = T) / 10, "verify", "OK")
-help(ifelse) # so no surprises there...
+ 
 ```
+That `NA`, gets passed through. Maybe we want that, maybe we don't. In `mean()` and many other functions we were able to set `na.rm=TRUE` and omit the `NA` value, but reading through `help(ifelse)`, we don't really have that option. One option is that we can try to have two nested `ifelse` conditions. 
 
-That `NA`, gets passed through. Maybe we want that, but if we don't we can try to have two nested `ifelse` conditions. 
-
-```{r Day4Recode.3, echo=T, eval=F}
-ifelse(is.na(d) == T, "verify",
+```{r Day4Recode.3, echo=T, eval=T}
+ifelse(is.na(d) == T, "Missing",
   ifelse(d < mean(d, na.rm = T) / 10, "verify", "OK")
 )
 ```       
-
-Nesting is useful, but chances are if you find yourself nesting more than 2 or 3 conditions deep, there is probably a better way to do things. 
+`is.na()` returns a logical vector with `F` for all finite elements and `T` for all `NA` and `NaN` (but not `Inf`). In this nested structure, the `F` cases are futher evaluated and labeled with the second statement. Nesting is useful, but chances are if you find yourself nesting more than 2 or 3 conditions deep, there is probably a better way to do things. 
 
 The next option is `if/else`
-First thing to know about the `if/else` construction in R that it is very sensitive to the bracket placement, else must always be between a set of open brackets like this `}else{` . If it isn't you will end up with errors that are hard to track down. In context:
+First thing to know about the `if/else` construction in R that it is very sensitive to the bracket placement, else must always be between a set of open brackets like this `}else{`. If it isn't you will end up with errors that are hard to track down. In context:
 
 R will not comprehend this:
-
-if(...){thing to do if TRUE<mark>}
-      else{</mark>    
+```{r pseudocode.1, echo=T, eval=F}
+if(...){thing to do if TRUE}
+      else{
       thing to do if FALSE
       }
-
+```
 R will only comprehend this:
-
+```{r pseudocode.2, echo=T, eval=F}
 if(...){thing to do if TRUE
-        <mark>}else{</mark>    
-        thing to do if FALSE
-        }
+           }else{
+           thing to do if FALSE
+           }
+```
 
 This statements expects a single boolean as the result of `if()` statement. Sometimes I like to use this to create switches or bypasses when I am writing loops/iteration. For example: If I have a dataframe that is non-empty, then do the analysis. If the data frame is empty do something else. 
 
-```{r Day4Flagging.1, echo=T, eval=F}
+```{r Day4Flagging.1, echo=T, eval=T}
 d <- c(1:4, 1:4 * 100, NA)
+
 if (all(is.finite(d))) {
   "no NA, NaN, or Inf present"
 } else {
   "NA present"
 }
 ```
-
 This also nests nicely and we will get back to that later, but here is what that looks like:
-
-```{r Day4Flagging.1b, echo=T, eval=F}
+```{r Day4Flagging.1b, echo=T, eval=T}
 d <- c(1:4, 1:4 * 100)
+
 if (!all(is.finite(d))) {
   "NA present"
 } else if (all(d < 100)) {
@@ -92,56 +108,83 @@ I most commonly use the `if/else` constructions to create a switch in the code f
 
 #### Iteration
 
+<h3>Iteration</h3>
 This brings us to iteration. Iteration is a control structure that causes code to repeat itself while the conditions for iterating are met. We will explain what that means a little later. Practically speaking it allows you to a lot of work without having to be the one doing it. Iteration consists of a few pieces:
   1. The data you need to do something to
   2. The method of iteration
   3. The task you need to do
   4. The result of your task
   
-What are some kinds of tasks you find yourself doing that you are wanting to do more easily in R? 
+*What are some kinds of repetitive tasks you find yourself doing that you are wanting to do more easily in R?*
+<ul>  
+  <li>...</li>
+  <li>...</li>
+  <li>...</li>
+</ul>
 
-There are a lot of ways to accomplish iteration and we are not going to cover them all. We are going to cover some of the most basic and commonly used approaches.
+All of those can be accomplished with iteration. There are a lot of ways to accomplish iteration and we are not going to cover them all. We are going to cover some of the most basic and commonly used approaches.
 
 The first one you may be familiar with is the `for` loop. You give this a list of items and tell it what you want it to do and it will do that thing for each item on the list. In simplest terms that looks like:
 
+```{r pseudocode.3, echo=T, eval=F}
 for(i in vector){ 
   do thing 1
   do thing 2
   ...
   return output 
- }
-
-A few things to pick apart here:
-
-i - i is an arbitrary variable, you could call it q. I will take on the value for the first item in the vector on the first step of iteration. q is then available in the loop as a variable and it takes on each successive value in vec with each step of the iteration. 
-
-vector - vector is that vector of items aka the conditions for iteration. These could be numeric or they could be characters or strings. Numeric vectors are common is you need to run through all of the cases. Character vectors are great if you have groups of data you want to work through. All `vector` does it gives it some instructions on what it should work on and effectively when to stop.
-
-```{r ForLoop.1, echo=T, eval=F}
-for (i in 1:9) { # for the number 1 through 9
-  OutDat <- i + 1 # add 1 to each number and store that in the variable OutDat
-  print(OutDat) # print the result to console
-}   
-```
-What we really want is the whole vector that generates. 
-```{r ForLoop.1a, echo=T, eval=F}
-#alternatively predefine a container to receive the data
-OutDat <- NULL # define an empty variable this is naughty, see discussion on 'growing' dataframes later on
-for (i in 1:9) {
-  OutDat[i] <- i + 1 # store that in the ith position of the variable OutDat
 }
 ```
 
+A few things to pick apart here:
+
+`i` - i is an arbitrary variable, you could call it q. It will take on the value for the first item in the vector on the first step of iteration. q is then available in the loop as a variable and it takes on each successive value in vec with each step of the iteration. 
+
+`vector` - vector is that vector of items aka the conditions for iteration. These could be numeric or they could be characters or strings. Numeric vectors are common is you need to run through all of the cases. Character vectors are great if you have groups of data you want to work through. All `vector` does it gives it some instructions on what it should work on and effectively when to stop.
+
+Let's make sure we understand those two things
+```{r ForLoop.0, echo=T, eval=T}
+vec<-1:9
+for (i in vec) { # for the number 1 through 9
+         i
+}   
+```
+Nothing happened because I did not actually tell it to return something from that loop. That isn't entirely true. Something happened:
+```{r ForLoop.0b, echo=T, eval=T}
+i 
+```
+i was created in the environment and it has a value of 9 the last value of the loop. Logically that means it seems to have made it to the end of vec.
+
+```{r ForLoop.0a, echo=T, eval=T}
+for (i in vec) { # for the number 1 through 9
+         print(i+1)
+}   
+```
+Now we can see it clearly walking though that loop and adding 1 to each value. But, what we really want is we want a vector of something out of it.
+```{r ForLoop.1a, echo=T, eval=T}
+#alternatively predefine a container to receive the data
+OutDat <- NULL # define an empty variable. This is naughty, see discussion on 'growing' dataframes later on
+for (i in 1:9) {
+  OutDat[i] <- i + 1 # store that in the ith position of the variable OutDat
+}
+OutDat
+```
+
 Before we move on to more interesting code, I want to pause and note that you will hear us tell you that there are better ways to iterate than a for loop. However, for loops are a fundamental skill for several reasons. 
-+ They reinforce a fundamental understanding of iterative processing. 
-+ Everyone (probably) falls back on a for loop eventually. 
-+ They are the precursor to writing your own functions. 
+<ul>
+    <li> They reinforce a fundamental understanding of iterative processing.</li> 
+    <li> Everyone (probably) falls back on a for loop eventually. </li>
+    <li> They are the precursor to writing your own functions. </li>
+</ul>
 
-So let's make a useful for loop. We are going to use the hobo data and we want to do 3 things with that. First we want to calculate some summary statistics, second we want to do a rudimentary QAQC check and flag potentially bad data, then we want to save it to a file so we can do some further visual assessment. That kind of task may sound familiar. I would note we are also going to write this as the 'do everything all at once' loop which is a pretty common way to start using a for loop. We will come back to whether or not that is the 'best' way to iterate a little later. 
+So let's make a useful `for` loop. We are going to use raw hobo air temperature files and we will want to do 3 things with those data. These should sound familiar:
+<ul>
+0. Look at the data
+1. We want to calculate some summary statistics.
+2. We want to do a rudimentary QAQC check and flag potentially bad data
+3. We want to save it to a file so we can do some further visual assessment.
+</ul>
 
-We are going to work through a basic for loop script that mimics some things you might have to do repeatedly. These are raw hobo air temperature files from different sites in the same year. 
-
-```{r ForLoop.2a, echo=TRUE, eval=F}
+```{r ForLoop.2a, echo=TRUE, eval=T}
 library(magrittr)
 library(ggplot2)
 
@@ -156,35 +199,50 @@ fNames <- paste0(
     "APIS05_20597703_2021_temp.csv"
   )
 )
+fNames
 ```
-Note, `paste0()` is an example of a handy vectorized operation. 
+Note, `paste0()` is an example of a handy vectorized operation of paste that assume no spaces between arguments. 
 
-Let's get some idea of what we are dealing with so we have a general idea of the code we need to write.
-```{r ForLoop.2b, echo=TRUE, eval=F}
+Let's get some idea of what we are dealing for the data so we can plan the code. It is almost impossible to read in data from files blindly.
+```{r ForLoop.2b, echo=TRUE, eval=T}
 #read in and inspect the first element (for training purposes)
-temp<-read.csv(fNames[1], skip = 1, header = T)[1:3] #hobo data has an extra line at the top we need to skip
+temp<-read.csv(fNames[1], skip = 1, header = T) #hobo data has an extra line at the top we need to skip
 head(temp)
 ```
+Gross, but we can fix that, it is just headers and we could actually use some of that info, but we will save those games for a different day. Maybe we whould redo this with headers set to `F` and you can just trust me that I know what is in each column? (Note, I am changing `skip=2` otherwise this will treat the headers as data.)
 
-```{r ForLoop.2c, echo=TRUE, eval=F}
+```{r ForLoop.2c, echo=TRUE, eval=T}
+temp<-read.csv(fNames[1], skip = 2, header = F)
+names(temp)[1:3]<-c("idx", "DateTime", "T_F") #let me just assing some column names really quick
+head(temp)
 str(temp) #look at data types
 rm(temp) #do a little cleanup 
 ```
-There are ~5 columns in most of them and they all have awful headers... raw data... what are you going to do... R... that is what! 
-  + Col. 1 is a sequential index column
-  + Col. 2 is a date and time string
-  + Col. 3 is the air temperature in degrees F
-  + Col. 4 is light measured as lux or lumens per ft2 (if it was measured)
-  + Col. 5 is a comment column
-  
-We are only interested in the first 3 columns.
+There are ~5 columns in most of these files. 
+  <ul>
+  Col. 1 is a sequential index column<br>
+  Col. 2 is a date and time string<br>
+  Col. 3 is the air temperature in degrees F<br>
+  Col. 4 is light measured as lux or lumens per ft2 (if it was measured)<br>
+  Col. >5 are comment columns<br>
+  </ul>
+We are only interested in the first 3 columns today.
 
-So, 3 columns of data, two columns are numeric/integer, one is character. Really ugly headers that need cleanup. Also because I know these data, one of the files is empty except for the headers.
+So, things we are aware of for coding so far:
+<ul>
+-Three columns of data is all we want right now<br>
+-Two columns are numeric/integer<br>
+-One is time stored as a character but we want it to be real time<br>
+-Really ugly headers that need cleanup, so bad I am not even going to read them in.<br>
+-Lastly, because I know these data, one of the files is empty except for the headers :O.<br>
+</ul>
+
+Done with preliminary data inspection.
 
 <h3> Summary Statistics Loop </h3>
 What do we want to do? We are going to create a simple summary statistics data dataframe. The loop will need to handle the empty filename somehow You will need to initialize a empty variable so you can get data out of the for loop. We will use a list for reasons discussed below.
 
-```{r ForLoop.2f, echo=TRUE, eval=F}
+```{r ForLoop.2f, echo=TRUE, eval=T}
 len<-length(fNames) #calculate the number of iterations
 
 SummaryData <- list() #Generate a list that we will put output into. Always rerun prior to loop.
@@ -200,7 +258,7 @@ for (i in 1:len) {
     setNames(., c("idx", "DateTime", "T_F")) %>%
     dplyr::mutate(., DateTime2 = as.POSIXct(DateTime, "%m/%d/%y %H:%M:%S", tz = "UCT"))
   # 2 summarize and 3 output the data
-  SummaryData[[i]] <- data.frame(
+  SummaryData[[i]] <- data.frame( #output the data
     # 2 what to summarize for all files 
     Site = Site,
     Year = Year,
@@ -233,11 +291,12 @@ dplyr::bind_rows(SummaryData)
 
 ```   
 Lets take some time to pick this apart and understand what it is doing. 
-1. The read and generate data step. Is a pretty standard part of a loop where you define some variables that you are going to reuse later. Here, we are just parsing some metadata from the filename. Also a standard part of a loop is where you need to actually read in your data. `i` usually does not contain your data in a for construction
 
-2. The getting stuff done Step. This step is setting up where the data goes -- "list element i" -- and what data to put there. The nifty thing is that we are calling an if/else statement within the construction of the dataframe. There are dataframe elements that will be fixed and dataframe elements that will be variable. 
+**1. The read and generate data step.** Is a pretty standard part of a loop where you define some variables that you are going to reuse later. Here, we are just parsing some metadata from the filename. Also a standard part of a loop is where you need to actually read in your data. `i` usually does not contain your data in a for construction
 
-3. The output step. Here, the output step is integrated into the output step. This is where we put the data into something we can access after the for loop is done. 
+**2. The getting stuff done step.** This step is setting up where the data goes -- "list element i" -- and what data to put there. The nifty thing is that we are calling an if/else statement within the construction of the dataframe. There are dataframe elements that will be fixed and dataframe elements that will be variable. 
+
+**3. The output step.** Here, the output step is integrated into the output step. This is where we put the data into something we can access after the for loop is done. 
 
 A note on the output technique. We output data into a `list` then simplify the `list` at the end. We could have built a dataframe directly, however, this would have required an approach called 'growing' a dataframe. This approach is simple, but is considered highly inefficient and is generally discouraged. It is ok with small dataframes, but with larger ones, it will bog down your system. 
 
