@@ -1,7 +1,6 @@
 ---
 title: "Day 3: Data Viz - Module 1"
 author: "Ellen Cheng & Kate Miller"
-date: '`r format(Sys.time(), "%d %b %Y")`'
 output:
   html_document
 ---
@@ -37,7 +36,7 @@ Consider three examples...
 
 Most people can understand this...
 
-<center>![Average daily Covid cases per 100k people, by region (Sources: State and local health agencies [cases]; Census Bureau [population data]](../images/covid_by_region.png)</center>
+<center>![Average daily Covid cases per 100k people, by region (Sources: State and local health agencies [cases]; Census Bureau [population data]](images/covid_by_region.png)</center>
 
 <br>
 faster than they can understand this...
@@ -109,7 +108,7 @@ sapply(ansc, function(x) c(mean=round(mean(x), 2), var=round(var(x), 2))) %>%
 <details open><summary class='drop2'>Anscombe data as plots</summary>
 Despite their identical statistics, when we actually plot the data we see the four datasets are very different. 
 
-<center>![](../images/anscombe_plots.png))</center>
+<center>![](images/anscombe_plots.png))</center>
  
 </details>
 <br>
@@ -126,7 +125,7 @@ Anscombe used clever thinking and simple plots to demonstrate the importance of 
 - **Consider your audience.** Avoid scientific names, acronyms, or jargon unless your audience is well-versed in that language. Use color-blind friendly colors.
 
 - **Use an appropriate visualization.** For example: 
-  - Line charts work well for showing changes in continous data over time 
+  - Line graphs work well for showing changes in continuous data over time 
   - Bar charts compare counts or proportions in categorical data (pie charts get a bad rap in the data viz world, but can be useful in [certain situations](https://chartio.com/learn/charts/what-is-the-difference-between-a-pie-chart-and-a-bar-chart/#:~:text=As%20a%20rule%20of%20thumb%3A%201%20Use%20either,values%20...%203%20Use%20a%20bar%20chart%20otherwise))
   - For statistics (e.g., means) with confidence intervals, point plots with error bars are preferred over bar charts (nice explanation [here](https://scc.ms.unimelb.edu.au/resources-list/graphs-for-statistical-analysis/graphs))
   - Scatterplots are useful for showing the relationship (correlation) between two continuous variables.
@@ -219,7 +218,7 @@ Before we run more detailed data checks, let's extract a subset of the `park_vis
 
 # NOTES: 
 # 1. When we preface function names with the package name, we avoid potential issues with duplicate function names among packages
-# 2. The dplyr::select() function can simultaneously select columns, rename them, and order them as specified. See ?select
+# 2. The dplyr::select() function can simultaneously select columns, rename them, and order them as specified. See `?select`
 
 park_sub <- park_visits %>%
   dplyr::filter( 
@@ -415,9 +414,17 @@ viz_dat <- joined_dat %>%
   dplyr::filter(!unit_code %in% remove_units$unit_code)
   
 # View(viz_dat) to make sure the park units have been removed. The final data frame should have 1856 rows and 7 columns.
+```
 
-# If you want to save `viz_dat` to your working directory, uncomment and run the code below. This code saves `viz_dat` as an .RDS file, which just means it saves it as an `R` object instead of as a .csv file. When we save a data frame as an `R` object we retain the accompanying attribute information (e.g., the order of factor levels for `region`)--this information would not be saved in a .csv file.
-# saveRDS(viz_dat, "viz_dat.RDS")
+```{r save_dat, echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE}
+# If you want to save `viz_dat` to your current working directory, run the code below. This code saves `viz_dat` as an .RDS file, which just means it saves it as an `R` object instead of as a .csv file. 
+
+# When we save a data frame as an `R` object we retain the accompanying attribute information (e.g., the order of factor levels for `region`)--this information would not be saved in a .csv file.
+
+saveRDS(viz_dat, "viz_dat.RDS")
+
+# To read the RDS file from your working directory and assign it to `viz_dat`, use the code below. You can assign it to any name you want. If you're reading it from a location other than your working current directory, provide the file path in the function argument.
+viz_dat <- readRDS("viz_dat.RDS")
 ```
 
 Note that a report of our findings should explain how and why we selected this subset of data to work with.
@@ -449,4 +456,4 @@ tab_count
 ```
 </details>
 <br>
-We're ready to start plotting the data.
+We see from this table that we have data for 34 National Monuments in the Intermountain region and that the smallest number of park units in any region-type is 7. We're ready to start plotting.
