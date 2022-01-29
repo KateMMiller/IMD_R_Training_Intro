@@ -15,21 +15,17 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE)
 ### Prep for Training{.tabset}
 
 ```{r Install_instructions, child = "IMD_D0_Install_R_and_RStudio.Rmd"}
-
 ```
 
 ### Day 1: Intro to R {.tabset}
 
 ```{r Intro_to_R_tab, child = "D1_M1_Intro_to_R_tab.Rmd"}
-
 ```
 
 ```{r Start_coding, child = "D1_M2_Lets_start_coding.Rmd"}
-
 ```
 
 ```{r Vars_Fns, child = "D1_M3_Variables_and_functions.Rmd"}
-
 ```
 
 ```{r Examining_data, child = "D1_M4_Examining_data.Rmd"}
@@ -37,69 +33,60 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE)
 ```
 
 ```{r Data_structures, child = "D1_M5_Data_structures.Rmd"}
-
 ```
 
 ```{r Working_with_columns, child = "D1_M6_Working_with_columns.Rmd"}
-
 ```
 
 ```{r Basic_data_viz, child = "D1_M7_Basic_data_viz.Rmd"}
-
 ```
 
 ```{r Getting_help, child = "D1_M8_Getting_help.Rmd"}
-
 ```
 
 ### Day 2: Data Wrangling {.tabset}
 
 ```{r Intro_and_Packages, child = "IMD_D2_M1_Intro_and_Packages.Rmd"}
-
 ```
 
 ```{r Data_Cleaning, child = "IMD_D2_M2_Data_Cleaning.Rmd"}
-
 ```
 
 ```{r Data_Wrangling, child = "IMD_D2_M3_Data_Wrangling.Rmd"}
-
 ```
 
 ```{r Data_Reshaping, child = "IMD_D2_M4_Pivoting_Tables.Rmd"}
-
 ```
 
 ```{r D2_Joining_Tables, child = "IMD_D2_M5_Joining_Tables.Rmd"}
-
 ```
 
 ### Day 3: Data Viz {.tabset}
 
 ```{r data_viz1, child = "IMD_D3_M1_Intro_Data_Viz.Rmd"}
+```
 
+```{r data_viz2, child = "IMD_D3_M2_Base_R_Plots.Rmd"}
+```
+
+```{r data_viz3, child = "IMD_D3_M3_Basic_GGPlot.Rmd"}
 ```
 
 ```{r data_viz4, child = "IMD_D3_M4_Data_Viz_GIS.Rmd"}
-
 ```
 
-### Day 4: Best Practices & Wrap-up {.tabset}
+### Day 4: Best Practices and Iteration {.tabset}
 
 ```{r Good_Practices, child = "D4_M1_Good_Practices.Rmd"}
-
 ```
 
 ```{r Vectorization, child = "D4_M2_Vectorization.Rmd"}
-
 ```
 
 ```{r Control_Structures, child = "D4_M3_Control_Structures.Rmd"}
-
 ```
 
 ```{r Troubleshooting_Iteration, child = "D4_M4_Troubleshooting_Iteration.Rmd"}
-
 ```
 
 ### Resources
@@ -129,16 +116,13 @@ There's a lot of great online material for learning new applications of R. The o
 
 <h4>Day 3: Data Visualization</h4>
 ```{r data_viz_res2, child = "IMD_Resources_D3_Data_Viz.Rmd"}
-
 ```
 
 
 ### Code printout {.tabset}
 ```{r Code_printout, child = "IMD_Code_Printout.Rmd"}
-
 ```
 
 ### Meet the Instructors
 ```{r about, child = "IMD_Meet_the_Trainers.Rmd"}
-
 ```

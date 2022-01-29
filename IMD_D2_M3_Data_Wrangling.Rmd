@@ -154,7 +154,7 @@ Time for the first challenge. Using the park_visits data, create a new data.fram
 
 </details>
 <br>
-<details open><summary class='drop'> dplyr- solution 1</summary>
+<details><summary class='drop'> dplyr- solution 1</summary>
 
 ```{r eval=FALSE, include=TRUE}
 pr_park_visits <- park_visits %>%
