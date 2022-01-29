@@ -287,7 +287,7 @@ So, things we are aware of for coding so far:
 Done with preliminary data inspection.
 </details>
 
-<details open><summary class='drop2'>Calculate Summary Statistics</summary>
+<details open><summary class='drop2'>A Loop to Calculate Summary Statistics</summary>
 
 What do we want to do? 
 <ul>
@@ -445,22 +445,23 @@ What did we do?
 </ul>
 At this stage you may be thinking. Ok, but you have read the data in multiple times and repeated a lot of code. Couldn't we just wrap this in one giant `for` loop? 
 
-+ We could have written the loop to read in the data, store it in memory, and then loop only on the stored data for flagging, statistics, and plotting. But, loading stuff in R takes up memory. Depending on the size of your datasets, you may not want unused information floating around hogging memory. Continuous data files can become large objects. So, it depends. 
++ We could have written the loop to read in the data, store it in memory, and then loop only on the stored data for flagging, statistics, and plotting. (We are actually going to do that next.) But, loading stuff in R takes up memory. Depending on the size of your datasets, you may not want unused information floating around hogging memory. Continuous data files can become large objects. So, it depends. 
 
-+ There are only rare instances where you want to wrap stuff up in that complicated of a for loop. The more complex the loop the harder it is to debug. Complex for loops are also hard to build flexibility into. In general you should shoot for one task or task family per loop.  
++ There are only rare instances where you want to wrap stuff up in a complicated `for` loop. The more complex the loop the harder it is to debug. Complex `for` loops are also hard to build flexibility into (e.g. handling `NA` values). In general you should shoot for one task or task family per loop.  
 </details>
 
 #### Preallocation
-<h3>Predefining For Loop Output Variables</h3>
-Before we move on let's take time to discuss a truely advanced R topic: preallocating the for loop output. This primarily refers to dataframe-like loop output variables and it makes a huge difference in how quickly your code executes. There are many ways to initialize this, I have shown two ways -- there are more.  
+<details open><summary class='drop'>Preallocating Output Objects</summary>
+Before we move on let's take time to discuss a more advanced R topic: preallocating the for loop output. This primarily refers to dataframe-like loop output variables and it makes a huge difference in how quickly your code executes. There are many ways to initialize this, I have shown two ways -- there are more.  
 
 In the first method we defined `OutDat<-NULL` and in the body of the loop proceeded to assign each iteration's output to a specific location in `OutDat` using indexing `OutDat[i]<-i+1`. We did something similar in the above example where we created a list `SummaryData <- list()` and then added an new list element for each iteration's output `SummaryData[[i]] <- data.frame(...)`. These are both acceptable ways to capture output. 
 
 But, most of us think in dataframe most of the time so we expect a dataframe out. This means we need an extra step to ensure we have dataframe output. This leads some people to say 'hey, why don't we just put it into a dataframe to begin with?' The most natural thing in the world is to do:
 ```{r Preallocation, echo=T, eval=F}
 #alternatively predefine a container to receive the data
+nIter=10000
 OutDat <- NULL # define an empty variable. 
-system.time(for (i in 1:10000) {
+system.time(for (i in 1:nIter) {
   d <- data.frame(x=i + 1,y=i)
   OutDat<-rbind(OutDat,d)# append the previous steps' outputs with this step's output
 }) #4.47 seconds on my system
@@ -481,9 +482,11 @@ system.time(for (i in 1:nIter) {
 }) #2.42 seconds on my system
 
 ```
-<h4>Wrapping up</h4>
+</details>
+
+<details open><summary class='drop'>Preallocation Wrapup</summary>
 <ul>
-  *When do we preallocate?* Pretty much just `for` loops. `apply` family and `purrr` will take care of that preallocation for you.
+  *When do we preallocate?* Pretty much just when we use `for` loops. `apply` family and `purrr` will take care of that preallocation for you.
   
   *Should you always preallocate?* Probably.<br> 
   
@@ -491,15 +494,17 @@ system.time(for (i in 1:nIter) {
   
   *Why not install more memory?* That will appear to solve the problem. But datasets will just get bigger over time.<br>
   
-  *So I shouldn't use a for loop?* No, you can when you need to, but there is an art to it. This course is all about preparing you with the tools to avoid some *frustration*.<br> 
+  *So I shouldn't use a for loop?* No, you can when you need to, but there is an art to it. This course is all about equipping you with tools to help avoid *some* frustration.<br> 
 </ul>
+
+</details>
 
 
 #### Apply Family
-<h3>Apply Family AKA (better) ways to iterate in R</h3>
-Now that you have the basics down, we are going to forge ahead with better and better ways to iterate. One family of functions that often replaces `for()` is the `apply` family of functions. In reality you are now in intermediate R - we won't really finish the lesson on iteration with `apply` family function today. We will do that next week during the advanced session on 'functional programming'. 
+<details open><summary class='drop'>Apply Family AKA (better) ways to iterate in R</summary>
+Now that you have the basics down, we are going to forge ahead with better and better ways to iterate. One family of functions that often replaces `for()` is the `apply` family of functions. We will get you started here and then dive deeper during the avanced R course on "Functional Programming" next week. For now:
 
-`apply` - operates on things resembling a dataframe. Okay, really it operates on a matrix where all values are the same type (all number or all letters). It can operate by row or by column and the output will be a dataframe,
+`apply` - operates on things resembling a dataframe. Okay, really it operates on a matrix where all values are the same type (all number or all letters). It can operate by row or by column and the output will be a 
 
 `mapply` - Is a way to vectorize a function that isn't vectorized. I don't think I have used this in the past year, but it is in the apply family and you might encounter it. 
 
@@ -508,15 +513,18 @@ Now that you have the basics down, we are going to forge ahead with better and b
 `sapply` - A 'wrapper' for lapply that will coerce the list output into a matrix or array.
 
 `tapply` - apply by groups. This lets you apply functions by a group. So, quick summary statistics, but you will quickly outgrow this and there are better ways to do this. 
-
-<h4>apply()</h4>
+</details>
+<br>
+<details open><summary class='drop2'>mtcars</summary> 
 To explore using simple functions in `apply`, let's look at `mtcars`. This is a wonderful little built in datast that I like to use for developing and demoing code (see `help(mtcars)` for description). It has continuous and categorical variables that cover a good bit of what I end up needing to do. Another reason to know about `mtcars` is that a lot of answers on stackoverflow will call this dataset.
 
 ```{r ApplyFamily.0, echo=T, eval=T}
 str(mtcars)
 head(mtcars)
 ``` 
- 
+</details>
+<br>
+<details open><summary class='drop'>apply()</summary> 
 First let's calculate the mean across the rows. It doesn't make a whole lot of sense as to why we would do this because the columns contain values with different units, but we can if we set `margin=1`. 
 ```{r ApplyFamily.1, echo=T, eval=T}
 apply(mtcars,MARGIN=1, FUN=mean) #calculate mean across the row
@@ -532,15 +540,18 @@ apply(mtcars,MARGIN=2, FUN=mean)
 ```
 
 That returns the mean of each variable. What is happending is the apply is disassembling the data frame and passing it line by line (`margin=1`) or row by row (`margin=2`) into `mean()` and collecting the output into a named vector. 
-
-
-<h4>lapply()</h4>
-Let's change gears a little bit and return to those hobo data to take a look at lapply. First, a quick review of what is a list. A list is an R object that can hold a bunch of different elements. A list is ok if one element is a string and the next element is a character or if one element has 100 columns and 10 rows while the next element has 10 columns and 100 rows. It even can hold a dataframe a 1 element and a matrix as another element without any trouble. *A list says you're ok just the way you are.* 
+</details>
+<br>
+<details open><summary class='drop'>lapply()</summary> 
+<details open><summary class='drop2'>lapply() overview</summary> 
+Let's change gears a little bit and return to those hobo data to take a look at `lapply()`. First, a quick review of what is a list. A list is an R object that can hold a bunch of different elements. A list is ok if one element is a string and the next element is a character or if one element has 100 columns and 10 rows while the next element has 10 columns and 100 rows. It even can hold a dataframe as one element and a matrix as another element without any trouble. *A list says you're ok just the way you are.* 
 
 We are going to use our list to read in data that are mostly the same. If we wanted to store them in a single dataframe: 1) it would get unwieldy and 2) you would have to write code that 'fixed' inconsistencies between the dataframes. By storing them as independent list elements we don't necessarily need to write code that 'fixes' the inconsistencies.   
 
 We discussed this earlier, in the previous `for` loop we operated on each of our hobo csvs one at a time. What we are going to do this time is open them all into a single list object with 5 different elmenets (1 for each csv file).
+</details>
 
+<details open><summary class='drop2'>lapply() to read in data</summary> 
 You should still have fNames hanging out somewhere. This is that list of hobos. 
 
 ```{r ApplyFamily.3, echo=T, eval=F}
@@ -580,10 +591,11 @@ HoboList<-lapply(fNames,read.csv, skip=1, header=T)%>% #1. read hobo data into a
           lapply(.,setNames, c("idx","DateTime","T_F")) #3. fix column names
 ```
 
-Now all of those hobo files are available in the HoboList object that we could summarize, do some flagging, or plot from. How do we do that? We could do for loops again, or we could keep going with lapply. 
-
-For now, let's create a little bit of summary data. 
-
+Now all of those hobo files are available in the `HoboList` object that we could summarize, do some flagging, or plot from. How do we do that? We could do for loops again, or we could keep going with lapply. 
+</details>
+<br>
+<details open><summary class='drop2'>lapply() to summarize data</summary> 
+Now, let's summarize that object and . 
 ```{r ApplyFamily.8, echo=TRUE, eval=FALSE}
 HoboSummary<-lapply(HoboList[-3], FUN=function(x){ #-3 drop that blank file for now
   d<-data.frame(
@@ -598,10 +610,10 @@ do.call(rbind, HoboSummary) #equivalent to dplyr::bind_rows(HoboSummary)
 This is a stripped down version of the for loop we did before. We then use `do.call()`, the base  equivalent to `dplyr::bind_rows()`, to generate a dataframe. `do.call` takes a function (here `rbind`) and passes it a list of arguments (here list elements). So, tt passes all of the individual elements of HoboSummary to `rbind` as individual arguments to glue together. 
 
 We could then do the flagging step and the plotting steps. However, we are going to stop here and pick those up in the advanced R session because we really need to talk about how to make a `function()` before we go a whole lot further and that is a topic for next time.
+</details>
+</details>
 
-
-##### A note on while loops
-
+#### while() 
 Another type of loop you should be aware of is the `while` loop. It probably won't come up much when you're working with data in R, but as a programmer you should have it in your toolbox. While the `apply` family of functions is specific to R, `for` loops and `while` loops are present in most programming languages.
 
 In a `for` loop, you decide ahead of time how many times the code inside your loop should execute. The `for` loop iterates through a vector of a certain length and stops when it reaches the end. 
