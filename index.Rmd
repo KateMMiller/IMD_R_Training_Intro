@@ -75,7 +75,7 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE)
 ```{r data_viz4, child = "IMD_D3_M4_Data_Viz_GIS.Rmd"}
 ```
 
-### Day 4: Best Practices & Wrap-up {.tabset}
+### Day 4: Best Practices and Iteration {.tabset}
 
 ```{r Good_Practices, child = "D4_M1_Good_Practices.Rmd"}
 ```

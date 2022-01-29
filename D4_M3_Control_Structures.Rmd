@@ -1,11 +1,11 @@
 #### Control Structures 
-<h3> Control Structures</h3>
+<details open><summary class='drop'><h4>Control Structures</h4></summary>
 What are control structures? The simplest way to think about this is that these are programming elements that control the flow of data in your code depending on the value of logical conditions. There are six basic control strucutres and you can find them with `help("Control")`.  
 
 There are two control structures we are going to focus on: `for` loops and `if/else` statements. `for` loops are a control structure that allow you to repeat a section of code multiple times (*without* copy-pasting it over and over!). `if/else` statements control whether or not a section of code is run based on certain conditions. If we have time we are going to touch on `while` at the end, mostly for fun.
 
 #### if/else
-<h3> if/else Statements </h3>
+<details open><summary class='drop'><h4>if/else Statement Overview</h4></summary>
 Most of you are probably familiar with this. It has 3 pieces (in order):
   
   1.  A conditional statement ("if") to evaluate as a (T/F), e.g. `(x>1)` 
@@ -22,6 +22,8 @@ This is not vectorized but is very useful where you need a 'switch'. This can ev
 
 `if(...){}else{}` (hereafter `if/else`)
 
+<details open><summary class='drop'><h4>ifelse() Examples </h4></summary>
+
 Let's see how `ifelse` works to recode some data. Let me build this up starting from the data:
 ```{r Day4Recode.1, echo=T, eval=T}
 d <- c(1:4, 100*1:4)
@@ -36,25 +38,26 @@ q_logic
 ```
 This will evaluate the expression and will return `TRUE` for all values of `d` that are less than the mean of `d` divided by 10. Do you remember PEMDAS? Well in R it is PEMDASL. Logicals are evaluated after the math expression.
 
-In reality this vector of logicals is what ifelse is actually evaluating. In fact, we can just drop that into the ifelse. 
+Under the hood, this vector of logicals is what ifelse is *actually* evaluating. In fact, we can just drop that into the ifelse directly if we want. 
 ```{r Day4Recode.1b, echo=T, eval=T}
 ifelse(q_logic, yes="verify", no="OK") #yes is the true condition no is the false condition
 ```
 It goes through and replaces every `TRUE` value in that vector of logicals with "verify" and all of the `FALSE` values with "OK".
 
-In reality we seldom develop this kind of statement step by step like that. We would normally just write it on a single line.
+In reality, we seldom develop this kind of statement step by step like that. We would normally just write it on a single line.
 ```{r Day4Recode.1c, echo=T, eval=T}
 q<-ifelse(d < (mean(d) / 10), "verify", "OK")
 ```
-
+<details open><summary class='drop'><h4>ifelse() Missing Data</h4></summary>
 Now, let's see what happens if we have some missing data.
 ```{r Day4Recode.2, echo=T, eval=T}
 d <- c(1:4, 100*1:4, NA)
 ifelse(d < mean(d, na.rm = T) / 10, "verify", "OK")
- 
 ```
 That `NA`, gets passed through. Maybe we want that, maybe we don't. In `mean()` and many other functions we were able to set `na.rm=TRUE` and omit the `NA` value, but reading through `help(ifelse)`, we don't really have that option. One option is that we can try to have two nested `ifelse` conditions. 
 
+<details open><summary class='drop'><h4>ifelse() Nesting</h4></summary>
+'Nesting' refers to the situation where you use a funciton, and then you use it again within itself. This frequently shows up in iteration tasks.
 ```{r Day4Recode.3, echo=T, eval=T}
 ifelse(is.na(d) == T, "Missing",
   ifelse(d < mean(d, na.rm = T) / 10, "verify", "OK")
@@ -62,8 +65,9 @@ ifelse(is.na(d) == T, "Missing",
 ```       
 `is.na()` returns a logical vector with `F` for all finite elements and `T` for all `NA` and `NaN` (but not `Inf`). In this nested structure, the `F` cases are futher evaluated and labeled with the second statement. Nesting is useful, but chances are if you find yourself nesting more than 2 or 3 conditions deep, there is probably a better way to do things. 
 
-The next option is `if/else`
-First thing to know about the `if/else` construction in R that it is very sensitive to the bracket placement, else must always be between a set of open brackets like this `}else{`. If it isn't you will end up with errors that are hard to track down. In context:
+<details open><summary class='drop'><h4>if/else Examples</h4></summary>
+
+First thing to know about the `if/else` construction in R that it is very sensitive to the bracket placement, else must always be between a set of open brackets like this `}else{`. If it isn't, you will end up with errors that are hard to track down. In context:
 
 R will not comprehend this:
 ```{r pseudocode.1, echo=T, eval=F}
@@ -80,7 +84,7 @@ if(...){thing to do if TRUE
            }
 ```
 
-This statements expects a single boolean as the result of `if()` statement. Sometimes I like to use this to create switches or bypasses when I am writing loops/iteration. For example: If I have a dataframe that is non-empty, then do the analysis. If the data frame is empty do something else. 
+This statement expects a single boolean as the result of `if()` statement. Sometimes I like to use this to create switches or bypasses when I am writing loops/iteration. For example: If I have a dataframe that is non-empty, then do the analysis. If the data frame is empty do something else. 
 
 ```{r Day4Flagging.1, echo=T, eval=T}
 d <- c(1:4, 1:4 * 100, NA)
@@ -91,18 +95,41 @@ if (all(is.finite(d))) {
   "NA present"
 }
 ```
-This also nests nicely and we will get back to that later, but here is what that looks like:
+<details open><summary class='drop'><h4>if/else Nesting</h4></summary>
+This also nests nicely and we will get back to that later, but here is what that formally looks like:
 ```{r Day4Flagging.1b, echo=T, eval=T}
 d <- c(1:4, 1:4 * 100)
 
-if (!all(is.finite(d))) {
+if (all(is.na(d))) {
   "NA present"
 } else if (all(d < 100)) {
   "all items less than 100"
-} else {
+} else if (any(d > 100)) {
   paste(sum(d > 100), "items more than 100")
+} else {
+  "I'm stumped"
 }
 ```
+This also works:
+```{r Day4Flagging.1b2, echo=T, eval=T}
+d <- c(1:4, 1:4 * 100)
+
+if (all(is.na(d))) {
+  "NA present"
+}
+if (all(d < 100)) {
+  "all items less than 100"
+}
+if (any(d > 100)) {
+  paste(sum(d > 100), "items more than 100")
+} else {
+  "I'm stumped"
+}
+```
+Sarah - "*You do not need to say `else` each time, you can leave that off and it is fine. In fact you see that a lot in the underlying code, just execute `dplyr::bind_row` in the console. 
+
+Thomas - {hyperventilating} I can't handle that - it makes it hard to read for me.
+
 
 I most commonly use the `if/else` constructions to create a switch in the code for special handling of undesirable data. However, I usually only go to this if there isn't a more direct solution. In my mind, `ifelse` gives a false sense of security. What all is in that 'else'?
 
@@ -422,19 +449,21 @@ system.time(for (i in 1:nIter) {
 ```
 <h4>Wrapping up</h4>
 <ul>
-  *When do we preallocate?* Pretty much just `for` loops `apply` family and `purrr` will take care of that for you.
+  *When do we preallocate?* Pretty much just `for` loops. `apply` family and `purrr` will take care of that preallocation for you.
   
   *Should you always preallocate?* Probably.<br> 
   
   *Do you really need to?* Not until your code execution takes longer than you are willing to wait.<br>
   
-  *Why not install more memory?* This is the federal government. I had to beg someone to install RStudio. Any idea the kind of fight it will take to put more memory in my laptop? If it even has an open slot? **But seriously**, that will appear to solve the problem. But datasets will just get bigger over time.<br>
+  *Why not install more memory?* That will appear to solve the problem. But datasets will just get bigger over time.<br>
   
-  *So I shouldn't use a for loop?* No, you can when you need to, but there is an art to it.<br> 
+  *So I shouldn't use a for loop?* No, you can when you need to, but there is an art to it. This course is all about preparing you with the tools to avoid some *frustration*.<br> 
 </ul>
+
+
 #### Apply Family
-<h3>Other (better) ways to iterate in R</h3>
-Now that you have the basics down, we are going to forge ahead with better and better ways to iterate. One family of functions that often replaces `for()` is the `apply` family of functions. 
+<h3>Apply Family AKA (better) ways to iterate in R</h3>
+Now that you have the basics down, we are going to forge ahead with better and better ways to iterate. One family of functions that often replaces `for()` is the `apply` family of functions. In reality you are now in intermediate R - we won't really finish the lesson on iteration with `apply` family function today. We will do that next week during the advanced session on 'functional programming'. 
 
 `apply` - operates on things resembling a dataframe. Okay, really it operates on a matrix where all values are the same type (all number or all letters). It can operate by row or by column and the output will be a dataframe,
 
@@ -446,33 +475,32 @@ Now that you have the basics down, we are going to forge ahead with better and b
 
 `tapply` - apply by groups. This lets you apply functions by a group. So, quick summary statistics, but you will quickly outgrow this and there are better ways to do this. 
 
-We are going to focus on `apply` and `lapply`. 
-`apply` - Going back to that definition, when might you use it?
-  
-To explore low level functions in apply, let's look at `mtcars` a wonderful little built in datast that I like to use for developing and demoing code (see `help(mtcars)` for description). 
-```{r ApplyFamily.0, echo=T, eval=F}
+<h4>apply()</h4>
+To explore using simple functions in `apply`, let's look at `mtcars`. This is a wonderful little built in datast that I like to use for developing and demoing code (see `help(mtcars)` for description). It has continuous and categorical variables that cover a good bit of what I end up needing to do. Another reason to know about `mtcars` is that a lot of answers on stackoverflow will call this dataset.
+
+```{r ApplyFamily.0, echo=T, eval=T}
 str(mtcars)
 head(mtcars)
 ``` 
  
 First let's calculate the mean across the rows. It doesn't make a whole lot of sense as to why we would do this because the columns contain values with different units, but we can if we set `margin=1`. 
-```{r ApplyFamily.1, echo=T, eval=F}
+```{r ApplyFamily.1, echo=T, eval=T}
 apply(mtcars,MARGIN=1, FUN=mean) #calculate mean across the row
-
 ```  
-Note: `apply` will operate on all the data it is provided. You will have to reduce your data to just that which you want analyzed.   
+Note: `apply()` will operate on all the data it is provided. If your data had a non-numeric element in the first column, for the function `mean()` to work you will have to exclude that column from the data provided to `apply`. 
 
-The make/model of the vehicle was stored as rownames so is not technically data being passed to mean for analysis. We get out a vector with the (meaningless) average value for each make and model of vehicle. 
+Apply is preserving/using rowname. That is nice in this case. The make/model of the vehicle was stored as rownames so is not technically data being passed to mean for analysis. We get out a vector with the (meaningless) average value for each make and model of vehicle. 
 
 It might make more sense to calculate the mean value for each of the attributes of a car. We can do that by setting `margin=2`.
 
-```{r ApplyFamily.2, echo=T, eval=F}   
+```{r ApplyFamily.2, echo=T, eval=T}   
 apply(mtcars,MARGIN=2, FUN=mean)
-
 ```
 
-That returns the mean of each variable. What is happending is the apply is disassembling the data frame and passing it line by line (`margin=1`) or row by row (`margin=2`) into `mean()` and collecting the output into a vector. 
+That returns the mean of each variable. What is happending is the apply is disassembling the data frame and passing it line by line (`margin=1`) or row by row (`margin=2`) into `mean()` and collecting the output into a named vector. 
 
+
+<h4>lapply()</h4>
 Let's change gears a little bit and return to those hobo data to take a look at lapply. First, a quick review of what is a list. A list is an R object that can hold a bunch of different elements. A list is ok if one element is a string and the next element is a character or if one element has 100 columns and 10 rows while the next element has 10 columns and 100 rows. It even can hold a dataframe a 1 element and a matrix as another element without any trouble. *A list says you're ok just the way you are.* 
 
 We are going to use our list to read in data that are mostly the same. If we wanted to store them in a single dataframe: 1) it would get unwieldy and 2) you would have to write code that 'fixed' inconsistencies between the dataframes. By storing them as independent list elements we don't necessarily need to write code that 'fixes' the inconsistencies.   
