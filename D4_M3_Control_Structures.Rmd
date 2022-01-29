@@ -1,142 +1,194 @@
-Thomas if/else - mostly done needs some code touch-up
-Thomas for, apply family - This is mostly done, needs some code touch up
-
 #### Control Structures 
-<h4> Control Structures</h4>
-What are control structures? The simplest way to think about this is that these are programming elements that control the flow of data in your code dependng on the value of logical conditions. There are two control structures we are going to focus on: `for` loops and `ifelse` statements. `for` loops are a control structure that sets the number of times and the data code should perform an operation on. 'ifelse' statements control what code is run under different conditions. 
+<h3> Control Structures</h3>
+What are control structures? The simplest way to think about this is that these are programming elements that control the flow of data in your code depending on the value of logical conditions. There are six basic control strucutres and you can find them with `help("Control")`.  
 
-<h4> if/else Statements </h4>
+There are two control structures we are going to focus on: `for` loops and `if/else` statements. `for` loops are a control structure that allow you to repeat a section of code multiple times (*without* copy-pasting it over and over!). `if/else` statements control whether or not a section of code is run based on certain conditions. If we have time we are going to touch on `while` at the end, mostly for fun.
+
+#### if/else
+<h3> if/else Statements </h3>
 Most of you are probably familiar with this. It has 3 pieces (in order):
   
-  1.  A statement ("if") to evaluate as a (T/F), e.g. (x>1) 
-  2.  An action to perform if it is TRUE  
-  3.  An action to perform if it is FALSE 
+  1.  A conditional statement ("if") to evaluate as a (T/F), e.g. `(x>1)` 
+  2.  An action to perform if it is `TRUE`  
+  3.  An action to perform if it is `FALSE` 
   
-On any individual data point or set of data, only two of these code pieces will be applied. The if statement (1) will always be evaluated. Then only the appropriate T or F action (2 or 3) will be applied - the other will be skipped. There are a two different ways to invoke this in R and they do different things:
+On any individual data point or set of data, only two of these code pieces will be applied. The conditional statement (1) will always be evaluated. Then only the appropriate `T` or `F` action (2 or 3) will be applied - the other will be skipped. There are a two different ways to invoke this in R and they do different things:
 
 This is the 'vectorized' version - you might use this to recode data. 
 
-`ifelse(test= , yes= , no= )`
+`ifelse(test= , yes= , no= )` (hereafter `ifelse`)
 
 This is not vectorized but is very useful where you need a 'switch'. This can evaluate complex data like a dataframe, but only as long as the output is a single boolean (TRUE or FALSE).
 
-`if(...){}else{}`
+`if(...){}else{}` (hereafter `if/else`)
 
-Let's see how `ifelse` works to recode some data. 
+Let's see how `ifelse` works to recode some data. Let me build this up starting from the data:
+```{r Day4Recode.1, echo=T, eval=T}
+d <- c(1:4, 100*1:4)
+d
+```
+A simple vector of numbers.
 
-```{r Day4Recode.1, echo=T, eval=F}
-d <- c(1, 2, 3, 4, 100, 200, 300, 400)
-ifelse(d < mean(d) / 10, "verify", "OK")
+Now lets evaluate that dataframe in a logical expression:
+```{r Day4Recode.1a, echo=T, eval=T}
+q_logic<- d < (mean(d) / 10)
+q_logic
+```
+This will evaluate the expression and will return `TRUE` for all values of `d` that are less than the mean of `d` divided by 10. Do you remember PEMDAS? Well in R it is PEMDASL. Logicals are evaluated after the math expression.
+
+In reality this vector of logicals is what ifelse is actually evaluating. In fact, we can just drop that into the ifelse. 
+```{r Day4Recode.1b, echo=T, eval=T}
+ifelse(q_logic, yes="verify", no="OK") #yes is the true condition no is the false condition
+```
+It goes through and replaces every `TRUE` value in that vector of logicals with "verify" and all of the `FALSE` values with "OK".
+
+In reality we seldom develop this kind of statement step by step like that. We would normally just write it on a single line.
+```{r Day4Recode.1c, echo=T, eval=T}
+q<-ifelse(d < (mean(d) / 10), "verify", "OK")
 ```
 
 Now, let's see what happens if we have some missing data.
-
-```{r Day4Recode.2, echo=T, eval=F}
-d <- c(1, 2, 3, 4, 100, 200, 300, 400, NA)
+```{r Day4Recode.2, echo=T, eval=T}
+d <- c(1:4, 100*1:4, NA)
 ifelse(d < mean(d, na.rm = T) / 10, "verify", "OK")
-help(ifelse) # so no surprises there...
+ 
 ```
+That `NA`, gets passed through. Maybe we want that, maybe we don't. In `mean()` and many other functions we were able to set `na.rm=TRUE` and omit the `NA` value, but reading through `help(ifelse)`, we don't really have that option. One option is that we can try to have two nested `ifelse` conditions. 
 
-That `NA`, gets passed through. Maybe we want that, but if we don't we can try to have two nested `ifelse` conditions. 
-
-```{r Day4Recode.3, echo=T, eval=F}
-ifelse(is.na(d) == T, "verify",
+```{r Day4Recode.3, echo=T, eval=T}
+ifelse(is.na(d) == T, "Missing",
   ifelse(d < mean(d, na.rm = T) / 10, "verify", "OK")
 )
 ```       
+`is.na()` returns a logical vector with `F` for all finite elements and `T` for all `NA` and `NaN` (but not `Inf`). In this nested structure, the `F` cases are futher evaluated and labeled with the second statement. Nesting is useful, but chances are if you find yourself nesting more than 2 or 3 conditions deep, there is probably a better way to do things. 
 
-Nesting is useful, but chances are if you find yourself nesting more than 2 or 3 conditions deep, there is probably a better way to do things. 
-
-The next option is if...else
-First thing to know about the if...else construction in R that it is very sensitive to the bracket placement, else must always be between a set of open brackets like this `}else{` . If it isn't you will end up with errors that are hard to track down. In context:
+The next option is `if/else`
+First thing to know about the `if/else` construction in R that it is very sensitive to the bracket placement, else must always be between a set of open brackets like this `}else{`. If it isn't you will end up with errors that are hard to track down. In context:
 
 R will not comprehend this:
-
-if(...){thing to do if TRUE<mark>}
-      else{</mark>    
+```{r pseudocode.1, echo=T, eval=F}
+if(...){thing to do if TRUE}
+      else{
       thing to do if FALSE
       }
-
+```
 R will only comprehend this:
-
+```{r pseudocode.2, echo=T, eval=F}
 if(...){thing to do if TRUE
-        <mark>}else{</mark>    
-        thing to do if FALSE
-        }
-
-This statements expects a single boolean in the `if()` statement. Sometimes I like to use this to create switches or bypasses when I am writing loops/iteration. For example: If I have a dataframe that is non-empty, then do the analysis. If the data frame is empty do something else. 
-
-```{r Day4Flagging.1, echo=T, eval=F}
-d<-c(1:4,1:4*100,NA)
-if(all(is.finite(d))){"no NA, NaN, or Inf present"
-                     }else{"NA present"}
+           }else{
+           thing to do if FALSE
+           }
 ```
 
-Simple enough, but not very helpful/informative. This also nests nicely and we will get back to that later, but here is what that looks like:
+This statements expects a single boolean as the result of `if()` statement. Sometimes I like to use this to create switches or bypasses when I am writing loops/iteration. For example: If I have a dataframe that is non-empty, then do the analysis. If the data frame is empty do something else. 
 
-```{r Day4Flagging.1b, echo=T, eval=F}
-d<-c(1:4,1:4*100)
-if(!all(is.finite(d))){"NA present"
-                     }else if(all(d<100)){"all items less than 100"
-                     }else{paste(sum(d>100), "items more than 100")} 
+```{r Day4Flagging.1, echo=T, eval=T}
+d <- c(1:4, 1:4 * 100, NA)
+
+if (all(is.finite(d))) {
+  "no NA, NaN, or Inf present"
+} else {
+  "NA present"
+}
+```
+This also nests nicely and we will get back to that later, but here is what that looks like:
+```{r Day4Flagging.1b, echo=T, eval=T}
+d <- c(1:4, 1:4 * 100)
+
+if (!all(is.finite(d))) {
+  "NA present"
+} else if (all(d < 100)) {
+  "all items less than 100"
+} else {
+  paste(sum(d > 100), "items more than 100")
+}
 ```
 
-I most commonly use the if...else construction to create a switch in the code for special handling of undesirable data. However, I usually only go to this if there isn't a more direct solution. In my mind, ifelse gives a false sense of security. What all is in that 'else'?
+I most commonly use the `if/else` constructions to create a switch in the code for special handling of undesirable data. However, I usually only go to this if there isn't a more direct solution. In my mind, `ifelse` gives a false sense of security. What all is in that 'else'?
 
-####Iteration
+#### Iteration
 
+<h3>Iteration</h3>
 This brings us to iteration. Iteration is a control structure that causes code to repeat itself while the conditions for iterating are met. We will explain what that means a little later. Practically speaking it allows you to a lot of work without having to be the one doing it. Iteration consists of a few pieces:
   1. The data you need to do something to
   2. The method of iteration
   3. The task you need to do
   4. The result of your task
   
-What are some kinds of tasks you find yourself doing that you are wanting to do more easily in R? 
+*What are some kinds of repetitive tasks you find yourself doing that you are wanting to do more easily in R?*
+<ul>  
+  <li>...</li>
+  <li>...</li>
+  <li>...</li>
+</ul>
 
-There are a lot of ways to accomplish iteration and we are not going to cover them all. We are going to cover some of the most basic and commonly used approaches.
+All of those can be accomplished with iteration. There are a lot of ways to accomplish iteration and we are not going to cover them all. We are going to cover some of the most basic and commonly used approaches.
 
 The first one you may be familiar with is the `for` loop. You give this a list of items and tell it what you want it to do and it will do that thing for each item on the list. In simplest terms that looks like:
 
-`for(i in vector){ do thing 1
-                do thing 2
-                ...
-                return output 
- }`
+```{r pseudocode.3, echo=T, eval=F}
+for(i in vector){ 
+  do thing 1
+  do thing 2
+  ...
+  return output 
+}
+```
 
 A few things to pick apart here:
 
-i - i is an arbitrary variable, you could call it q. I will take on the value for the first item in the vector on the first step of iteration. It is passed into the loop code with a different value for each step of the iteration. 
+`i` - i is an arbitrary variable, you could call it q. It will take on the value for the first item in the vector on the first step of iteration. q is then available in the loop as a variable and it takes on each successive value in vec with each step of the iteration. 
 
-vector - vector is that vector of items aka the conditions for iteration. These could be numeric or they could be characters or strings. Numeric vectors are common is you need to run through all of the cases. Character vectors are great if you have groups of data you want to work through. All `vector` does it gives it some instructions on what it should work on and effectively when to stop.
+`vector` - vector is that vector of items aka the conditions for iteration. These could be numeric or they could be characters or strings. Numeric vectors are common is you need to run through all of the cases. Character vectors are great if you have groups of data you want to work through. All `vector` does it gives it some instructions on what it should work on and effectively when to stop.
 
-```{r ForLoop.1, echo=T, eval=F}
-
-for(i in 1:9){                  #for the number 1 through 9
-              OutDat<-i+1       #add 1 to each number and store that in the variable OutDat
-              print(OutDat)     #print the result to console 
-              }    
+Let's make sure we understand those two things
+```{r ForLoop.0, echo=T, eval=T}
+vec<-1:9
+for (i in vec) { # for the number 1 through 9
+         i
+}   
 ```
-What we really want is the whole vector that generates. 
-```{r ForLoop.1a, echo=T, eval=F}
+Nothing happened because I did not actually tell it to return something from that loop. That isn't entirely true. Something happened:
+```{r ForLoop.0b, echo=T, eval=T}
+i 
+```
+i was created in the environment and it has a value of 9 the last value of the loop. Logically that means it seems to have made it to the end of vec.
+
+```{r ForLoop.0a, echo=T, eval=T}
+for (i in vec) { # for the number 1 through 9
+         print(i+1)
+}   
+```
+Now we can see it clearly walking though that loop and adding 1 to each value. But, what we really want is we want a vector of something out of it.
+```{r ForLoop.1a, echo=T, eval=T}
 #alternatively predefine a container to receive the data
-OutDat<-NULL                    #define an empty variable
-for(i in 1:9){
-              OutDat[i]<-i+1    #store that in the ith position of the variable OutDat   
-              }   
+OutDat <- NULL # define an empty variable. This is naughty, see discussion on 'growing' dataframes later on
+for (i in 1:9) {
+  OutDat[i] <- i + 1 # store that in the ith position of the variable OutDat
+}
+OutDat
 ```
 
-Before we move on to more interestig code, I want to pause and note that you will hear us tell you that there are better ways to iterate than a for_loop. However, for loops are a fundamental skill and almost everyone teaching these trainings will tell you that they will fall back on a for loop when they can't get something else to work.
+Before we move on to more interesting code, I want to pause and note that you will hear us tell you that there are better ways to iterate than a for loop. However, for loops are a fundamental skill for several reasons. 
+<ul>
+    <li> They reinforce a fundamental understanding of iterative processing.</li> 
+    <li> Everyone (probably) falls back on a for loop eventually. </li>
+    <li> They are the precursor to writing your own functions. </li>
+</ul>
 
-So let's make a useful for loop. We are going to use the hobo data and we want to do 3 things with that. First we want to calculate some summary statistics, second we want to do a rudimentary QAQC check and flag potentially bad data, then we want to save it to a file so we can do some further visual assessment. That kind of task may sound familiar. I would note we are also going to write this as the 'do everything all at once' loop which is a pretty common way to start using a for loop. We will come back to whether or not that is the 'best' way to iterate a little later. 
+So let's make a useful `for` loop. We are going to use raw hobo air temperature files and we will want to do 3 things with those data. These should sound familiar:
+<ul>
+0. Look at the data
+1. We want to calculate some summary statistics.
+2. We want to do a rudimentary QAQC check and flag potentially bad data
+3. We want to save it to a file so we can do some further visual assessment.
+</ul>
 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! add some code to introduce dataframe . 
-str 
-head
-
-
-```{r ForLoop.2, echo=TRUE, eval=F}
+```{r ForLoop.2a, echo=TRUE, eval=T}
 library(magrittr)
 library(ggplot2)
+
+#create a list of file names that we will read in
 fNames <- paste0(
   "https://raw.githubusercontent.com/KateMMiller/IMD_R_Training_Intro/master/Data/",
   c(
@@ -147,87 +199,203 @@ fNames <- paste0(
     "APIS05_20597703_2021_temp.csv"
   )
 )
+fNames
+```
+Note, `paste0()` is an example of a handy vectorized operation of paste that assume no spaces between arguments. 
 
-OutPath <- choose.dir() # note, no trailing '\\' in path
+Let's get some idea of what we are dealing for the data so we can plan the code. It is almost impossible to read in data from files blindly.
+```{r ForLoop.2b, echo=TRUE, eval=T}
+#read in and inspect the first element (for training purposes)
+temp<-read.csv(fNames[1], skip = 1, header = T) #hobo data has an extra line at the top we need to skip
+head(temp)
+```
+Gross, but we can fix that, it is just headers and we could actually use some of that info, but we will save those games for a different day. Maybe we whould redo this with headers set to `F` and you can just trust me that I know what is in each column? (Note, I am changing `skip=2` otherwise this will treat the headers as data.)
+
+```{r ForLoop.2c, echo=TRUE, eval=T}
+temp<-read.csv(fNames[1], skip = 2, header = F)
+names(temp)[1:3]<-c("idx", "DateTime", "T_F") #let me just assing some column names really quick
+head(temp)
+str(temp) #look at data types
+rm(temp) #do a little cleanup 
+```
+There are ~5 columns in most of these files. 
+  <ul>
+  Col. 1 is a sequential index column<br>
+  Col. 2 is a date and time string<br>
+  Col. 3 is the air temperature in degrees F<br>
+  Col. 4 is light measured as lux or lumens per ft2 (if it was measured)<br>
+  Col. >5 are comment columns<br>
+  </ul>
+We are only interested in the first 3 columns today.
+
+So, things we are aware of for coding so far:
+<ul>
+-Three columns of data is all we want right now<br>
+-Two columns are numeric/integer<br>
+-One is time stored as a character but we want it to be real time<br>
+-Really ugly headers that need cleanup, so bad I am not even going to read them in.<br>
+-Lastly, because I know these data, one of the files is empty except for the headers :O.<br>
+</ul>
+
+Done with preliminary data inspection.
+
+<h3> Summary Statistics Loop </h3>
+What do we want to do? We are going to create a simple summary statistics data dataframe. The loop will need to handle the empty filename somehow You will need to initialize a empty variable so you can get data out of the for loop. We will use a list for reasons discussed below.
+
+```{r ForLoop.2f, echo=TRUE, eval=T}
+len<-length(fNames) #calculate the number of iterations
+
+SummaryData <- list() #Generate a list that we will put output into. Always rerun prior to loop.
+
+for (i in 1:len) {
+  # 1 Read in and generate the data to use
+  # 1a extract the filename from a filepath and parse the metadata
+  fName <- basename(fNames[i])
+  Site <- stringr::str_sub(fName, 1, 6)
+  Year <- as.numeric(stringr::str_sub(fName, -13, -10))
+  # 1b read in the data, change headers, set time so we can do some math later
+  d <- read.csv(fNames[i], skip = 1, header = T)[1:3] %>%
+    setNames(., c("idx", "DateTime", "T_F")) %>%
+    dplyr::mutate(., DateTime2 = as.POSIXct(DateTime, "%m/%d/%y %H:%M:%S", tz = "UCT"))
+  # 2 summarize and 3 output the data
+  SummaryData[[i]] <- data.frame( #output the data
+    # 2 what to summarize for all files 
+    Site = Site,
+    Year = Year,
+    FileName = fName,
+    # Variable output
+    # 2a What to summarize so long as there is 1 non-NA record
+    if (any(is.numeric(d[, 3]))) { # check that there is at least 1 non-NA record
+      list(
+        T_F_mean = mean(d$T_F, na.rm = T),
+        T_F_min = min(d$T_F, na.rm = T),
+        T_F_max = max(d$T_F, na.rm = T),
+        nObs = nrow(d),
+        nDays = (d$DateTime2[nrow(d)] - d$DateTime2[1])[[1]], # why we created a posix
+        Flag = NA
+      ) 
+      # 2b what to summarize if the data are missing.
+    } else {
+      list(
+        T_F_mean = NA,
+        T_F_min = NA,
+        T_F_max = NA,
+        nObs = nrow(d),
+        nDays = NA,
+        Flag = "Hobo File Present But No Data"
+      )
+    }
+  )
+}
+dplyr::bind_rows(SummaryData)
+
+```   
+Lets take some time to pick this apart and understand what it is doing. 
+
+**1. The read and generate data step.** Is a pretty standard part of a loop where you define some variables that you are going to reuse later. Here, we are just parsing some metadata from the filename. Also a standard part of a loop is where you need to actually read in your data. `i` usually does not contain your data in a for construction
+
+**2. The getting stuff done step.** This step is setting up where the data goes -- "list element i" -- and what data to put there. The nifty thing is that we are calling an if/else statement within the construction of the dataframe. There are dataframe elements that will be fixed and dataframe elements that will be variable. 
+
+**3. The output step.** Here, the output step is integrated into the output step. This is where we put the data into something we can access after the for loop is done. 
+
+A note on the output technique. We output data into a `list` then simplify the `list` at the end. We could have built a dataframe directly, however, this would have required an approach called 'growing' a dataframe. This approach is simple, but is considered highly inefficient and is generally discouraged. It is ok with small dataframes, but with larger ones, it will bog down your system. 
+
+Let's carry on and loop up some other tasks. Next up we want to do some QA/QC flagging on the original data. 
+
+<h3>QA/QC Loop</h3>
+```{r ForLoop.2d, echo=TRUE, eval=F}
+OutPath <- paste0(getwd(), "/hobo_ouputs/") # or put your preferred path here (we will use this later)
+# set up some QA thresholds
 TempUpper <- 40
 TempLower <- (-40)
 
-# i=fNames[1] #code dev/debugging fragment
-# rm(i) #debug.dev frag
-SummaryData <- NULL # make sure this gets cleared before rerunning this code
 for (i in fNames) {
-  d <- read.csv(i, skip = 1, header = T)[1:3]
-  fName <- basename(i) # extract the filename from a filepath
-  print(fName) # dev/debug frag
-  # begin if...else control structure
-  if (nrow(d) > 0) {
-    # What to do if there is at least 1 record in the dataframe
-    names(d) <- c("idx", "DateTime", "T_F")
-    d$DateTime2 <- as.POSIXct(d$DateTime, "%m/%d/%y %H:%M:%S", tz = "UCT")
-    # summarize the data
-    OutDat <- data.frame(
-      FileName = fName,
-      T_F_mean = mean(d$T_F, na.rm = T),
-      T_F_min = min(d$T_F, na.rm = T),
-      T_F_max = max(d$T_F, na.rm = T),
-      nObs = nrow(d),
-      nDays = (d$DateTime2[nrow(d)] - d$DateTime2[1])[[1]]
-    ) # days
-    # Append new summary data to old summary data
-    SummaryData <- rbind(SummaryData, OutDat)
-    # Do some QA/QC flagging
-    d <- d %>%
-      dplyr::mutate(
-        TChangeFlag = ifelse(c(abs(diff(T_F, lag = 1)) > 10, FALSE), "D10", NA),
-        Flag = dplyr::case_when(
-          is.na(T_F) ~ "MISSING",
-          T_F > TempUpper ~ "High",
-          T_F < TempLower ~ "Low"
-        )
-      ) %>%
-      tidyr::unite("Flag", c(TChangeFlag, Flag), sep = "_", remove = TRUE, na.rm = TRUE)
-    # Write out the flagged dataset
-    write.csv(d[, c("DateTime", "T_F", "Flag")],
-      paste0(OutPath, "/", gsub(".csv", "_QC.csv", fName)),
-      row.names = F, quote = F
-    )
-    # Make some quick plots for visual QA/QC
-    p <- ggplot(d, aes(x = DateTime2, y = T_F)) +
-      geom_point(size = 0.5) +
-      ggtitle(fName)
-    ggsave(
-      filename = gsub(".csv", "_plot.pdf", fName), path = OutPath, device = "pdf",
-      plot = p,
-      width = 5, height = 5, units = "in"
-    )
-    # What to do when the dataframe is empty.
-  } else {
-    OutDat <- data.frame(
-      FileName = fName,
-      T_F_mean = NA,
-      T_F_min = NA,
-      T_F_max = NA,
-      nObs = NA,
-      nDays = NA
-    )
-    SummaryData <- rbind(SummaryData, OutDat)
-  }
+  #1 Read in/generate data
+  fName <- basename(i)
+  d <- read.csv(i, skip = 1, header = T)[1:3] %>%
+    setNames(., c("idx", "DateTime", "T_F"))
+  
+  #2 Generate your output in this case, some QA/QC flagging
+  d_com <- d %>%
+    dplyr::mutate(
+      # checks for too big of a temp change
+      TChangeFlag = ifelse(c(abs(diff(T_F, lag = 1)) > 10, FALSE), "D10", NA),
+      # flag if a temp is too high or too low
+      Flag = dplyr::case_when(
+        is.na(T_F) ~ "MISSING",
+        T_F > TempUpper ~ "High",
+        T_F < TempLower ~ "Low"
+      )
+    ) %>%
+    # merge so you can have multiple flags applied
+    tidyr::unite("Flag", c(TChangeFlag, Flag), sep = "_", remove = TRUE, na.rm = TRUE)
+
+  #3 outptut the data
+  dir.create(OutPath, showWarnings = F)
+  write.csv(d_com[, c("DateTime", "T_F", "Flag")],
+    paste0(OutPath, gsub(".csv", "_QC.csv", fName)),
+    row.names = F, quote = F
+  )
 }
-#write out the summary data. Not run, included for fun.
-#write.csv(SummaryData, paste0(OutPath,"/SummaryData.csv"),row.names=F, quote=F)           
-
 ```
-That is most of what you might end up doing in some routine QA/QC task. We can take some time now to deconstruct what in this is new to you and what questions you have on it. 
+We used some new functions there, but let's start at a higher level and work our way down to the lower level functions. 
 
-+ We used a control structure to handle potentially missing data
+What changed with the for loop?
+A for loop can accept any vector as input. It could be a vector of names or a could be a vector of numbers. In the first loop we did, I wanted that vector of numbers so I had an automatic index to use. In this case, I just need the name, I don't need that index.
+  
+1. This is mostly the same as before. 
+2. There is new stuff here but this boils down to: "I want to create 2 variables and then merge them. `mutate()` is creating the variables `Flag` and `TChangeFlag`. `Flag` is using a dplyer version of ifelse called `case_when()` that allows you to specify what to return if certain conditions are true. `TChangeFlag` is the first derivative of the temperature data - rate of change of the data. If the rate of chagne is too high, then we flag it. This could have been done with `case_when()`, but we are talking about control structures today. 
+3. I want to point out the 'on the fly' file name generation. This takes some practice in `paste()`. All this is doing is slightly modifying the old name and giving it a new directory.  
+    
+<h3>Plot Loop</h3>
+Let's do our last for loop that is pretty commomn and that is the 'barf out a bunch of plots' loop. I am visual and can quickly diagnose data by looking at it. I like to do this by having PDFs on hand.  
+```{r ForLoop.2g, echo=TRUE, eval=F}    
+OutPath <- paste0(getwd(), "/hobo_ouputs/") # or put your preferred path here (we will use this
 
-+ There are only rare instances where you want to wrap stuff up in that complicated of a for loop. The more complex the loop the harder it is to debug. Complex for loops are also hard to build flexibility into. 
+for (i in fNames) {
+  #1 Read in/generate data
+  fName <- basename(i)
+  d <- read.csv(i, skip = 1, header = T)[1:3] %>%
+    setNames(., c("idx", "DateTime", "T_F")) %>%
+    dplyr::mutate(., DateTime2 = as.POSIXct(DateTime, "%m/%d/%y %H:%M:%S", tz = "UCT"))
+  #2 Do the thing you want to do, in this case make and save plots
+  p <- ggplot(d, aes(x = DateTime2, y = T_F)) +
+    geom_point(size = 0.5) +
+    ggtitle(fName)
+  #3 Output the results outside of the for loop
+  dir.create(OutPath, showWarnings = F)
+  ggsave(
+    filename = gsub(".csv", "_plot.pdf", fName), 
+    path = OutPath, device = "pdf",
+    plot = p, width = 5, height = 5, units = "in"
+  )
+}
+```
+Let's break this down again because practice makes perfect. 
+0. The iteration hasn't changed. Same approach, different products. 
+1. Same.
+2. This should be pretty familiar from the data visualization day. 
+3. I am a huge fan of doing things in base R, but boy does ggsave take the frustration out of saving plots. What I want to point out here is that we don't need to build the full file path. We specify the file name as discussed before and feed it a path separately. 
 
-+ `for` is pretty hard to get data out of if you want to work with it further in the environment. It has probably been my single greatest frustration. You have to tell it exactly what to give you and set that up beforehand otherwise you aren't going to get anything. (okay fine, this is a good thing and a bad thing) 
+<h3> Recap and final thoughts on for loops and control structures </h3>
+What did we do?
++ Learned the basic structure of most for loops. Probably the most important thing.
++ Used some for loops to do some actual tasks on multiple datasets. 
++ Read files into and wrote files out of a for loop.
++ Wrote data calculated in a for loop to a variable in the environment.
++ Used `ifelse()` logic to flag some data for checking.
++ Use `if...else` to create a switch for NA handling in a dataframe in a for loop.
++ Maybe learned a few new functions. 
++ ...?
 
-+ ...
+At this stage you may be thinking. Ok, but you have read the data in multiple times and repeated a lot of code. Couldn't we just wrap this in one giant `for` loop? 
 
-The good news is that there are many other ways to iterate in R. Often you will start with a for loop and then refine it with approaches that are more suited to your needs. One family of functions that often replaces "for" is the apply family of functions. 
++ We could have written the loop to read in the data, store it in memory, and then loop only on the stored data for flagging, statistics, and plotting. But, loading stuff in R takes up memory. Depending on the size of your datasets, you may not want unused information floating around hogging memory. Continuous data files can become large objects. So, it depends. 
+
++ There are only rare instances where you want to wrap stuff up in that complicated of a for loop. The more complex the loop the harder it is to debug. Complex for loops are also hard to build flexibility into. In general you should shoot for one task or task family per loop.  
+
+<h3>Other (better) ways to iterate in R</h3>
+Now that you have the basics down, we are going to forge ahead with better and better ways to iterate. One family of functions that often replaces `for()` is the `apply` family of functions. 
 
 `apply` - operates on things resembling a dataframe. Okay, really it operates on a matrix where all values are the same type (all number or all letters). It can operate by row or by column and the output will be a dataframe,
 
@@ -235,108 +403,107 @@ The good news is that there are many other ways to iterate in R. Often you will 
 
 `lapply` - Apparently, this is a special case of mapply and it operates on lists of things and stores the output in a list of things. sapply and vapply are variations on this theme.
 
+`sapply` - A 'wrapper' for lapply that will coerce the list output into a matrix or array.
+
 `tapply` - apply by groups. This lets you apply functions by a group. So, quick summary statistics, but you will quickly outgrow this and there are better ways to do this. 
 
-We are going to focus on apply and lapply. 
+We are going to focus on `apply` and `lapply`. 
 `apply` - Going back to that definition, when might you use it?
   
- Let's calculate the mean value for each site across sampling years
- !!!!!! print d to the console so people can look at what they are woring on.
-```{r ApplyFamily.1, echo=T, eval=F}
-apply(d[],MARGIN=1, FUN=mean)
-#need data still
+To explore low level functions in apply, let's look at `mtcars` a wonderful little built in datast that I like to use for developing and demoing code (see `help(mtcars)` for description). 
+```{r ApplyFamily.0, echo=T, eval=F}
+str(mtcars)
+head(mtcars)
 ``` 
  
- Now, let's calculate the mean value for each sampling year across sites
+First let's calculate the mean across the rows. It doesn't make a whole lot of sense as to why we would do this because the columns contain values with different units, but we can if we set `margin=1`. 
+```{r ApplyFamily.1, echo=T, eval=F}
+apply(mtcars,MARGIN=1, FUN=mean) #calculate mean across the row
+
+```  
+Note: `apply` will operate on all the data it is provided. You will have to reduce your data to just that which you want analyzed.   
+
+The make/model of the vehicle was stored as rownames so is not technically data being passed to mean for analysis. We get out a vector with the (meaningless) average value for each make and model of vehicle. 
+
+It might make more sense to calculate the mean value for each of the attributes of a car. We can do that by setting `margin=2`.
+
 ```{r ApplyFamily.2, echo=T, eval=F}   
-apply(d[],MARGIN=2, FUN=mean)
-#need data still
+apply(mtcars,MARGIN=2, FUN=mean)
+
 ```
 
-Let's change gears a little bit. Let's look at lapply. Let's review what a list is really quick, a list is a container that can hold a bunch of different things and let them be different without trying to make them the same. They can have different numbers of columns, different numbers of rows, etc. They are like a filing cabinet.  I use them for reading in acoustic recognizer results, temperature results, etc. We are going to look at the case of reading in multiple CSV hobo files. 
+That returns the mean of each variable. What is happending is the apply is disassembling the data frame and passing it line by line (`margin=1`) or row by row (`margin=2`) into `mean()` and collecting the output into a vector. 
 
-In the previous for loop we operated on our hobos one at a time. What we can do instead is open all of the data into an object and operate it on it as needed. 
+Let's change gears a little bit and return to those hobo data to take a look at lapply. First, a quick review of what is a list. A list is an R object that can hold a bunch of different elements. A list is ok if one element is a string and the next element is a character or if one element has 100 columns and 10 rows while the next element has 10 columns and 100 rows. It even can hold a dataframe a 1 element and a matrix as another element without any trouble. *A list says you're ok just the way you are.* 
 
-You should still have fName hanging out somewhere. This is that list of hobos. 
+We are going to use our list to read in data that are mostly the same. If we wanted to store them in a single dataframe: 1) it would get unwieldy and 2) you would have to write code that 'fixed' inconsistencies between the dataframes. By storing them as independent list elements we don't necessarily need to write code that 'fixes' the inconsistencies.   
+
+We discussed this earlier, in the previous `for` loop we operated on each of our hobo csvs one at a time. What we are going to do this time is open them all into a single list object with 5 different elmenets (1 for each csv file).
+
+You should still have fNames hanging out somewhere. This is that list of hobos. 
 
 ```{r ApplyFamily.3, echo=T, eval=F}
 fNames
 ```
 
-What we will do next is iterate through that list of names and store it in a list. We do that with lapply.
+What we will do next is iterate through that list of names and store it in a list. We do that with lapply. What does lapply do? It takes in a list or vector of data and returns list of data of the same length. `lapply(X, FUN,...)` has 3 arguments.
++ `X` the data or the vector to FUN
++ `FUN` what to do
++ `...` elipsis - this is a bit of an odd one. This is where you put whatever other arguments you want passed to FUN. Looking at the examples below will help.
 
+Get the data
 ```{r ApplyFamily.4, echo=T, eval=F}
-HoboList<-lapply(fNames,read.csv, skip=1, header=T)%>% #read hobo data into a list
-          lapply(.,"[",,1:3)%>% #Grab only first 3 columns
-          lapply(.,setNames, c("idx","DateTime","T_F")) #fix column names
+HoboList<-lapply(fNames,read.csv, skip=1, header=T)
+HoboList
+```
+This is passing, sequentially, file paths into `read.csv()`. Just like our for loop more or less. It is also passing `skip` and `header` values to `read.csv()`. It returned a list of all the csvs with everything in them.
 
+Simplify the Data
+```{r ApplyFamily.5, echo=T, eval=F}
+HoboList<-lapply(HoboList,"[",,1:3)
+HoboList  
+```
+This then takes that list as input and passes each of the dataframes contained within it to the indexing function. That is right, indexing `[]` is a function and we can pass it into `FUN` by calling `"["`. What fun! Not the empty commas there `"[",,1:3` are intentional and will be interpreted the same as saying `x[,1:3]` or... go get columns 1 through 3.
 
+Clean those headers
+```{r ApplyFamily.6, echo=T, eval=F}
+HoboList<-lapply(HoboList,setNames, c("idx","DateTime","T_F"))
+HoboList
+```
+Then we simply just rename the headers because lapply passes each dataframe to the list. 
+
+All together now with the piping!
+```{r ApplyFamily.7, echo=T, eval=F}
+HoboList<-lapply(fNames,read.csv, skip=1, header=T)%>% #1. read hobo data into a list
+          lapply(.,"[",,1:3)%>% #2. Grab only first 3 columns
+          lapply(.,setNames, c("idx","DateTime","T_F")) #3. fix column names
 ```
 
-So now all of those hobo files are available in this list and we made it pretty. So let's redo that previous for loop as an lapply.
+Now all of those hobo files are available in the HoboList object that we could summarize, do some flagging, or plot from. How do we do that? We could do for loops again, or we could keep going with lapply. 
 
-First we can create that summary data
+For now, let's create a little bit of summary data. 
 
-```{r ApplyFamily.5, echo=TRUE, eval=FALSE}
-OutDat <- lapply(HoboList, function(x) {
-  data.frame(
-    gmean = mean(),
-    gmin = min(),
-    gmax = max(),
-    nObs = nrow(),
-    nDays = ("...posix math...")
+```{r ApplyFamily.8, echo=TRUE, eval=FALSE}
+HoboSummary<-lapply(HoboList[-3], FUN=function(x){ #-3 drop that blank file for now
+  d<-data.frame(
+    Mean = mean(x$T_F, na.rm=T),
+    Min = min(x$T_F, na.rm=T),
+    Max = max(x$T_F, na.rm=T),
+    nObs = nrow(x)
   )
 })
-# insert some simplification step
-write.csv(outDat, file.choose(), row.names = F, quote = F)
+do.call(rbind, HoboSummary) #equivalent to dplyr::bind_rows(HoboSummary)
 ```
+This is a stripped down version of the for loop we did before. We then use `do.call()`, the base  equivalent to `dplyr::bind_rows()`, to generate a dataframe. `do.call` takes a function (here `rbind`) and passes it a list of arguments (here list elements). So, tt passes all of the individual elements of HoboSummary to `rbind` as individual arguments to glue together. 
 
-We can then do the flagging step
+We could then do the flagging step and the plotting steps. However, we are going to stop here and pick those up in the advanced R session because we really need to talk about how to make a `function()` before we go a whole lot further and that is a topic for next time.
 
-```{r ApplyFamily.6, echo=TRUE, eval=F}
-lapply(HoboList, function(x){
- #put that mutate-unite thing in here                
-}
-)
-#need to put in the on the fly naming with the orignal file names.
-```
-Finally we can do some plotting. 
-```{r ApplyFamily.7, echo=TRUE, eval=F}
-library(ggplot2)
-lapply(HoboList, function(x) {
-  p <- ggplot(x, aes(x = DateTime, y = T_F)) +
-    geom_point() +
-    ggtitle()
-  ggsave(
-    filename = , path = , plot = p, device = "pdf",
-    width = 5, height = 5, units = "in"
-  )
-  # still some stuff to fix here. filename is not defined in the list. List needs to be named.
-})
-```
-
-So how is this different from the super for loop that does everything? 
--All of the data are available to you in 1 object. But, you could write a for loop that puts the data in a list.  
--You can easily add extra steps/iteration without worring about compatibility with the existing for loop. 
--You are invoking things in separate steps. You could do this by writing a series of for loops that do specific things but then you will be calling in the data each time.
--Better control of outputs if you need to tweak one part. If nothing else changed you shouldn't be running the whole thing again. 
--Note we secretly are getting you to start thinking about 'functional programming'. Each of these code chunks is a very short step away from being a function. 
-
-Let's say you don't like the list structure and you need to crate a dataframe (e.g. for a multi-panel GGplot). It is pretty simple to collapse a list into a dataframe assuming you are collapsing things that are equivalent dimensions.
-
-```{r ApplyFamily.8, echo=TRUE, eval=F}
-do.call(rbind, HoboList) 
-```
-
-And do.call was another example of iteration. That just took all of our files and glued them together instead of having to loop thorugh them and put them together one by one or call separate isntances of rbind. Of course you will want to make sure you know what each list element was before you glue them together.
-
-  -purrr - This exists and I know nothing about it. Covered more in depth on day 6 
 
 ##### A note on while loops
 
 Another type of loop you should be aware of is the `while` loop. It probably won't come up much when you're working with data in R, but as a programmer you should have it in your toolbox. While the `apply` family of functions is specific to R, `for` loops and `while` loops are present in most programming languages.
 
-In a `for` loop, you decide ahead of time how many times the code inside your loop should execute. The `for` loop iterates through a vector of a certain length and stops when it reaches the end.
+In a `for` loop, you decide ahead of time how many times the code inside your loop should execute. The `for` loop iterates through a vector of a certain length and stops when it reaches the end. 
 
 In a `while` loop, on the other hand, your loop executes *while* some condition is true. When that condition is no longer true, the loop stops. `while` loops are good for situations when you can't predict ahead of time how many times the loop needs to execute.
 
