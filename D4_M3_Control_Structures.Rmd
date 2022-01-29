@@ -391,7 +391,7 @@ At this stage you may be thinking. Ok, but you have read the data in multiple ti
 
 #### Preallocation
 <h3>Predefining For Loop Output Variables</h3>
-I want to now set up some guidelines for initializing and using for loop output variables. This primarily refers to dataframe-like loop output variables. There are many ways to initialize this, I have done it two ways -- there are more.  
+Before we move on let's take time to discuss a truely advanced R topic: preallocating the for loop output. This primarily refers to dataframe-like loop output variables and it makes a huge difference in how quickly your code executes. There are many ways to initialize this, I have shown two ways -- there are more.  
 
 In the first method we defined `OutDat<-NULL` and in the body of the loop proceeded to assign each iteration's output to a specific location in `OutDat` using indexing `OutDat[i]<-i+1`. We did something similar in the above example where we created a list `SummaryData <- list()` and then added an new list element for each iteration's output `SummaryData[[i]] <- data.frame(...)`. These are both acceptable ways to capture output. 
 
@@ -405,7 +405,7 @@ system.time(for (i in 1:10000) {
 }) #4.47 seconds on my system
 
 ```
-Instant dataframe and everyone is happy. Or are they? They aren't. This is called `growing` an object. Doug Burns also refers to this as the "Second Circle of R Hell" in his book *The R Inferno*. Look it up, it is great (no really, it is). To do this 1,000 times requires 0.23 seconds, 1,000,000 time took... well I quit after 13 minutes. If this were a strictly linear process it should have taken around 4 minutes to do 1,000,000 iterations - clearly it did not. 
+Instant dataframe and everyone is happy. Or are they? They aren't. This is called `growing` an object. Patrick Burns also refers to this as the "Second Circle of R Hell" in his book *The R Inferno* (Dante's *Inferno*... the R community was a wonderful sense of humor). Look it up, it is great (no really, it is). To do this 1,000 times requires 0.23 seconds, 1,000,000 time took... well I quit after 13 minutes. If this were a strictly linear process it should have taken around 4 minutes to do 1,000,000 iterations - clearly it did not. 
 
 Why? When you use `rbind` in this manner it copies the giant dataframe each time and tell's R to go look for/request another giant block of memory instead of the one that is already there. This slows your processing way down. So.... don't do that. Instead you should preallocate your dataframe, especially if it is going to be big, it even makes a difference on smaller dataframes.
 
@@ -420,9 +420,11 @@ system.time(for (i in 1:nIter) {
 }) #2.42 seconds on my system
 
 ```
-Should you always preallocate? Yes. 
+When do we preallocate? Pretty much just `for` loops `apply` family and `purrr` will take care of that for you.
+Should you always preallocate? Probably. 
 Do you really need to? Not until your code execution takes longer than you are willing to wait. 
 Why not get more memory? That will appear to solve the problem. But datasets will just get bigger over time.
+So I shouldn't use a for loop? No, you can when you need to, but there is an art to it. 
 
 #### Apply Family
 <h3>Other (better) ways to iterate in R</h3>
