@@ -60,8 +60,8 @@ sample(1:100000, 1) #62051
 set.seed(62051)
 
 # Read in shapefiles from teams data folder
-sara_bound1 <- st_read("./data/SARA_boundary_4269.shp")
-sara_veg1 <- st_read("./data/SARA_Veg.shp")
+sara_bound1 <- st_read('./data/SARA_boundary_4269.shp')
+sara_veg1 <- st_read('./data/SARA_Veg.shp')
 
 # Check that the projections match; fix the one that doesn't match
 st_crs(sara_bound1) == st_crs(sara_veg1) # FALSE- projections don't match.
@@ -69,7 +69,7 @@ st_crs(sara_bound1) == st_crs(sara_veg1) # FALSE- projections don't match.
 sara_bound <- st_transform(sara_bound1, crs = 26918)
 st_crs(sara_bound) == st_crs(sara_veg1) # TRUE
 
-# Quick plot
+# Quick plot of first column in attribute table
 plot(sara_bound[1])
 plot(sara_veg1[1]) # bigger extent than boundary
 
@@ -85,69 +85,71 @@ names(sara_veg)
 table(sara_veg$ANDERSONII)
 
 # Simplify vegetation types for easier plotting
-dev <- c("1. Urban or Built-up Land", "11. Residential", 
-         "12. Commercial and Services", "13. Industrial",
-         "14. Transportation, Communications, and Utilities", 
-         "17. Other Urban or Built-up Land")
-crop <- c("21. Cropland and Pasture", 
-          "22. Orchards, Groves, Vineyards, and Nurseries", 
-          "31. Herbaceous Rangeland")
-shrubland <- c("32. Shrub and Brush Rangeland")
-forest_up <- c("41. Deciduous Forest Land", "42. Evergreen Forest Land", 
-               "43. Mixed Forest Land")
-forest_wet <- c("61. Forested Wetland")
-open_wet <- c("62. Nonforested wetland", "62. Nonforested Wetland")
-water <- c("5. Water", "51. Streams and Canals", "53. Reservoirs")
-unk <- "Unclassified"
+dev <- c('1. Urban or Built-up Land', '11. Residential', 
+         '12. Commercial and Services', '13. Industrial',
+         '14. Transportation, Communications, and Utilities', 
+         '17. Other Urban or Built-up Land')
+crop <- c('21. Cropland and Pasture', 
+          '22. Orchards, Groves, Vineyards, and Nurseries', 
+          '31. Herbaceous Rangeland')
+shrubland <- c('32. Shrub and Brush Rangeland')
+forest_up <- c('41. Deciduous Forest Land', '42. Evergreen Forest Land', 
+               '43. Mixed Forest Land')
+forest_wet <- c('61. Forested Wetland')
+open_wet <- c('62. Nonforested wetland', '62. Nonforested Wetland')
+water <- c('5. Water', '51. Streams and Canals', '53. Reservoirs')
+unk <- 'Unclassified'
 
 # Create 2 fields in the veg attribute table: simp_veg, and fills
 sara_veg <- sara_veg %>% 
-  mutate(simp_veg = case_when(ANDERSONII %in% dev ~ "Developed",
-                              ANDERSONII %in% crop ~ "Open field",
-                              ANDERSONII %in% shrubland ~ "Shrublands",
-                              ANDERSONII %in% forest_up ~ "Forest",
-                              ANDERSONII %in% forest_wet ~ "Forested wetland",
-                              ANDERSONII %in% open_wet ~ "Open wetland",
-                              ANDERSONII %in% water ~ "Open water",
-                              ANDERSONII %in% unk ~ "Unclassified",
-                              TRUE ~ "Unknown"),
-         fill_col = case_when(simp_veg == "Developed" ~ "#D8D8D8",
-                              simp_veg == "Open field" ~ "#f5f0b0",
-                              simp_veg == "Shrublands" ~ "#F29839",
-                              simp_veg == "Powerline ROW" ~ "#F9421D",
-                              simp_veg == "Forest" ~ "#55785e",
-                              simp_veg == "Forested wetland" ~ "#9577a6",
-                              simp_veg == "Open wetland" ~ "#c497d4",
-                              simp_veg == "Open water" ~ "#AFD0F2",
-                              simp_veg == "Unclassified" ~ "#ffffff"))
+  mutate(simp_veg = case_when(ANDERSONII %in% dev ~ 'Developed',
+                              ANDERSONII %in% crop ~ 'Open field',
+                              ANDERSONII %in% shrubland ~ 'Shrublands',
+                              ANDERSONII %in% forest_up ~ 'Forest',
+                              ANDERSONII %in% forest_wet ~ 'Forested wetland',
+                              ANDERSONII %in% open_wet ~ 'Open wetland',
+                              ANDERSONII %in% water ~ 'Open water',
+                              ANDERSONII %in% unk ~ 'Unclassified',
+                              TRUE ~ 'Unknown'),
+         fill_col = case_when(simp_veg == 'Developed' ~ '#D8D8D8',
+                              simp_veg == 'Open field' ~ '#f5f0b0',
+                              simp_veg == 'Shrublands' ~ '#F29839',
+                              simp_veg == 'Powerline ROW' ~ '#F9421D',
+                              simp_veg == 'Forest' ~ '#55785e',
+                              simp_veg == 'Forested wetland' ~ '#9577a6',
+                              simp_veg == 'Open wetland' ~ '#c497d4',
+                              simp_veg == 'Open water' ~ '#AFD0F2',
+                              simp_veg == 'Unclassified' ~ '#ffffff'))
 
 ```
 </details>
 <br>
 
 <details open><summary class = 'drop2'>Sidebar on simple features and shapefiles</summary>
-Before moving to the next step, I wanted to show how easy it is to create simple features from dataframes that contain X/Y coordinates. We'll read in a fake dataset in the GitHub repo for this training, and call it wetdat. The dataset contains fake species composition data for wetland monitoring sites in ACAD and includes X and Y coordinates. We'll use dplyr functions to calculate the number of invasive and protected species in each site by year combination. Then we'll make it a simple feature, and save it as a shapefile. Note that there are multiple formats you can save simple features as. I show the shapefile version, in case you find yourself going between R and ArcGIS. 
+Before moving to the next step, I wanted to show how easy it is to create simple features from dataframes that contain X/Y coordinates. We'll read in a fake dataset in the GitHub repo for this training, and call it wetdat. The dataset contains fake species composition data for wetland monitoring sites in ACAD and includes X and Y coordinates. We'll use `dplyr` functions to calculate the number of invasive and protected species in each site by year combination. Then we'll make it a simple feature, and save it as a shapefile. Note that there are multiple formats you can save simple features as. I only show the shapefile version, in case you find yourself going between R and ArcGIS. 
 
 ```{r impwetd, echo = T, eval = F}
 library(dplyr)
 # Import data
 wetdat <- read.csv(
-  "https://raw.githubusercontent.com/KateMMiller/IMD_R_Training_Advanced/main/data/ACAD_wetland_data_clean.csv")
+  'https://raw.githubusercontent.com/KateMMiller/IMD_R_Training_Advanced/main/data/ACAD_wetland_data_clean.csv')
 
 # Summarize so that each site x year combination has 1 row
 wetsum <- wetdat %>% group_by(Site_Name, Year, X_Coord, Y_Coord) %>% 
   summarize(num_inv = sum(Invasive), num_prot = sum(Protected), 
-            .groups = 'drop')
+            .groups = 'drop') # keeps dplyr quiet in console
+
 # Check first 6 rows of output
 head(wetsum)
 
 # Convert dataframe to sf
-wetsum_sf <- st_as_sf(wetsum, coords = c("X_Coord", "Y_Coord"), crs = 26919) 
+wetsum_sf <- st_as_sf(wetsum, coords = c('X_Coord', 'Y_Coord'), crs = 26919) 
   # ACAD is UTM Zone 19N NAD83, hence the difference between SARA, which is 18N.
 
 # Write sf to disk as shapefile
-st_write(wetsum_sf, "ACAD_wetland_data.shp")
+st_write(wetsum_sf, 'ACAD_wetland_data.shp')
 ```
+
 </details>
 <br>
 
@@ -160,6 +162,7 @@ The `spsurvey` package has been updated to point to `sf` instead of `rgdal`. It'
 sara_grts <- grts(sara_bound, n_base = 100) # generate 100 points within SARA boundary
 sara_grts$sites_base$priority <- as.numeric(row.names(sara_grts$sites_base)) # add priority number (same as row.name)
 ```
+
 </details>
 <br>
 
@@ -172,17 +175,30 @@ names(grts_veg)
 
 # Create list of forest habitats
 sort(unique(sara_veg$simp_veg))
-forest_veg <- c("Forest", "Forested Wetland")
+forest_veg <- c('Forest', 'Forested Wetland')
 
 # Filter out non-forest points
 grts_forest <- grts_veg %>% filter(simp_veg %in% forest_veg)
 nrow(grts_veg) # 100 points
 nrow(grts_forest) # fewer points
 ```
+
+<div class="alert alert-info">
+<h4>Challenge: Filter GRTS by priority</h4>
+How would you filter out GRTS points with a priority higher than 50?
+<br>
+<details><summary class = 'drop2'>Answer</summary>
+```{r d3gis_a1, echo = T}
+
+grts_50 <- grts_veg %>% filter(priority <= 50)
+nrow(grts_50)
+```
+</details> 
+</div>
 </details>
 <br>
 
-<details open><summary class = 'drop2'>Step 4. Create map </summary>
+<details open><summary class='drop2'>Step 4. Create map</summary>
 Now it's time to plot. The code below may seem a bit much, but we'll break it down piece by piece. The great thing about building maps this way is that you're essentially building a template in code that you can steal from and adapt for future maps. You can even turn these into a function that's even easier to use in future maps. That's beyond what we can cover here, but it's another great benefit of making maps in R instead of ArcGIS. 
 
 The code below is broken into the various pieces that make up the map. The way `tmap` works is that first, you have to add the layer via `tm_shape()`, and then you specify how you want that layer to look, `like tm_fill()`, or `tm_border()`. Each piece has its own legend as well. This is similar to how you start each `ggplot2` graph defining the data with `ggplot(data, aes(x = xvar, y = yvar))`, and then start adding `geom_point()`, or whatever else to define how the data are plotted. The difference with `tmap` is that every layer you want in the map has to be coded this way. Finally `tm_layout()` is similar to `theme()` in ggplot2, and is where you can customize the map layout. 
@@ -206,41 +222,91 @@ for_legend <- unique(data.frame(simp_veg = sara_veg$simp_veg, fill_col = sara_ve
 sara_map <- 
   # Vegetation map
   tm_shape(sara_veg, projection = 26918, bbox = sara_bound) +
-  tm_fill("fill_col") +
+  tm_fill('fill_col') +
   tm_add_legend(type = 'fill', labels = for_legend$simp_veg, 
                 col = for_legend$fill_col, z = 3) +
 
   # Park boundary
   tm_shape(sara_bound) +
   tm_borders('black', lwd = 2) +
-  tm_add_legend(type = 'line', labels = "Park Boundary", col = "black",
+  tm_add_legend(type = 'line', labels = 'Park Boundary', col = 'black',
                 z = 2)+
     
   # GRTS points  
   tm_shape(grts_forest) +
-  tm_symbols(shapes = 21, col = "#EAFF16", border.lwd = 0.5, size = 0.3) + 
-  tm_text("priority", size = 0.9, xmod = -0.4, ymod = -0.4) +
-  tm_add_legend(type = 'symbol', labels = "GRTS points", shape = 21, 
-                col = "#EAFF16", border.lwd = 1, size = 0.5, 
+  tm_symbols(shapes = 21, col = '#EAFF16', border.lwd = 0.5, size = 0.3) + 
+  tm_text('priority', size = 0.9, xmod = -0.4, ymod = -0.4) +
+  tm_add_legend(type = 'symbol', labels = 'GRTS points', shape = 21, 
+                col = '#EAFF16', border.lwd = 1, size = 0.5, 
                 z = 1) +
   
   # Other map features
   tm_compass(size = 2, type = 'arrow', 
              text.size = 1, position = c('left', 'bottom')) +
-  tm_scale_bar(text.size = 1.25, position = c("center", "bottom")) + 
+  tm_scale_bar(text.size = 1.25, position = c('center', 'bottom')) + 
   tm_layout(inner.margins = c(0.2, 0.02, 0.02, 0.02), # make room for legend
             outer.margins = 0,
             legend.text.size = 1.25,
             legend.just = 'right',
-            legend.position = c("right", "bottom"),
-            title = "Saratoga NHP GRTS points",
-            title.position = c("center", "top"))
+            legend.position = c('right', 'bottom'),
+            title = 'Saratoga NHP GRTS points',
+            title.position = c('center', 'top'))
 
-tmap_save(sara_map, "SARA_GRTS.png", height = 10.5, width = 8, 
+tmap_save(sara_map, 'SARA_GRTS.png', height = 10.5, width = 8, 
           units = 'in', dpi = 600, outer.margins = 0)
 ```
+
+
+<div class="alert alert-info">
+<h4>Challenge: Change the map</h4>
+1. How would you change the vegmap layers to have an outline, instead of just fill?
+2. How would you make the park boundary red instead of black? 
 <br>
-Here's what sara_map looks like in your plot viewer:
+
+<details><summary class = 'drop2'>Answer</summary>
+
+```{r d3gis_a2, echo = T}
+sara_map <- 
+  # Vegetation map
+  tm_shape(sara_veg, projection = 26918, bbox = sara_bound) +
+  tm_polygons('fill_col') + # A1: changed tm_fill() to tm_polygon()
+  tm_add_legend(type = 'fill', labels = for_legend$simp_veg, 
+                col = for_legend$fill_col, z = 3) +
+
+  # Park boundary
+  tm_shape(sara_bound) +
+  tm_borders('red', lwd = 2) + # A2A: changed 'black' to 'red'
+  tm_add_legend(type = 'line', labels = 'Park Boundary', col = 'red', # A2B
+                z = 2)+
+    
+  # GRTS points  
+  tm_shape(grts_forest) +
+  tm_symbols(shapes = 21, col = '#EAFF16', border.lwd = 0.5, size = 0.3) + 
+  tm_text('priority', size = 0.9, xmod = -0.4, ymod = -0.4) +
+  tm_add_legend(type = 'symbol', labels = 'GRTS points', shape = 21, 
+                col = '#EAFF16', border.lwd = 1, size = 0.5, 
+                z = 1) +
+  
+  # Other map features
+  tm_compass(size = 2, type = 'arrow', 
+             text.size = 1, position = c('left', 'bottom')) +
+  tm_scale_bar(text.size = 1.25, position = c('center', 'bottom')) + 
+  tm_layout(inner.margins = c(0.2, 0.02, 0.02, 0.02), # make room for legend
+            outer.margins = 0,
+            legend.text.size = 1.25,
+            legend.just = 'right',
+            legend.position = c('right', 'bottom'),
+            title = 'Saratoga NHP GRTS points',
+            title.position = c('center', 'top'))
+```
+
+</details> 
+</div>
+</details>
+
+<br>
+<details open><summary class = 'drop2'>Map dimensions</summary>
+The dimensions and scaling in the plot viewer of your R session tends to be a bit funky. Instead of trying to make the map perfect in the plot viewer, I usually save it to disk and tweak that version to look the way I want it to. To demonstrate, here's what sara_map looks like in your plot viewer:
 ```{r, plotvw, echo = T, out.width = '60%', warning = F, message = F}
 sara_map
 ```
@@ -249,16 +315,19 @@ sara_map
 <br>
 Here's what the map looks like after it's written to disk and the dimensions are set using `tmap_save()`:
 ```{r, discvw, echo = F, results = 'show', out.width = '60%', warning = F, message = F, out.extra = 'style="padding:0px 0px; margin:-4px 0;"'}
-knitr::include_graphics("SARA_GRTS.png")
+knitr::include_graphics('SARA_GRTS.png')
 ```
+</details>
 <br>
 
+<details open><summary class = 'drop2'>Interactive mode</summary>
 The last cool thing to show with tmap, is that you can include interactive HTML widgets similar to what leaflet can do (coming next). With the interactive mode, you can change baselayers, turn your layers off/on, and zoom to different extent. The legend in the interactive mode is a bit limited to only show fills, but it's still pretty cool. 
 ```{r tmview, echo = T, warning = F, message = F}
-tmap_mode("view") # turn interactive mode on
+tmap_mode('view') # turn interactive mode on
 sara_map
-tmap_mode("plot") # return to default plot view
+tmap_mode('plot') # return to default plot view
 ```
+</details>
 </details>
 </details>
 <br>
@@ -273,13 +342,13 @@ We’re going to use some of the SARA layers we used with tmap, but we have to r
 library(leaflet)
 
 # Load park tiles
-NPSbasic = "https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck58pyquo009v01p99xebegr9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg"
+NPSbasic = 'https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck58pyquo009v01p99xebegr9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg'
   
-NPSimagery = "https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck72fwp2642dv07o7tbqinvz4/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg"
+NPSimagery = 'https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck72fwp2642dv07o7tbqinvz4/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg'
   
-NPSslate = "https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck5cpvc2e0avf01p9zaw4co8o/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg"
+NPSslate = 'https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck5cpvc2e0avf01p9zaw4co8o/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg'
   
-NPSlight = "https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck5cpia2u0auf01p9vbugvcpv/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg"
+NPSlight = 'https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck5cpia2u0auf01p9vbugvcpv/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg'
 
 # Reproject SARA layers
 sara_bnd_wgs <- st_transform(sara_bound, crs = 4326)
@@ -308,16 +377,16 @@ sara_map_lf <-
   leaflet() %>% 
   setView(lng = -73.63, lat = 42.99, zoom = 13) %>% 
   # parktiles
-  addTiles(group = "Map",
+  addTiles(group = 'Map',
            urlTemplate = NPSbasic) %>%
-  addTiles(group = "Imagery",
+  addTiles(group = 'Imagery',
            urlTemplate = NPSimagery) %>%
-  addTiles(group = "Light",
+  addTiles(group = 'Light',
            urlTemplate = NPSlight) %>%
-  addTiles(group = "Slate",
+  addTiles(group = 'Slate',
            urlTemplate = NPSslate) %>% 
   addLayersControl(map = .,
-    baseGroups = c("Map", "Imagery", "Light", "Slate"),
+    baseGroups = c('Map', 'Imagery', 'Light', 'Slate'),
     options = layersControlOptions(collapsed = T)) %>% 
   # points
   addCircleMarkers(data = grts_forest_wgs,
@@ -325,8 +394,8 @@ sara_map_lf <-
                    lat = st_coordinates(grts_forest_wgs)[,2],
                    label = grts_forest_wgs$priority,
                    labelOptions = labelOptions(noHide=T, textOnly = TRUE, 
-                      direction = 'bottom', textsize = "12px"),
-                   fillColor = "#EAFF16",
+                      direction = 'bottom', textsize = '12px'),
+                   fillColor = '#EAFF16',
                    radius = 4,
                    stroke = FALSE, # turn off outline
                    fillOpacity = 1) %>% 
@@ -340,6 +409,8 @@ sara_map_lf
 ```
 
 Note that I can’t figure out why I’m not able to make this map render on the website, but I’ll demonstrate it in R Studio.
+</details>
+<br>
 <hr>
 
 #### Resources
