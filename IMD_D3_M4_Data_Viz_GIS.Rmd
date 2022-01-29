@@ -5,6 +5,12 @@ output:
   html_document:
     css: custom_styles.css
 ---
+```{r, day3code, include = F}
+#------------------------
+#        Day 3- GIS
+#------------------------
+```
+
 #### Vizualizing Spatial Data
 <details open><summary class = 'drop'>GIS in R</summary>
 If you've tried to do GIS and make maps in R even a few years ago, you probably encountered the same frustrations I did. There were a ton of packages out there, each with its own file format and coding convention, and each package rarely had all the features I needed. It was not easy to navigate, and I often found myself just exporting my work out of R and doing the rest in ArcGIS... Enter the `sf` and `tmap` packages, which are the latest and greatest R packages devoted to GIS and map making! Most of the frustrations I had with earlier packages have been resolved with these two packages.
@@ -26,7 +32,7 @@ My two favorite features of sf are 1) the attribute table of a simple feature (s
 
 To demonstrate the use of sf and tmap, I'm going to generate a simple GRTS sample using `spsurvey`, which now connects to `sf` instead of `sp` and `rgdal`. Then we'll filter out points that don't fall in a forest habitat to demonstrate how to work with sf data in R. Finally we'll plot the results using `tmap`. 
 
-I wasn't able to figure out how to post a shapefile that you could easily download in R with a url. I emailed them to you as data.zip the previous week. I also posted all of the files to our Scientists Team, which can be downloaded using the following link: <a href="https://doimspp.sharepoint.com/:f:/s/ScientistsTraining2022/EiXOTYV1l4RCk1sMr5yXhZUB1ZFEaAlAN4elvsYbBfYHRg?e=ktVy5n">https://doimspp.sharepoint.com/:f:/s/ScientistsTraining2022/EiXOTYV1l4RCk1sMr5yXhZUB1ZFEaAlAN4elvsYbBfYHRg?e=ktVy5n</a>. To follow along, you'll need to download (and unzip if you're using the email attachment) the shapefiles and save them to your working directory. 
+I wasn't able to figure out how to post a shapefile that you could easily download in R with a url. I emailed them to you as data.zip the previous week. I also posted all of the files to our Scientists Team, which can be downloaded using the following link: <a href="https://doimspp.sharepoint.com/:f:/s/ScientistsTraining2022/EiXOTYV1l4RCk1sMr5yXhZUB1ZFEaAlAN4elvsYbBfYHRg?e=ktVy5n">https://doimspp.sharepoint.com/:f:/s/ScientistsTraining2022/EiXOTYV1l4RCk1sMr5yXhZUB1ZFEaAlAN4elvsYbBfYHRg?e=ktVy5n</a>. To follow along, you'll need to download (and unzip if you're using the email attachment) the shapefiles and save them to a "data" folder in your working directory. 
 
 <details open><summary class = 'drop2'>Step 1. Load and prep shapefiles using sf</summary>
 The code chunk below has a lot going on, but bare with me. This is the easiest way I've found to customize the layers in tmap plots. The basic steps in the code chunk below are: 
@@ -54,8 +60,8 @@ sample(1:100000, 1) #62051
 set.seed(62051)
 
 # Read in shapefiles from teams data folder
-sara_bound1 <- st_read("./shapefiles/SARA_boundary_4269.shp")
-sara_veg1 <- st_read("./shapefiles/SARA_Veg.shp")
+sara_bound1 <- st_read("./data/SARA_boundary_4269.shp")
+sara_veg1 <- st_read("./data/SARA_Veg.shp")
 
 # Check that the projections match; fix the one that doesn't match
 st_crs(sara_bound1) == st_crs(sara_veg1) # FALSE- projections don't match.
