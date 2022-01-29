@@ -115,7 +115,19 @@ font-size: 16px;
   padding: 0 4px;
 }
 
+.column3 {
+  flex: 25%;
+  padding: 0 10px;
+}
+
 .column img {
   margin-top: 8px;
   vertical-align: middle;
 }
+
+/* for box around text */
+.boxBorder {
+ border: 1.5px solid #696969;
+ padding: 10px;
+ /*outline: #696969 solid 5px;*/
+ }
