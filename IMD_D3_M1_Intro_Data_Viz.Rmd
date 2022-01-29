@@ -5,8 +5,7 @@ output:
   html_document
 ---
 
-```{r setup, include = FALSE, message = FALSE, warning = FALSE}
-library(tidyverse)
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 library(knitr)
 library(kableExtra)
 library(here)
@@ -14,7 +13,16 @@ library(here)
 
 #### Intro to Data Visualizations {.tabset} 
 
-<details open><summary class='drop'>Goals of this Day</summary>
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+
+# Packages used in this tab
+library(tidyverse)
+library(viridis) # for colorblind-friendly palettes
+```
+
+<details open><summary class='drop'>Introduction to Data Visualizations</summary>
+
+Goals of this Day
 
   1. Learn rules for effective data visualizations
   2. Create simple plots, using base R functions
@@ -26,13 +34,15 @@ library(here)
 <br>
 <details open><summary class='drop'>The Power of (Good) Data Visualizations</summary>
 
-Data are useful only when used. 
-<br>
-Data are used only when understood. 
-<br>
-Consider three examples...
+**Data are useful only when used.** 
 
-<h3>Example 1</h3>
+<br>
+**Data are used only when understood.**
+
+<br>
+Consider three examples:
+
+<h3>Example 1. Plots </h3>
 
 Most people can understand this...
 
@@ -42,12 +52,12 @@ Most people can understand this...
 faster than they can understand this...
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 covid_numbers <- readr::read_csv(here::here("Data", "covid_numbers.csv"))
-head(covid_numbers, 12) %>%
-  knitr::kable(align = "c", caption = "Daily Covid cases and population numbers by state (only showing first 12 records)") %>%
+head(covid_numbers, 7) %>%
+  knitr::kable(align = "c", caption = "Daily Covid cases and population numbers by state (only showing first 7 records)") %>%
   kableExtra::kable_styling(full_width = F)
 ```
 
-<h3>Example 2</h3>
+<h3>Example 2. Plots can reveal patterns and highlight highs and lows.</h3>
 
 This table shows average monthly revenue for Acme products. 
 
@@ -66,9 +76,10 @@ Use the table above to answer these questions:
 
 <br>
 <details open><summary class='drop2'>Table as Heat Map</summary>
-Let's display the table as a heat map, with larger numbers represented by darker color cells. Now how quickly can we answer those same two questions? What patterns can we see in the heat map that were not obvious in the table above?
+Now let's display the same table as a heat map, with larger numbers represented by darker color cells. Now how quickly can we answer those same two questions? What patterns can we see in the heat map that were not obvious in the table above?
 
 ```{r acme_heatmap, echo = FALSE, fig.width = 9, fig.align="center", message = FALSE, warning = FALSE}
+
 acme <- acme_in %>%
   pivot_longer(-c(category, product), names_to = "month", values_to = "revenue")
 acme$month <- factor(acme$month, levels = month.abb)
@@ -85,7 +96,7 @@ ggplot(acme, aes(x=month, y=product, fill=revenue)) +
 ```
 </details>
 <br>
-<h3>Example 3</h3>
+<h3>Example 3. Plots can reveal patterns that statistics obscure.</h3>
 
 In 1973, Francis Anscombe published ["Graphs in statistical analysis"](https://garstats.files.wordpress.com/2016/08/anscombe-as-1973.pdf), a paper describing four bivariate datasets with identical means, variances, and correlations.
 
@@ -132,12 +143,12 @@ Anscombe used clever thinking and simple plots to demonstrate the importance of 
   - Matrix heat maps can efficiently compare the magnitude of numbers when we have lots of data structured in table format, especially when colors have a clear connection to the numbers (e.g., scorecard data)
   - Box plots, violin plots, and histograms show distributions and outliers for continuous data. Dot plots are a useful alternative when sample sizes are small.
 <br>  
-- **KEEP IT SIMPLE!!!**
+- **Keep it simple!!!**
   - Every plot element and aesthetic should have a purpose.
   - Avoid 3D charts unless you have good reason otherwise.
   - Don't try to cram everything into one plot (e.g., juxtapose two plots instead of adding a secondary y-axis. Nice explanation [here](https://blog.datawrapper.de/dualaxis/)).
 <br>  
-- **Use informative text and arrows wisely.** Clear and simple titles, subtitles, axes titles/labels, and annotations help convey the message of a plot. Use lines and arrows (sparingly but effectively) to emphasize important thresholds, data points or other plot features. Fonts should be large enough with good contrast (against the background) and sufficient white space to be easily readable.
+- **Use informative text and arrows wisely.** Clear, meaningful titles, subtitles, axes titles/labels, and annotations help convey the message of a plot. Use lines and arrows (sparingly but effectively) to emphasize important thresholds, data points or other plot features. Fonts should be large enough with good contrast (against the background) and sufficient white space to be easily readable.
     
 </details>
 <br>
@@ -155,28 +166,12 @@ From subsets of the park visits and gas price data, we will create plots to:
 <br>
 First steps:
 
-1. Load packages for today's module
-2. Import and view the park visits and gas price data
-3. Extract a subset of the park visits data to work with
-4. Merge in the gas price data
-5. Check and clean/tidy the data
+1. Import and view the park visits and gas price data
+2. Extract a subset of the park visits data to work with
+3. Merge in the gas price data
+4. Check and clean/tidy the data
 
-<details open><summary class='drop2'>Step 1. Load packages</summary>
-
-```{r load_packages, results = FALSE, message = FALSE, warning = FALSE}
-# This is a useful chunk of code that installs any missing packages and then loads all of them. Useful if we're sharing code with others who may have older versions of RStudio installed (more recent versions have pop-up prompts that ask if we want to install missing packages)
-pkgs <- c("tidyverse", # includes dplyr, ggplot2, and other really useful packages
-          "magrittr", # for the `%<>%` function to reassign piping outcomes to the original variable
-          "viridis", # popular colorblind-friendly palette
-          "scales", # show_col() and scale_x_date()
-          "knitr") # format tables for display 
-installed_pkgs <- pkgs %in% installed.packages() # check which packages are not yet installed
-if (length(pkgs[!installed_pkgs]) > 0) install.packages(pkgs[!installed_pkgs],dep=TRUE) # if some packages are not yet installed, go ahead and install them...
-lapply(pkgs, library, character.only = TRUE) # ...then load all the packages and their dependencies
-```
-
-</details>
-<details open><summary class='drop2'>Step 2. Import and view the data</summary>
+<details open><summary class='drop2'>Step 1. Import and view the data</summary>
 
 ```{r import_data, echo = TRUE, message = FALSE, warning = FALSE}
 park_visits <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/national_parks.csv") # visits to US National Parks
@@ -193,7 +188,7 @@ View(gas_price); summary(gas_price)
 ```
 
 </details>
-<details open><summary class='drop2'>Step 3. Extract a subset of data</summary>
+<details open><summary class='drop2'>Step 2. Extract a subset of data</summary>
 
 Before we run more detailed data checks, let's extract a subset of the `park_visits` data to work with. 
 
@@ -239,7 +234,7 @@ glimpse(park_sub)
 </details>
 
 </details>
-<details open><summary class='drop2'>Step 4. Merge the `gas_constant` data with the `park_sub` data frame</summary>
+<details open><summary class='drop2'>Step 3. Merge the `gas_constant` data with the `park_sub` data frame</summary>
 
 <div class="alert alert-info">
   <strong>CHALLENGE:  Join the `gas_constant` data (from `gas_price` data frame) to `park_sub`, matching records by year. Call the new data frame `joined_dat`.</strong>
@@ -275,12 +270,12 @@ glimpse(joined_dat)
 We now have all the data we need in a single data frame.
 
 </details>
-<details open><summary class='drop2'>Step 5. Check and clean/tidy the data</summary>
+<details open><summary class='drop2'>Step 4. Check and clean/tidy the data</summary>
 
 We are primarily using `dplyr` to wrangle data and `ggplot2` to plot data. These two packages are part of the [Tidyverse](https://www.tidyverse.org/packages/) of packages for data science. Tidyverse packages share a common design philosophy centered on ideas like breaking down complex tasks into a series of simpler functions executed in sequence (e.g., piping `%>%`). Functions from tidyverse packages work together most seamlessly and efficiently when data are in a tidy format. Remember that a 'tidy' format means data have one variable per column and one observation per row. 
 
 <div class="alert alert-info">
-  <strong>POLL:  Which of these is 'tidy' data?</strong>
+  <strong>POLL:  Which of the data sets below is 'tidy'?</strong>
   
   A) Plants that Grow
   <br>
@@ -316,18 +311,11 @@ test_grades <- data.frame(
 )
 ```
 
-<div class = 'boxBorder'>
-<div class = 'row'>
-<div class = 'column3'>
-
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 # Plants 
 knitr::kable(plants, caption = "A) Plants That Grow", align = "c") %>%
   kableExtra::kable_styling(full_width = F)
 ```
-
-</div>
-<div class = 'column3'>
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 # Twitter Likes
@@ -335,19 +323,14 @@ knitr::kable(twitter_likes, caption = "B) Political Twitter Likes", align = "c")
   kableExtra::kable_styling(full_width = F)
 ```
 
-</div>
-<div class = 'column3'>
-
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 # Test Grades
 knitr::kable(test_grades, caption = "C) Test Grades and Lunch", align = "c") %>%
   kableExtra::kable_styling(full_width = F)
 ```
-</div>
-<br>
-</div></div>
 
 What about our `joined_dat` data frame? Is it in 'tidy' format? Yes, it is! No need to pivot_long anything today. But let's make two final changes to the data before we begin plotting. First, we will convert `region` to an ordered factor with more descriptive labels. Second, we will remove park units that don't have visitor data for every year from 2000 to 2015. We will end with a final check of the data to make sure it's ready for plotting.
+</details>
 
 <details open><summary class='drop2'>Convert `region` to a factor data type</summary>
 
@@ -440,12 +423,12 @@ Always do a final check of the data to look for missing data, duplicated records
 
 ```{r tab_count, echo = FALSE, results = FALSE, message = FALSE, warning = FALSE}
 
-tab_count <- joined_dat %>% 
+tab_count <- viz_dat %>% 
   dplyr::distinct(region, unit_type, unit_code) %>%
   dplyr::count(region, unit_type) %>%
   tidyr::pivot_wider(names_from = region, values_from = n)
 
-# View(joined_dat) to double-check the numbers
+# View(viz_dat) to double-check the numbers
 ```
 
 
@@ -454,6 +437,6 @@ The new data frame (if you have it in wide format) should look like this:
 ```{r view_tab_count, echo = FALSE, message = FALSE, warning = FALSE}
 tab_count
 ```
-</details>
-<br>
+
 We see from this table that we have data for 34 National Monuments in the Intermountain region and that the smallest number of park units in any region-type is 7. We're ready to start plotting.
+</details>

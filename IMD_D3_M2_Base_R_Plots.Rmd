@@ -5,22 +5,24 @@ output:
   html_document
 ---
 
-```{r setup, include = FALSE, message = FALSE, warning = FALSE}
-library(tidyverse)
-```
-
 #### Plotting with Base R {.tabset}
 
-```{r load_data1, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE}
+```{r, echo = FALSE, eval = TRUE, warning = FALSE, message = FALSE}
 
 viz_dat <- readRDS("Data/viz_dat.RDS")
 ```
 
-```{r load_data2, echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE}
+```{r, echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE}
 
 # This tab requires the `viz_dat` data frame created earlier in the module. If you don't have this data frames in the global environment, run the code below.
 
 viz_dat <- readRDS("viz_dat.RDS") # this file is provided with the training materials. If this file is not in your current working directory, provide the file path in the function argument
+```
+
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
+
+# Packages used in this tab
+library(tidyverse)
 ```
 
 Plots can reveal data issues that we had overlooked with our data checks. I sometimes use base R plotting functions to create quick-and-dirty plots for this purpose. If I want anything more than a very basic plot, I find `ggplot` functions easier to remember and use.
@@ -63,7 +65,7 @@ I tend to use the formula approach for feeding data to base R plotting functions
 
 </details>
 <br>
-<details open><summary class='drop'>Example: Box Plots</summary>
+<details open><summary class='drop'>Create a Box Plot</summary>
 
 Let's use base R functions to create a box plot of park visitors by year, for a subset of `viz_dat` that meets these criteria:
 
@@ -110,16 +112,9 @@ p_box
 
 From the boxplots and numbers, it looks like visitation was generally down in 2010 and 2015 compared to 2000 and 2005. The spread of visitor counts across these 34 National Monuments is huge, though.
 
-The code below extracts the minimum and maximum visitor counts in `subdat` for the year 2000.
-```{r visitor_range, echo = TRUE, warning = FALSE, message = FALSE}
-range(subdat$visitors[subdat$year==2000]) 
-```
-
-For the Intermountain region in the year 2000, the number of visitors (N = 848348) to the most-visited National Monument was 270 times the number of visitors (N = 3131) to the least-visited National Monument!
-
 </details>
 <br>
-<details open><summary class='drop'>Modifying Base R Plots</summary>
+<details open><summary class='drop'>Graphical Parameters for Base R Plots</summary>
 
 Type `?par` in the console to see the many graphical parameters (arguments) that can be used to modify base R plots. Unless you plan to use base R functions to create complex plots, you can probably get by with remembering a small handful of useful graphical parameters, such as `pch =` to change scatterplot point types, `col =` to set color, and a variety of `cex` arguments to change font size and point size.
 
@@ -127,7 +122,7 @@ Let's create a basic scatterplot and use some of these graphical parameters to g
 
 </details>
 <br>
-<details open><summary class='drop'>Example: Scatterplots</summary>
+<details open><summary class='drop'>Create a Scatterplot</summary>
 
 <div class="alert alert-info">
   <strong>CHALLENGE:  Create a scatterplot showing the relationship between park visitor count (y-axis) and gas price (x-axis) for Arches National Park (unit code is ARCH).</strong>
@@ -169,7 +164,7 @@ The scatterplot shows another interesting bit of information. What is that funny
 
 It would be interesting to see if 2015 was a high visitation year for other park units as well. We will save that question for ggplot.
 
-For now, let's see if we gain any additional insight from plots showing trends in visitor counts at Arches National Park and trends in national gas prices. In the plots below, the data point for year 2015 is shown in red. To do that, I added this argument to the plot function: `col = ifelse(arch_dat$year == 2015, "red", "black")`
+For now, let's see if we gain any additional insight from plots showing trends in visitor counts at Arches National Park and trends in national gas prices. 
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 # Visitors vs. year
@@ -188,7 +183,7 @@ The plot above shows that gas prices have gone up and down between 2000 and 2015
 These scatterplots give interesting insight on trends in national gas prices and trends in visitation at Arches National Park. The pattern we saw in our initial scatterplot--positive correlation between annual visitation and national average gas price--was almost certainly a spurious correlation. It's important to look at data from many different directions and to not jump to conclusions based on a narrow exploration of the data.
 </details>
 <br>
-<details open><summary class='drop'>Example: Line Graph</summary>
+<details open><summary class='drop'>Create a Line Graph</summary>
 
 Line graphs are often used for showing changes in continuous data over time. Let's make one last plot in base R before we move on to `ggplot`.
 
