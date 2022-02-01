@@ -1,7 +1,8 @@
 ---
 title: "Day 3: Data Viz - Module 3"
 author: "Ellen Cheng & Kate Miller"
-output: html_document
+output:
+  html_document
 ---
 
 #### Building a Basic ggplot {.tabset}
@@ -13,27 +14,31 @@ viz_dat <- readRDS("Data/viz_dat.RDS")
 arch_dat <- subset(viz_dat, unit_code == "ARCH") # subset of data that is for Arches National park
 ```
 
+<details open><summary class='drop'>Data Used in this Section</summary>
 ```{r, echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE}
 
-# This tab requires the `viz_dat` and `arch_dat` data frames created earlier in the module. If you don't have these data frames in the global environment, run the code below.
+# This section requires the `viz_dat` and `arch_dat` data frames created earlier in the module. If you don't have these data frames in the global environment, run the code below.
 
 viz_dat <- readRDS("viz_dat.RDS") # this file is provided with the training materials. If this file is not in your current working directory, provide the file path in the function argument
 
 arch_dat <- subset(viz_dat, unit_code == "ARCH") # subset of data that is for Arches National park
 ```
+</details>
 
+<details open><summary class='drop'>Packages Used in this Section</summary>
 ```{r, echo = TRUE, message = FALSE, warning = FALSE}
 
-# Packages used in this tab
+# Packages used in this section
 library(tidyverse)
 library(ggthemes)
 ```
+</details>
 
 If you search the Internet for information on plotting in `R`, you will quickly learn that `ggplot2` is the most popular `R` package for plotting. It takes a little effort to learn how the pieces of a ggplot object fit together. But once you get the hang of it, you will be able to create a large variety of attractive plots with just a few lines of `R` code.  
 
 [Reference documents]("http://r-statistics.co/ggplot2-cheatsheet.html") and [cheatsheets](https://nyu-cdsc.github.io/learningr/assets/data-visualization-2.1.pdf") can be very helpful while you are learning to use the `ggplot2` package.
 
-We will build our first ggplot object step-by-step to demonstrate how each component contributes to the final plot. Our first ggplot object will re-create the line graph of trends in visitation at Arches National Park.
+We will build our first ggplot object step-by-step to demonstrate how each component contributes to the final plot. Our first ggplot object will re-create the line graph of trends in visits to Arches National Park.
 
 <details open><summary class='drop'>Step 1. Create a "Master" Template for the Plot</summary>
 
@@ -49,7 +54,7 @@ From the 'arch_dat' data we will map 'visitors' (in 1000's) to the y variable an
 
 # NOTES:
 # 1. The first argument provided to the `ggplot()` function is assumed to be the data frame, so it's not necessary to include the argument name `data =`.
-# 2. We are assigning the plot to a variable `p` so we can build on this `ggplot()` master template in the next step.
+# 2. We are assigning the plot to the name `p` so we can build on this `ggplot()` master template in the next step.
 # 3. The parentheses around the line of code is a shortcut for `print`. Without it, the plot would assign to `p` but not print in the plots pane.
 
 (p <- ggplot(data = arch_dat, aes(x = year, y = visitors/1000)))
@@ -67,7 +72,7 @@ The geometry layer determines how the data will be represented in the plot. We c
 
 If we had set default data and aesthetic mappings, the geometry layer will use that information unless additional (overriding) data or aesthetics are set in the layer itself. If we had NOT set default data and aesthetics, they will need to be set within the layer. At a minimum we need to specify the data frame and which data frame columns hold the `x` and (for most plot types) `y` aesthetics. The ggplot object will use its own default values for any other aesthetics (e.g., color, size...) if not defined by the user. 
 
-Each geometry layer has its own set of required and accepted aesthetics. For example,`geom_point()` (point plot) REQUIRES `x` and `y` aesthetics and ACCEPTS aesthetics that modify point color and size. It does NOT accept the `linetype` aesthetic. We cover plot aesthetics in more detail in the tab titled 'Customizing a ggplot Object'.
+Each geometry layer has its own set of required and accepted aesthetics. For example,`geom_point()` (point plot) REQUIRES `x` and `y` aesthetics and ACCEPTS aesthetics that modify point color and size. It does NOT accept the `linetype` aesthetic. We cover plot aesthetics in more detail in the section titled 'Customizing a ggplot Object'.
 
 <details open><summary class='drop2'>Add a line graph geometry layer</summary>
 ```{r p1_step2, echo = TRUE, warning = FALSE, message = FALSE}
@@ -77,8 +82,6 @@ p + geom_line()
 ```
 </details>
 
-<details open><summary class='drop2'>Example of data and aesthetics set only in the geometry layer</summary>
-
 If we had NOT set default data and `x` and `y` aesthetics in the plot's master template we could have set them within the geometry layer like this:
 
 ```{r p1_step2b, echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE}
@@ -86,7 +89,6 @@ If we had NOT set default data and `x` and `y` aesthetics in the plot's master t
 ggplot() +
   geom_line(data = arch_dat, aes(x = year, y = visitors/1000))
 ```
-</details>
 
 <details open><summary class='drop2'>Add multiple geometry layers</summary>
 We can include multiple geometry layers in a single ggplot object. For example, to overlay a point plot on the line graph we would add a `geom_point()` layer. If we had set default data and aesthetic mappings, this additional geometry would use that information unless additional (overriding) information were set in the `geom_point()` layer itself.
@@ -94,8 +96,10 @@ We can include multiple geometry layers in a single ggplot object. For example, 
 ```{r p1_step2c, echo = TRUE, warning = FALSE, message = FALSE}
 # This works because we had defined default data and aesthetics in `p`, so don't need to provide additional information to the geometry layers
 p + geom_line() + geom_point() 
+```
 
-# This does NOT work because `geom_point()` has no data or aesthetics defined, and we did not define default values in the ggplot object
+The code below will NOT add the points layer because `geom_point()` has no data or aesthetics defined, and we did not define default values in the ggplot object.
+```{r, echo = TRUE, eval = FALSE}
 ggplot() +
   geom_line(data = arch_dat, aes(x = year, y = visitors/1000)) +
   geom_point()
@@ -120,7 +124,7 @@ All aesthetic mappings can be fine-tuned with a `scale_...()` function. For exam
 ```{r p3_step1, echo = TRUE, warning = FALSE, message = FALSE}
 # NOTES:
 # 1. Our plot code is getting long, so we will separate out the components to improve readability
-# 2. We will assign this plot object to a new variable, `p2` so we can just add to `p2` in the next step instead of re-typing all these lines
+# 2. We will assign this plot object to the name `p2` so we can just add to `p2` in the next step instead of re-typing all these lines
 # 3. `ggplot2` also provides shortcuts for some scaling arguments. For example, if we just want to set y-axis limits we can add the layer `ylim (600, 1500)` instead of setting limits via `scale_y_continuous()`
 
 # Check out `?scale_y_continuous` for ways to modify the y-axis
@@ -149,8 +153,8 @@ If we want to remove a default label from the plot, we can set the argument to N
 
 (p3 <- p2 + 
   labs(
-    title = "Arches National Park Visitation, 2000 - 2015", # plot title
-    subtitle = "Visitor counts have increased each year since 2004", # plot subtitle
+    title = "Visitor Counts at Arches National Park, 2000 - 2015", # plot title
+    subtitle = "Visits to Arches National Park have increased each year since 2004", # plot subtitle
     x = "Year") # x-axis title. We had already set the y-axis title with `scale_y_continous()`.
  )
 ```
@@ -170,7 +174,7 @@ p3 +
 
 <details open><summary class='drop2'>Create a FiveThirtyEight-inspired plot</summary>
 
-For more fun, install and load the `ggthemes` package, which allows us to apply plot styles inspired by the Economist and the popular FiveThirtyEight website, among other choices.
+For more fun, install and load the `ggthemes` [package](https://mran.microsoft.com/snapshot/2016-12-03/web/packages/ggthemes/vignettes/ggthemes.html), which allows us to apply plot styles inspired by the Economist and the popular FiveThirtyEight website, among other choices.
 
 ```{r p5_step2, echo = TRUE, warning = FALSE, message = FALSE}
 p3 + 
@@ -198,10 +202,10 @@ p3 +
 
 We can use `facet_grid()` or `facet_wrap()` to split a ggplot object into multiple subplots, each representing a different group level. This is a nice way to simplify data-heavy plots with a single line of code. 
 
-With facet_grid we can specify different grouping variables for a row of plots versus a column of plots. For example, we can say that each row of subplots should represent a different region and each column of subplots should represent a different unit type. With facet_wrapped, subplots are "wrapped" in order from left-to-right and top-to-bottom, just like text is wrapped on a page.
+With facet_grid we can specify different grouping variables for a row of plots versus a column of plots. For example, we can say that each row of subplots should represent a different region and each column of subplots should represent a different unit type. With facet_grid, facet column titles are horizontal at the top of each facet and facet row titles will be vertical to the right of each facet. With facet_wrap, subplots are "wrapped" in order from left-to-right and top-to-bottom, just like text is wrapped on a page. The facet titles are horizontal at the top of each facet.
 
 <details open><summary class='drop2'>Create a faceted plot</summary>
-```{r p6_step1, echo = TRUE, warning = FALSE, message = FALSE}
+```{r p6_step1, echo = TRUE, warning = FALSE, message = FALSE, fig.height =8.5}
 # NOTES:
 # 1. For this plot we need to use the `viz_dat` dataset so we can facet by park unit name
 # 2. In the `facet_wrap` arguments, `ncol = 1` sets a single column so plots are stacked on top of each other and `scales = "free_y"` allows the y-axis range to differ across the subplots (this is useful if the range of y-axis values is very different across subplots and we are more interested in comparing trends than in comparing absolute numbers among the subplots)
@@ -212,7 +216,7 @@ ggplot(subdat, aes(x = year, y = visitors/1000)) +
   geom_line() + 
   geom_point() +
   labs(
-    title = "National Park Visitation, 2000 - 2015",
+    title = "Annual Visitor Counts at Three National Parks, 2000 - 2015",
     x = "Year", 
     y = "Number of visitors, in 1000's") +
   theme_bw() +
@@ -220,7 +224,7 @@ ggplot(subdat, aes(x = year, y = visitors/1000)) +
   facet_wrap(vars(unit_name), ncol = 1, scales = "free_y")
 ```
 
-We were wondering if 2015 was a very high visitation year for parks other than Arches National Park. It looks like it was for Grand Canyon and Yosemite National Parks too!
+We were wondering if 2015 was a very high year for visitor counts in parks other than Arches National Park. It looks like it was for Grand Canyon and Yosemite National Parks too!
 
 </details>
 </details>
