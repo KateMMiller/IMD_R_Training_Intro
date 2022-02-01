@@ -5,7 +5,7 @@ date: "12/15/2021"
 output: html_document
 ---
 
-#### Data Cleaing {.tabset}
+#### Data Cleaning {.tabset}
 
 <details open><summary class='drop'> Data Cleaning</summary>
 
