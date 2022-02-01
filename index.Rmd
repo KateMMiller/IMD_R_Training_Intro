@@ -72,7 +72,10 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE)
 ```{r data_viz3, child = "IMD_D3_M3_Basic_GGPlot.Rmd"}
 ```
 
-```{r data_viz4, child = "IMD_D3_M4_Data_Viz_GIS.Rmd"}
+```{r data_viz4, child = "IMD_D3_M4_Customize_GGPlot.Rmd"}
+```
+
+```{r data_viz5, child = "IMD_D3_M4_Data_Viz_GIS.Rmd"}
 ```
 
 ### Day 4: Best Practices and Iteration {.tabset}
