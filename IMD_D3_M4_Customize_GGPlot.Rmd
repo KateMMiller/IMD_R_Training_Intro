@@ -22,7 +22,7 @@ viz_dat <- readRDS("Data/viz_dat.RDS")
 viz_dat <- readRDS("viz_dat.RDS") # this file is provided with the training materials. If this file is not in your current working directory, provide the file path in the function argument
 ```
 </details>
-
+<br>
 <details open><summary class='drop'>Packages Used in this Section</summary>
 ```{r load_packages, results = FALSE, message = FALSE, warning = FALSE}
 # Packages used in this section
@@ -43,6 +43,8 @@ if (length(pkgs[!installed_pkgs]) > 0) install.packages(pkgs[!installed_pkgs],de
 lapply(pkgs, library, character.only = TRUE) # ...then load all the packages and their dependencies
 ```
 </details>
+<br>
+<details open><summary class='drop'>Get Ready to be Challenged</summary>
 
 Although `ggplot2` default options create decent plots, we have extensive options for customizing every aspect of a ggplot object. In this section of the data visualization module we will practice building and customizing ggplot objects.  
 
@@ -55,8 +57,9 @@ The format of this section is that for each plot type we:
 
 We include Challenge Questions that ask you to figure out some coding on your own. These are coding challenges that should be "do-able" at this stage of learning, and will help you hone your skills of searching the Internet and `R` help documents for answers to your R-related questions--an absolute MUST for continuing to improve your coding skills after this training is done.
 
-Embrace the challenge! Happy coding!
+Embrace the challenge. Happy coding!
 
+</details>
 <br>
 <details open><summary class='drop'>Histograms</summary>
 
@@ -104,7 +107,6 @@ This histogram has a really long, discontinuous tail. It looks like a very small
 For now, don't worry too much about the error message that says we are using a default of `bins = 30`. This message is reminding us that we should thoughtfully select an appropriate bin size for a histogram instead of relying on a default. If we explicitly set the default number of bins to 30 (`geom_histogram(bins = 30)`) the message goes away, even though we produce the same histogram. For highly skewed data like we have here, typical rules-of-thumb for the appropriate number of bins may not apply. 
 
 </details>
-<br>
 <details open><summary class='drop2'>Step 2. Group by unit type</summary>
 
 We can split out the unit types in this histogram by assigning a different fill to each unit type or by faceting the histogram by unit type. When we map the `ggplot()` fill aesthetic to a categorical variable, `ggplot()` automatically maps that variable to a grouping aesthetic as well. That is, each category level will be represented by a separate histogram (with a different fill) in the plot. 
@@ -149,8 +151,7 @@ ggplot(dat_2015, aes(x = visitors_k)) +
 The dot plot is actually nicely informative (though could use tweaking), given the moderately small sample size of our data set. But the reader is forced to manually count the taller bin stacks, which can be slower than reading the y-axis of the frequency histogram. We could do some hack coding to change the y-axis labels to show counts instead of density, but instead let us customize the frequency histogram so it is more readable and informative.
 
 </details>
-<br>
-<details open><summary class='drop2'>Step 3. Customize bin sizes and x-axis labels.</summary>
+<details open><summary class='drop2'>Step 3. Customize bin sizes and x-axis labels</summary>
 
 Look at the count summaries used to build `hist1`
 ```{r, echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE}
@@ -182,7 +183,6 @@ Let's customize the bin sizes and x-axis labels. Save the result as `hist2`.
 ```
 
 </details>
-<br>
 <details open><summary class='drop2'>Step 4. Add median lines and more informative facet labels</summary>
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE, fig.height = 7, fig.width = 6}
@@ -202,8 +202,7 @@ ggplot(dat_2015_label, aes(x = visitors_k)) +
 ```
 
 </details>
-<br>
-<details open><summary class='drop2'>Step 5. Customize a final plot and arrange plots in a single graphic.</summary>
+<details open><summary class='drop2'>Step 5. Customize a final plot and arrange plots in a single graphic</summary>
 
 <div class="alert alert-info">
   <strong>CHALLENGE:  Customize a final plot however you wish and save it as `hist3`. Then use the R package `patchwork` (make sure you have it installed and loaded) to arrange `hist1` and `hist3` into a single graphic</strong>
@@ -242,7 +241,6 @@ Here is an example of two histograms combined in a single graphic.
 )
 ```
 </details>
-<br>
 <details open><summary class='drop2'>Further improvements?</summary> 
 
 We are going to stop here with the histograms, but it's useful to think about ways we can further improve our plots. 
@@ -294,42 +292,24 @@ ggplot(mpg) + geom_bar(aes(y = class))
 # NOTE: We can also use `coord_flip()` to flip the axes
 ```
 
-Let's try this with our data. 
+Let's try building a bar chart with our data. We are going to start off by doing all of the data wrangling within `geom_bar()` instead of wrangling a plot-specific data set. It's useful to know how to wrangle within `ggplot2` functions because it comes in handy sometimes.
 
-<div class="alert alert-info">
-  <strong>CHALLENGE:  Create a stacked bar chart that shows the total number of visitors in each combination of region and year.</strong>
-  
-  1. Subset the data to keep data only for years 2000 and 2015
-  2. Create a basic stacked bar chart faceted by region (3 columns, one region per column). In each facet panel, you should have two stacked bar charts, one for 2000 and one for 2015. The bar heights should represent total visitors summed across park units, with a different color for each unit type.
-  
-  Hint: map the `x` aesthetic to `year` as a factor, i.e., `x = as.factor(year)`. This isn't absolutely necessary, but will avoid some errors later when we build on this basic bar chart. Bar charts are not meant to display two continuous variables, so with `as.factor(year)` we are making it clear that `year` should be considered a categorical variable.
-  </div>
-  
-The final plot should show this relationship:
-```{r, echo = FALSE, message = FALSE, warning = FALSE}
+NOTE: In the bar chart we will map the `x` aesthetic to `year` as a factor data class (instead of numeric). This isn't absolutely necessary, but will avoid errors later when we build on this basic bar chart. Bar charts are not meant to display two continuous variables, so with `as.factor(year)` we are making it clear that `year` should be considered a categorical variable.
 
-# Subset the data, only keeping data for the years 2000 and 2015
-bar_dat <- viz_dat %>%
-  dplyr::filter(year %in% c(2000, 2015)) %>%
-  dplyr::mutate(year_f = as.factor(year))
-
-head(bar_dat) # always check the data before plotting
+```{r, echo = TRUE, message = FALSE, warning = FALSE}
 
 # Stacked bar chart, using the handy `weight` argument
-ggplot(bar_dat, aes(x = year_f, fill = unit_type)) +
-  geom_bar(aes(weight = visitors)) +
+ggplot(subset(viz_dat, year %in% c(2000, 2015)),
+       aes(x = as.factor(year), fill = unit_type)) +
+  geom_bar(aes(weight = visitors)) + # we don't need to divide visitors by 1000 for this one because we will be converting to proportions anyway
   facet_grid(cols = vars(region))
 
 # Compare the plot to the data to make sure things look about right
-
-
-# NOTE: It's possible to wrangle the data set to calculate the bar heights, instead of using the `weight` argument in `geom_bar`
 ```
 
-NOTE: Notice that the order of levels in the legend is alphabetical from top to bottom, and the order of colors in the stacked bar chart matches the legend order. If `unit_type` were a factor data type (instead of character), then the legend and chart colors would follow the factor level orders (remember that we had manually set factor level orders for `region`)
+Notice that the order of levels in the legend is alphabetical from top to bottom, and the order of colors in the stacked bar chart matches the legend order. If `unit_type` were a factor data type (instead of character), then the legend and chart colors would follow the factor level orders (remember that we had manually set factor level orders for `region`)
 
 </details>
-<br>
 <details open><summary class='drop2'>Step 2. Create a stacked bar chart of proportions (instead of counts)</summary>
 
 Instead of wrangling the data set to calculate group proportions, we can convert count data to proportion data by simply changing the `position` setting in `geom_bar()`.
@@ -338,12 +318,12 @@ Instead of wrangling the data set to calculate group proportions, we can convert
 # NOTE: Setting the `position` argument to "dodge" would change the stacked bar to a side-by-side bar chart
 
 # Set the `position` argument to "fill" to convert the counts to proportions
-ggplot(bar_dat, aes(x = year_f, fill = unit_type)) +
+ggplot(subset(viz_dat, year %in% c(2000, 2015)),
+       aes(x = as.factor(year), fill = unit_type)) +
   geom_bar(aes(weight = visitors), position = "fill") + # <<< changed this line
   facet_grid(cols = vars(region))
 ```
 </details>
-<br>
 <details open><summary class='drop2'>Step 3. Apply a colorblind-friendly palette</summary>
 
 The `RColorBrewer` and `viridis` packages have many popular color palettes for:
@@ -360,7 +340,8 @@ Apply one of the colorblind-friendly palettes to the bar chart.
 # These are colorblind-friendly palettes in `RColorBrewer`
 RColorBrewer::display.brewer.all(n=NULL, type="all", select=NULL, exact.n=TRUE, colorblindFriendly=TRUE)
 
-ggplot(bar_dat, aes(x = year_f, fill = unit_type)) +
+ggplot(subset(viz_dat, year %in% c(2000, 2015)),
+       aes(x = as.factor(year), fill = unit_type)) +
   geom_bar(aes(weight = visitors), position = "fill") +
   scale_fill_brewer(palette = "Set2") + # pick a palette to apply
   facet_grid(cols = vars(region))
@@ -371,10 +352,10 @@ To manually assign colors to each variable:
 
 # Google search a cheat sheet of "R ggplot2 colors" to see hundreds of named colors to choose from. Manually set fill for each unit type by replacing `scale_fill_brewer()` with:
 
-scale_fill_manual(values = c("National Historic Site " = "cadetblue", "National Monument" = "mediumpurple2", "National Park" = "burlywood1", ))
+scale_fill_manual(values = c("National Historic Site " = "cadetblue", "National Monument" = "mediumpurple2", "National Park" = "burlywood1"))
 ```
 
-To create your own palette of colors, and call it from the plot:
+To create your own palette of colors, and call it from the plot...
 ```{r echo = TRUE, eval = FALSE, message = FALSE, warning = FALSE}
 
 # A colorblind-friendly palette, with colors identified by hexadecimal code instead of by name (you can replace these with color names)
@@ -385,35 +366,58 @@ scales::show_col(my_colors) # the `scales` package has a `show_col()` function t
 # To use your custom palette, replace `scale_fill_brewer()` with:
   scale_fill_manual(values = my_colors) # make sure the number of colors in your custom palette is greater than or equal to the number of levels in your grouping variable (in our case, 3 unit types--so unit types (alphabetically or by factor level order) will be assigned the the first 3 colors in the custom palette
 ```
+</details>
+<details open><summary class='drop2'>Step 4. 
+Label each bar segment with the proportion represented</summary>
+
+A potential problem with stacked bar charts (depending on the message we want to convey) is that it can be difficult to determine differences between two bar charts, for a grouping level that is not grounded at the bottom of the stack. For example, it may be hard to tell if the proportion of visitors to National Monuments in the Southeast was higher or lower in 2015 compared to 2010. That is because the lower boundaries of the National Monuments bar segments have different starting points. If it's important for our plot to convey this kind of information to the reader, one option would be to label each bar segment with the % of the bar it represents.
+
+Below is some pseudo-complicated code to add bar segment labels as %. Ultimately, an easier option (at least, easier to remember) would have been to wrangle the data with columns that calculate % visitors grouped by region, unit type, and year. Then use `geom_col()` to just show the pre-calculated percentages, and `geom_text()` to add those pre-calculated values as labels.
+
+```{r, echo = TRUE, warning = FALSE, message = FALSE}
+ggplot(subset(viz_dat, year %in% c(2000, 2015)),
+       aes(x = as.factor(year), fill = unit_type, by = as.factor(year))) + # <<< this `by =` argument is required for the `stat` argument in `geom_text()` to calculate proportion
+  geom_bar(aes(weight = visitors), position = "fill") + 
+  geom_text(stat = "prop", fontface = "bold", size = 3.5, aes(weight = visitors), position = position_fill(0.5)) + # <<< this line creates the bar segment labels. `stat = "prop"` requires package `GGally`
+  scale_fill_brewer(palette = "Set2") +
+  facet_grid(cols = vars(region))
+```
 
 </details>
-<br>
-<details open><summary class='drop2'>Step 4. 
+<details open><summary class='drop2'>Step 5. 
 Finish it off</summary>
 
 <div class="alert alert-info">
-  <strong>CHALLENGE:  Finalize your bar chart by converting the y-axis values to percentages, adding appropriate plot labels, and making any other tweaks you would like. Save the resulting plot as a .pdf file.</strong>
+  <strong>CHALLENGE:  Finalize your bar chart and save the resulting plot as a .pdf file.</strong>
+  
+  The final bar chart should convert the y-axis labels to percentages instead of proportions (e.g., 50% instead of 0.50) and should include appropriate plot labels. Feel free to add other personal tweaks as well! Then save your ggplot object as a .pdf file in your working directory (test your Internet search skills!)
   </div>
   
 Here is an example of a final bar chart. Yours may look similar (or not!)
 
 ```{r echo = FALSE, message = FALSE, warning = FALSE}
 # Assign the final bar chart to the name 'final_bar' so we can save it as a .pdf file in the next step
-(final_bar <- ggplot(bar_dat, aes(x = year_f, fill = unit_type)) +
-  geom_bar(aes(weight = visitors), position = "fill") +
-  labs(fill = "NPS unit type", title = "Proportion of visits in each NPS unit type and region", subtitle = "Comparison of Years 2000 & 2015", y = "% of visits", x = "Year") +
-  scale_y_continuous(labels = scales::percent) + # <<< this line converts proportion to % on the y-axis
-    scale_fill_brewer(palette = "Set2") +
-  ggthemes::theme_pander() +
-    theme(plot.margin = margin(rep(15, 4)), # increase white margin around plot. May not need this for other themes.
-          plot.title = element_text(hjust = 0.5),
-          plot.subtitle = element_text(hjust = 0.5)) +
-  facet_grid(cols = vars(region)) # Could also do facet_wrap with one row
+(final_bar <- 
+   ggplot(subset(viz_dat, year %in% c(2000, 2015)),
+       aes(x = as.factor(year), fill = unit_type, by = as.factor(year))) +
+   geom_bar(aes(weight = visitors), position = "fill") + 
+   labs(fill = "NPS unit type", title = "Proportion of visits in each NPS unit type and region", subtitle = "Comparison of Years 2000 & 2015", y = "% of visits", x = "Year") +
+   scale_y_continuous(labels = scales::percent) + # <<< this line converts proportion to % on the y-axis
+   geom_text(stat = "prop", fontface = "bold", size = 3.5, aes(weight = visitors), position = position_fill(0.5)) + # <<< this line creates the bar segment labels. `stat = "prop"` requires package `GGally`
+   scale_fill_brewer(palette = "Set2") +
+   ggthemes::theme_pander() +
+   theme(plot.margin = margin(rep(15, 4)), # increase white margin around plot. This particular theme needs it, others may not.
+         plot.title = element_text(hjust = 0.5),
+         plot.subtitle = element_text(hjust = 0.5)) +
+   facet_grid(cols = vars(region))
 )
-ggsave(filename = "final_bar.pdf", plot = final_bar) # uses extension to figure out file type. Can set width, height and unit or use default based on how it looks on plots page. It will tell you the size it saves at, and you can add that into the script to make it reproducible
+
+# And here is the code to save it as a .pdf file
+# ggsave(filename = "final_bar.pdf", plot = final_bar) 
+
+# NOTE: `ggsave()` uses the file extension to guess at the file type to save as. There are function arguments to set figure width and height (and the associated measurement unit). The default is to save the image based on how we manually sized it in the RStudio plots plane. When we save the image this way, we will see a message in the console about the width and height of the saved image. For reproducibility, it's usually a good idea to hard code the output figure dimensions (if you plan to reuse or share a script)
 ```
 </details>
-<br>
 <details open><summary class='drop2'>Further improvements?</summary> 
 
 Spend some time thinking about how you might improve your final bar chart. Here are a few things to consider.
@@ -423,15 +427,18 @@ Spend some time thinking about how you might improve your final bar chart. Here 
 2. A potential problem with stacked bar charts (depending on the message we want to convey) is that it can be difficult to determine differences between two bar charts, for a grouping level that is not grounded at the bottom of the stack. For example, it may be hard to tell if the proportion of visitors to National Monuments in the Southeast was higher or lower in 2015 compared to 2010. That is because the lower boundaries of the National Monuments bar segments have different starting points. If it's important for our plot to convey this kind of information to the reader, one option would be to label each bar segment with the % of the bar it represents, and perhaps also actual number of visits. 
 
 </details>
+</details>
 <br>
 <details open><summary class='drop'>Line Graphs</summary> 
 
 Create a line graph to show trends in visitor counts, separately for each unit type and region. Do not include Southeast region data in this figure.
 
 Learn to: 
+
 - Build a line graph
 - Make it interactive (i.e., hovering over a line will cause the data to show in a pop-up)
 
+<br>
 <details open><summary class='drop2'>Step 1. Basic line graph</summary>
                             
 Subset the data for this plot and create a basic faceted line graph for a first look at the data. 
@@ -447,8 +454,7 @@ ggplot(line_dat, aes(x = year, y = visitors_k)) +
   facet_grid(rows = vars(unit_type), col = vars(region))
 ```
 </details>
-<br>
-<details open><summary class='drop2'>Step 2. Fix and finalize the line graph.</summary>
+<details open><summary class='drop2'>Step 2. Fix and finalize the line graph</summary>
 
 <div class="alert alert-info">
   <strong>CHALLENGE:  This one's all yours! Create a final line graph that is interactive.</strong>
@@ -482,11 +488,10 @@ Here is an example of a final line graph. Feel free to personalize your graph wi
 
 ```
 </details>
-<br>
 <details open><summary class='drop2'>Further improvements?</summary> 
 
 This line graph was really meant to add a few more skills to your `R` plotting toolkit. It can be greatly improved, and we'll leave it at that. 
-
+</details>
 </details>
 <br>
 <details open><summary class='drop'>Matrix Heat Maps</summary>
@@ -501,7 +506,7 @@ Learn to:
 - Change the length and position of a legend
 - Order heat map rows based on average rank over time
 
-<details open><summary class='drop2'>Step 1. Basic Heat Matrix</summary>
+<details open><summary class='drop2'>Step 1. Basic matrix heat map</summary>
                             
 Subset the data for this plot and create a basic matrix heat map for a first look at the data. 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE, fig.height = 9, fig.width = 11}
@@ -523,8 +528,7 @@ ggplot(tab_visits, aes(y = unit_name, x = year_f, fill = visitors_m)) +
 ```
 
 </details>
-<br>
-<details open><summary class='drop2'>Step 2. Improve the visibility of matrix cells.</summary>
+<details open><summary class='drop2'>Step 2. Improve the visibility of matrix cells</summary>
 
 The matrix cell colors all run into each other. To make the individual cells more obvious, we need to change the cell color from the default black to white. We also don't get much color range with many shades of a single color. It's easier to see differences among heat map values if we use a palette with a wider color range, e.g., a palette that blends two different colors.
 
@@ -537,8 +541,7 @@ ggplot(tab_visits, aes(y = unit_name, x = year_f, fill = visitors_m)) +
 What patterns do we see in the heat map so far? With the `viridis` palette it's a bit easier to see that there are a few National Parks with really high visitor counts-- Great Smoky Mountains and Grand Canyon National Parks, for example.
 
 </details>
-<br>
-<details open><summary class='drop2'>Step 2. Label cells with their values.</summary>
+<details open><summary class='drop2'>Step 3. Label cells with their values</summary>
 
 If we are not just trying to show "big picture" patterns in the heat map, but want the reader to be able to distinguish smaller differences, it is useful to label the heat map cells with their actual values. Before we do that here, we will also reverse the color order so the lighter colors correspond with smaller values (to me, that order seems to make more sense).
 
@@ -552,8 +555,7 @@ ggplot(tab_visits, aes(y = unit_name, x = year_f, fill = visitors_m)) +
 With the numbers added, we can now more clearly see that annual visitor counts increased at some parks (e.g., Arches National Park) over time, and declined at others (e.g., Mammoth Cave National Park). Those patterns aren't that easy to discern with the colors alone.
 
 </details>
-<br>
-<details open><summary class='drop2'>Step 3. Make text color conditional on value.</summary>
+<details open><summary class='drop2'>Step 4. Make text color conditional on value</summary>
 
 It's difficult to see black numbers against the darker colors. One way to fix this is to set the text color conditional on the matrix value.
 
@@ -565,8 +567,7 @@ ggplot(tab_visits, aes(y = unit_name, x = year_f, fill = visitors_m)) +
   scale_color_manual(values = c("black", "white")) # set color of TEXT as FALSE(0) = black (for <=7) and TRUE(1) = white (for >7)
 ```
 </details>
-<br>
-<details open><summary class='drop2'>Step 4. Finalize the heat map.</summary>
+<details open><summary class='drop2'>Step 5. Finalize the heat map</summary>
 
 This is a decent start. The rest is up to you!
 
@@ -618,7 +619,6 @@ tab_visits <- viz_dat %>%
 With this final heat map it's easy to see regional patterns in visitor counts. In all regions there are a few National Parks with really high visitor counts.The Intermountain region has many National Parks that typically exceed 2 million visitors per year.
 
 </details>
-<br>
 <details open><summary class='drop2'>Further improvements?</summary> 
 
 Matrix heat maps are great for showing a lot of information in a highly condensed figure, but they have there limits. Some thoughts on our final heat matrix:

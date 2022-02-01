@@ -165,8 +165,7 @@ From subsets of the park visits and gas price data, we will create plots to:
 - show temporal trends in ranking of the top 5 visited park units
 - show the relationship between gas price and park visits
 
-<br>
-Make sure you've installed and loaded the packages 
+Make sure you've installed and loaded the packages.
 
 1. Import and view the park visits and gas price data
 2. Extract a subset of the park visits data to work with
@@ -236,7 +235,6 @@ glimpse(park_sub)
 
 </details>
 
-</details>
 <details open><summary class='drop2'>Step 3. Merge the `gas_constant` data with the `park_sub` data frame</summary>
 
 <div class="alert alert-info">
@@ -273,7 +271,7 @@ glimpse(joined_dat)
 We now have all the data we need in a single data frame.
 
 </details>
-<details open><summary class='drop2'>Step 4. Check and clean/tidy the data</summary>
+<details open><summary class='drop2'>Step 4. Tidy the data</summary>
 
 We are primarily using `dplyr` to wrangle data and `ggplot2` to plot data. These two packages are part of the [Tidyverse](https://www.tidyverse.org/packages/) of packages for data science. Tidyverse packages share a common design philosophy centered on ideas like breaking down complex tasks into a series of simpler functions executed in sequence (e.g., piping `%>%`). Functions from tidyverse packages work together most seamlessly and efficiently when data are in a tidy format. Remember that a 'tidy' format means data have one variable per column and one observation per row. 
 
@@ -298,8 +296,7 @@ We are primarily using `dplyr` to wrangle data and `ggplot2` to plot data. These
 
 What about our `joined_dat` data frame? Is it in 'tidy' format? Yes, it is! No need to pivot_long anything today. But let's make two final changes to the data before we begin plotting. First, we will convert `region` to an ordered factor with more descriptive labels. Second, we will remove park units that don't have visitor data for every year from 2000 to 2015. We will end with a final check of the data to make sure it's ready for plotting.
 </details>
-<br>
-<details open><summary class='drop2'>Step 4a. Convert `region` to a factor data type</summary>
+<details open><summary class='drop2'>Step 5. Convert `region` to a factor data type</summary>
 
 Convert the variable `region` to a factor data type and rename and re-order the levels as Pacific West < Intermountain < and Southeast (the default order is alphabetical). This way, bar plots and color legends will order the region levels from west to east instead of alphabetically. 
 
@@ -326,8 +323,7 @@ summary(joined_dat) # the summary for `region` now counts the number of times ea
 ```
 
 </details>
-<br>
-<details open><summary class='drop2'>Step 4b. Remove park units with missing years of data</summary>
+<details open><summary class='drop2'>Step 6. Remove park units with missing years of data</summary>
 
 We will be creating plots to see if trends in park visits differ by region or unit type, so we want to exclude park units for which we don't have complete data for the years 2000 to 2015. 
 
@@ -381,8 +377,7 @@ viz_dat <- readRDS("viz_dat.RDS")
 Note that a report of our findings should explain how and why we selected this subset of data to work with.
 
 </details>
-<br>
-<details open><summary class='drop2'>Step 4c. Final data check</summary>
+<details open><summary class='drop2'>Step 7. Final data check</summary>
 
 Always do a final check of the data to look for missing data, duplicated records, funny numbers or category levels, etc. It helps to create summary tables that decompose the data in various ways. These tables can identify oddities (e.g., category levels with only one record) and also give us an idea of the sample sizes we'll be working with if we create plots with subsets of the data. 
 

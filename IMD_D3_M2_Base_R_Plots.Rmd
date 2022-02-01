@@ -20,7 +20,7 @@ viz_dat <- readRDS("Data/viz_dat.RDS")
 viz_dat <- readRDS("viz_dat.RDS") # this file is provided with the training materials. If this file is not in your current working directory, provide the file path in the function argument
 ```
 </details>
-
+<br>
 <details open><summary class='drop'>Packages Used in this Section</summary>
 ```{r, echo = TRUE, message = FALSE, warning = FALSE}
 
@@ -28,8 +28,9 @@ viz_dat <- readRDS("viz_dat.RDS") # this file is provided with the training mate
 library(tidyverse)
 ```
 </details>
-
-Plots can reveal data issues that we had overlooked with our data checks. I sometimes use base R plotting functions to create quick-and-dirty plots for this purpose. If I want anything more than a very basic plot, I find `ggplot` functions easier to remember and use.
+<br>
+<details open><summary class='drop'>Why plot in base `R`?</summary>
+Plots can reveal data issues that we had overlooked with our data checks. I sometimes use base R plotting functions to create quick-and-dirty plots for this purpose. If I want to do a lot of plot customizations, I find `ggplot` functions easier to remember and use.
 
 In addition to quick plots, base R plotting functions have another important use. Many `R` packages have functions that create specific data visualizations when `R`'s generic `plot()` is applied to an object of a particular class. For example, `lm()` is a statistical function that fits a general linear model to data and saves the model as an object of class `lm`. Run the code below to see what happens when we apply `plot()` to an object of class `lm`.
 
@@ -51,7 +52,7 @@ plot(mod) # residual plots
 ```
 
 We aren't going to discuss statistics or residual plots today, but it's useful to know these common uses for `plot()`.
-
+</details>
 <br>
 <details open><summary class='drop'>Feeding Data to Base R Plotting Functions</summary>
 
@@ -120,22 +121,22 @@ From the boxplots and numbers, it looks like visits were generally down in 2010 
 <br>
 <details open><summary class='drop'>Graphical Parameters for Base R Plots</summary>
 
-Type `?par` in the console to see the many graphical parameters (arguments) that can be used to modify base R plots. Unless you plan to use base R functions to create complex plots, you can probably get by with remembering a small handful of useful graphical parameters, such as `pch =` to change scatterplot point types, `col =` to set color, and a variety of `cex` arguments to change font size and point size.
+Type `?par` in the console to see the many graphical parameters (arguments) that can be used to modify base R plots. Unless you plan to use base R functions to create complex plots, you can probably get by with remembering a small handful of useful graphical parameters, such as `pch =` to change scatter plot point types, `col =` to set color, and a variety of `cex` arguments to change font size and point size.
 
-Let's create a basic scatterplot and use some of these graphical parameters to gussy up the plot.
+Let's create a basic scatter plot and use some of these graphical parameters to gussy up the plot.
 
 </details>
 <br>
-<details open><summary class='drop'>Create a Scatterplot</summary>
+<details open><summary class='drop'>Create a scatter plot</summary>
 
 <div class="alert alert-info">
-  <strong>CHALLENGE:  Create a scatterplot showing the relationship between park visits (y-axis) and gas price (x-axis) for Arches National Park (unit code is ARCH).</strong>
+  <strong>CHALLENGE:  Create a scatter plot showing the relationship between park visits (y-axis) and gas price (x-axis) for Arches National Park (unit code is ARCH).</strong>
   
   We want to know if annual visitor counts at Arches National Park is correlated with gas price (annual national average).
   
   The data for this plot should be the 16 records of data for Arches National Park (one data point per year). Assign this subset of data to the name 'arch_dat' because we will be using it again for later plots.
   
-  Make these modifications to the default scatterplot:
+  Make these modifications to the default scatter plot:
   
   - Show visitor count as 1000's of visitors (i.e., divide the visitor count by 1000) as we did for the box plots.
   
@@ -164,7 +165,7 @@ plot(visitors/1000 ~ gas_constant,
 
 This plot shows that annual visitor counts increased as gas prices increased. That's not the relationship we might have expected to see. But correlation is not causation, and the resolution of data influences the pattern we see. Maybe if we had used average June - July gas prices within 330 km of Arches National Park (instead of annual national averages) we might have seen a different relationship with visitor counts. Maybe, maybe not.
 
-The scatterplot shows another interesting bit of information. What is that funny point that is marching to its own beat?! Gas price was low (~2.50 per gallon in 2015 dollars) and the visitor count was really high, ~ 1.4 million. A quick look at the data shows that this funny point was for the year 2015. 
+The scatter plot shows another interesting bit of information. What is that funny point that is marching to its own beat?! Gas price was low (~2.50 per gallon in 2015 dollars) and the visitor count was really high, ~ 1.4 million. A quick look at the data shows that this funny point was for the year 2015. 
 
 It would be interesting to see if 2015 was a high visitor count year for other park units as well. We will save that question for ggplot.
 
@@ -184,7 +185,7 @@ plot(gas_constant ~ year, data = arch_dat, pch = 19, cex = 1.5, main = "Average 
 
 The plot above shows that gas prices have gone up and down between 2000 and 2015. There was a huge drop in gas price between 2008 and 2009 and again between 2014 and 2015.
 
-These scatterplots give interesting insight on trends in national gas prices and trends in visits to Arches National Park. The pattern we saw in our initial scatterplot--positive correlation between annual visitor counts and national average gas price--was almost certainly a spurious correlation. It's important to look at data from many different directions and to not jump to conclusions based on a narrow exploration of the data.
+These scatter plots give interesting insight on trends in national gas prices and trends in visits to Arches National Park. The pattern we saw in our initial scatter plot--positive correlation between annual visitor counts and national average gas price--was almost certainly a spurious correlation. It's important to look at data from many different directions and to not jump to conclusions based on a narrow exploration of the data.
 </details>
 <br>
 <details open><summary class='drop'>Create a Line Graph</summary>
@@ -192,10 +193,10 @@ These scatterplots give interesting insight on trends in national gas prices and
 Line graphs are often used for showing changes in continuous data over time. Let's make one last plot in base R before we move on to `ggplot`.
 
 <div class="alert alert-info">
-  <strong> CHALLENGE: Re-create the plot of trends in visitor counts at Arches National Park, using a line graph instead of a scatterplot. If you're feeling ambitious, make it a line graph with overplotted points.</strong>
+  <strong> CHALLENGE: Re-create the plot of trends in visitor counts at Arches National Park, using a line graph instead of a scatter plot. If you're feeling ambitious, make it a line graph with over-plotted points.</strong>
 </div>
 
-The final plot (with overplotted points) should show this relationship:
+The final plot (with over-plotted points) should show this relationship:
 ```{r base_line, echo = FALSE, message = FALSE, warning = FALSE}
 
 # Line graph
