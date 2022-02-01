@@ -12,18 +12,22 @@ output:
 viz_dat <- readRDS("Data/viz_dat.RDS")
 ```
 
+<details open><summary class='drop'>Data Used in this Section</summary>
 ```{r, echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE}
 
-# This tab requires the `viz_dat` data frame created earlier in the module. If you don't have this data frames in the global environment, run the code below.
+# This section requires the `viz_dat` data frame created earlier in the module. If you don't have this data frames in the global environment, run the code below.
 
 viz_dat <- readRDS("viz_dat.RDS") # this file is provided with the training materials. If this file is not in your current working directory, provide the file path in the function argument
 ```
+</details>
 
+<details open><summary class='drop'>Packages Used in this Section</summary>
 ```{r, echo = TRUE, message = FALSE, warning = FALSE}
 
-# Packages used in this tab
+# Packages used in this section
 library(tidyverse)
 ```
+</details>
 
 Plots can reveal data issues that we had overlooked with our data checks. I sometimes use base R plotting functions to create quick-and-dirty plots for this purpose. If I want anything more than a very basic plot, I find `ggplot` functions easier to remember and use.
 
@@ -40,7 +44,7 @@ group <- gl(2, 10, 20, labels = c("Ctl","Trt"))
 weight <- c(ctl, trt)
 
 # Simple linear regression of `weight` as a function of group
-mod <- lm(weight ~ group) # assign model results to the variable `mod`
+mod <- lm(weight ~ group) # assign model results to the name `mod`
 summary(mod) # model summary
 class(mod) # class of `mod` is `lm`
 plot(mod) # residual plots
@@ -110,7 +114,7 @@ look at the data underlying the box plots. In `?boxplot`, the section titled 'Va
 p_box
 ```
 
-From the boxplots and numbers, it looks like visitation was generally down in 2010 and 2015 compared to 2000 and 2005. The spread of visitor counts across these 34 National Monuments is huge, though.
+From the boxplots and numbers, it looks like visits were generally down in 2010 and 2015 compared to 2000 and 2005. The spread of visitor counts across these 34 National Monuments is huge, though.
 
 </details>
 <br>
@@ -125,9 +129,9 @@ Let's create a basic scatterplot and use some of these graphical parameters to g
 <details open><summary class='drop'>Create a Scatterplot</summary>
 
 <div class="alert alert-info">
-  <strong>CHALLENGE:  Create a scatterplot showing the relationship between park visitor count (y-axis) and gas price (x-axis) for Arches National Park (unit code is ARCH).</strong>
+  <strong>CHALLENGE:  Create a scatterplot showing the relationship between park visits (y-axis) and gas price (x-axis) for Arches National Park (unit code is ARCH).</strong>
   
-  We want to know if annual visitation to Arches National Park is correlated with gas price (annual national average).
+  We want to know if annual visitor counts at Arches National Park is correlated with gas price (annual national average).
   
   The data for this plot should be the 16 records of data for Arches National Park (one data point per year). Assign this subset of data to the name 'arch_dat' because we will be using it again for later plots.
   
@@ -153,7 +157,7 @@ plot(visitors/1000 ~ gas_constant,
      data = arch_dat, 
      pch = 19, # change point shape to a solid circle
      cex = 1.5, # increase point size
-     main = "Gas Prices vs Visitation at Arches National Park, 2000 - 2015", 
+     main = "Annual Gas Prices vs Visitor Counts at Arches National Park, 2000 - 2015", 
      xlab = "Gas price (constant 2015 dollars/gallon)", 
      ylab = "Number of visitors, in 1000's")
 ```
@@ -162,25 +166,25 @@ This plot shows that annual visitor counts increased as gas prices increased. Th
 
 The scatterplot shows another interesting bit of information. What is that funny point that is marching to its own beat?! Gas price was low (~2.50 per gallon in 2015 dollars) and the visitor count was really high, ~ 1.4 million. A quick look at the data shows that this funny point was for the year 2015. 
 
-It would be interesting to see if 2015 was a high visitation year for other park units as well. We will save that question for ggplot.
+It would be interesting to see if 2015 was a high visitor count year for other park units as well. We will save that question for ggplot.
 
-For now, let's see if we gain any additional insight from plots showing trends in visitor counts at Arches National Park and trends in national gas prices. 
+For now, let's see if we gain any additional insight from plots showing trends in visits to Arches National Park and trends in national gas prices. Try creating these plots on your own by modifying the code slightly. 
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 # Visitors vs. year
-plot(visitors/1000 ~ year, data = arch_dat, pch = 19, col = ifelse(arch_dat$year == 2015, "red", "black"), cex = 1.5, main = "Arches National Park Visitation, 2000 - 2015", sub = "(red point is year 2015; all other years are shown in black)", xlab = "Year", ylab = "Number of visitors, in 1000's")
+plot(visitors/1000 ~ year, data = arch_dat, pch = 19, cex = 1.5, main = "Visits to Arches National Park, 2000 - 2015", xlab = "Year", ylab = "Number of visitors, in 1000's")
 ```
 
-The plot above shows that from 2004 to 2015, visitor numbers at Arches National Park increased every year. Visitation REALLY jumped in 2014 and 2015.
+The plot above shows that from 2004 to 2015, visitor numbers at Arches National Park increased every year. Visitor counts REALLY jumped in 2014 and 2015.
 
 ```{r, echo = FALSE, warning = FALSE, message = FALSE}
 # Gas price vs. year
-plot(gas_constant ~ year, data = arch_dat, pch = 19, col = ifelse(arch_dat$year == 2015, "red", "black"), cex = 1.5, main = "Average National Gas Prices, 2000 - 2015", sub = "(red point is year 2015; all other years are shown in black)", xlab = "Year", ylab = "Gas price (constant 2015 dollars/gallon)")
+plot(gas_constant ~ year, data = arch_dat, pch = 19, cex = 1.5, main = "Average National Gas Prices, 2000 - 2015", xlab = "Year", ylab = "Gas price (constant 2015 dollars/gallon)")
 ```
 
 The plot above shows that gas prices have gone up and down between 2000 and 2015. There was a huge drop in gas price between 2008 and 2009 and again between 2014 and 2015.
 
-These scatterplots give interesting insight on trends in national gas prices and trends in visitation at Arches National Park. The pattern we saw in our initial scatterplot--positive correlation between annual visitation and national average gas price--was almost certainly a spurious correlation. It's important to look at data from many different directions and to not jump to conclusions based on a narrow exploration of the data.
+These scatterplots give interesting insight on trends in national gas prices and trends in visits to Arches National Park. The pattern we saw in our initial scatterplot--positive correlation between annual visitor counts and national average gas price--was almost certainly a spurious correlation. It's important to look at data from many different directions and to not jump to conclusions based on a narrow exploration of the data.
 </details>
 <br>
 <details open><summary class='drop'>Create a Line Graph</summary>
@@ -188,12 +192,12 @@ These scatterplots give interesting insight on trends in national gas prices and
 Line graphs are often used for showing changes in continuous data over time. Let's make one last plot in base R before we move on to `ggplot`.
 
 <div class="alert alert-info">
-  <strong> CHALLENGE: Re-create the plot of trends in visitation at Arches National Park, using a line graph instead of a scatterplot. If you're feeling ambitious, make it a line graph with overplotted points.</strong>
+  <strong> CHALLENGE: Re-create the plot of trends in visitor counts at Arches National Park, using a line graph instead of a scatterplot. If you're feeling ambitious, make it a line graph with overplotted points.</strong>
 </div>
 
 The final plot (with overplotted points) should show this relationship:
 ```{r base_line, echo = FALSE, message = FALSE, warning = FALSE}
 
 # Line graph
-plot(visitors/1000 ~ year, data = arch_dat, type = "o", main = "Arches National Park Visitation, 2000 - 2015", xlab = "Year", ylab = "Number of visitors, in 1000's") # can use `type = "o" to get line plots with points
+plot(visitors/1000 ~ year, data = arch_dat, type = "o", main = "Visits to Arches National Park, 2000 - 2015", xlab = "Year", ylab = "Number of visitors, in 1000's") # can use `type = "o" to get line plots with points
 ```
