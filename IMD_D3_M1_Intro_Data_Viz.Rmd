@@ -253,6 +253,10 @@ We are primarily using `dplyr` to wrangle data and `ggplot2` to plot data. These
 
 <center>![](images/tidy_poll.png)</center>
 
+<details open><summary class='drop2'>Answer to poll question</summary>
+A. Plant Growth Rates - of the three, this is the only data frame that is in 'tidy' format
+</details>
+
 <br>
 
 What about our `joined_dat` data frame? Is it in 'tidy' format? Yes, it is! No need to pivot_long anything today. But let's make two final changes to the data before we begin plotting. First, we will convert `region` to an ordered factor with more descriptive labels. Second, we will remove park units that don't have visitor data for every year from 2000 to 2015. We will end with a final check of the data to make sure it's ready for plotting.
@@ -358,4 +362,16 @@ tab_count
 ```
 
 We see from this table that we have data for 34 National Monuments in the Intermountain region and that the smallest number of park units in any region-type is 7. We're ready to start plotting.
+
+<details open><summary class='drop2'>Answer to challenge question</summary>
+```{r, echo = TRUE, eval = FALSE, results = FALSE, message = FALSE, warning = FALSE}
+
+tab_count <- viz_dat %>% 
+  dplyr::distinct(region, unit_type, unit_code) %>%
+  dplyr::count(region, unit_type) %>%
+  tidyr::pivot_wider(names_from = region, values_from = n)
+
+# View(viz_dat) to double-check the numbers
+```
+</details>
 </details>

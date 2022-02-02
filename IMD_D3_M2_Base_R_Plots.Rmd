@@ -148,6 +148,7 @@ Let's create a basic scatter plot and use some of these graphical parameters to 
   </div>
 
 The final plot should show this relationship:
+
 ```{r base_scatter, echo = FALSE, message = FALSE, warning = FALSE}
 
 # Subset the data
@@ -163,6 +164,23 @@ plot(visitors/1000 ~ gas_constant,
      ylab = "Number of visitors, in 1000's")
 ```
 
+<details open><summary class='drop'>Answer to Challenge Question</summary>
+```{r, echo = TRUE, eval = FALSE, message = FALSE, warning = FALSE}
+
+# Subset the data
+arch_dat <- subset(viz_dat, unit_code == "ARCH")
+
+# Visitors vs. gas price
+plot(visitors/1000 ~ gas_constant, 
+     data = arch_dat, 
+     pch = 19, # change point shape to a solid circle
+     cex = 1.5, # increase point size
+     main = "Annual Gas Prices vs Visitor Counts at Arches National Park, 2000 - 2015", 
+     xlab = "Gas price (constant 2015 dollars/gallon)", 
+     ylab = "Number of visitors, in 1000's")
+```
+</details>
+
 This plot shows that annual visitor counts increased as gas prices increased. That's not the relationship we might have expected to see. But correlation is not causation, and the resolution of data influences the pattern we see. Maybe if we had used average June - July gas prices within 330 km of Arches National Park (instead of annual national averages) we might have seen a different relationship with visitor counts. Maybe, maybe not.
 
 The scatter plot shows another interesting bit of information. What is that funny point that is marching to its own beat?! Gas price was low (~2.50 per gallon in 2015 dollars) and the visitor count was really high, ~ 1.4 million. A quick look at the data shows that this funny point was for the year 2015. 
@@ -171,14 +189,14 @@ It would be interesting to see if 2015 was a high visitor count year for other p
 
 For now, let's see if we gain any additional insight from plots showing trends in visits to Arches National Park and trends in national gas prices. Try creating these plots on your own by modifying the code slightly. 
 
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
+```{r, echo = TRUE, warning = FALSE, message = FALSE}
 # Visitors vs. year
 plot(visitors/1000 ~ year, data = arch_dat, pch = 19, cex = 1.5, main = "Visits to Arches National Park, 2000 - 2015", xlab = "Year", ylab = "Number of visitors, in 1000's")
 ```
 
 The plot above shows that from 2004 to 2015, visitor numbers at Arches National Park increased every year. Visitor counts REALLY jumped in 2014 and 2015.
 
-```{r, echo = FALSE, warning = FALSE, message = FALSE}
+```{r, echo = TRUE, warning = FALSE, message = FALSE}
 # Gas price vs. year
 plot(gas_constant ~ year, data = arch_dat, pch = 19, cex = 1.5, main = "Average National Gas Prices, 2000 - 2015", xlab = "Year", ylab = "Gas price (constant 2015 dollars/gallon)")
 ```
@@ -197,8 +215,17 @@ Line graphs are often used for showing changes in continuous data over time. Let
 </div>
 
 The final plot (with over-plotted points) should show this relationship:
+
 ```{r base_line, echo = FALSE, message = FALSE, warning = FALSE}
 
 # Line graph
 plot(visitors/1000 ~ year, data = arch_dat, type = "o", main = "Visits to Arches National Park, 2000 - 2015", xlab = "Year", ylab = "Number of visitors, in 1000's") # can use `type = "o" to get line plots with points
 ```
+
+<details open><summary class='drop'>Answer to Challenge Question</summary>
+```{r, echo = TRUE, eval = FALSE, message = FALSE, warning = FALSE}
+
+# Line graph
+plot(visitors/1000 ~ year, data = arch_dat, type = "o", main = "Visits to Arches National Park, 2000 - 2015", xlab = "Year", ylab = "Number of visitors, in 1000's") # can use `type = "o" to get line plots with points
+```
+</details>

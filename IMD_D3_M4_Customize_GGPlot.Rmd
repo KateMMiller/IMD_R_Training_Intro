@@ -245,7 +245,37 @@ Here is an example of two histograms combined in a single graphic.
 )
 )
 ```
+
+<details open><summary class='drop2'>Answer to challenge question</summary>
+```{r, echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, fig.height = 7, fig.width = 6}
+# Final histogram
+(hist3 <- ggplot(dat_2015_label, aes(x = visitors_k)) +
+    geom_histogram(fill = "lightblue", color = "black", binwidth = 200) +
+    scale_x_continuous(breaks = seq(0, 11000, by = 2000)) +
+    geom_vline(aes(xintercept = type_med), color = "red", size = 1, linetype = "dashed") +
+    labs(x = "Number of visitors, in 1000's", y = "Number of NPS units", title = "Distribution of Visitor Counts (Yr 2015)",
+       subtitle = "Red dashed line shows median count") +
+   theme(plot.title = element_text(hjust = 0.5),
+         plot.subtitle = element_text(hjust = 0.5)) +
+ facet_wrap(vars(type_label), ncol = 1)
+ )
+```
+
+```{r, echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, fig.height = 7, fig.width = 8}
+# Combine two histograms in a single graphic
+(hist_page <- hist1 + hist3 +
+  patchwork::plot_layout(ncol = 2, widths = c(1, 2)) + 
+  patchwork::plot_annotation(
+    title = "Basic (A) and Customized (B) Histograms",
+    tag_prefix = "(",
+    tag_levels = "1",
+    tag_suffix = ")"
+)
+)
+```
 </details>
+</details>
+
 <details open><summary class='drop2'>Further improvements?</summary> 
 
 We are going to stop here with the histograms, but it's useful to think about ways we can further improve our plots. 
@@ -420,6 +450,32 @@ Here is an example of a final bar chart. Yours may look similar (or not!)
 
 # NOTE: `ggsave()` uses the file extension to guess at the file type to save as. There are function arguments to set figure width and height (and the associated measurement unit). The default is to save the image based on how we manually sized it in the RStudio plots plane. When we save the image this way, we will see a message in the console about the width and height of the saved image. For reproducibility, it's usually a good idea to hard code the output figure dimensions (if you plan to reuse or share a script)
 ```
+
+<details open><summary class='drop2'>Answer to challenge question</summary>
+```{r echo = TRUE, eval = FALSE, message = FALSE, warning = FALSE}
+# Assign the final bar chart to the name 'final_bar' so we can save it as a .pdf file in the next step
+(final_bar <- 
+   ggplot(subset(viz_dat, year %in% c(2000, 2015)),
+       aes(x = as.factor(year), fill = unit_type, by = as.factor(year))) +
+   geom_bar(aes(weight = visitors), position = "fill") + 
+   labs(fill = "NPS unit type", title = "Proportion of visits in each NPS unit type and region", subtitle = "Comparison of Years 2000 & 2015", y = "% of visits", x = "Year") +
+   scale_y_continuous(labels = scales::percent) + # <<< this line converts proportion to % on the y-axis
+   geom_text(stat = "prop", fontface = "bold", size = 3.5, aes(weight = visitors), position = position_fill(0.5)) + # <<< this line creates the bar segment labels. `stat = "prop"` requires package `GGally`
+   scale_fill_brewer(palette = "Set2") +
+   ggthemes::theme_pander() +
+   theme(plot.margin = margin(rep(15, 4)), # increase white margin around plot. This particular theme needs it, others may not.
+         plot.title = element_text(hjust = 0.5),
+         plot.subtitle = element_text(hjust = 0.5)) +
+   facet_grid(cols = vars(region))
+)
+
+# And here is the code to save it as a .pdf file
+ggsave(filename = "final_bar.pdf", plot = final_bar) 
+
+# NOTE: `ggsave()` uses the file extension to guess at the file type to save as. There are function arguments to set figure width and height (and the associated measurement unit). The default is to save the image based on how we manually sized it in the RStudio plots plane. When we save the image this way, we will see a message in the console about the width and height of the saved image. For reproducibility, it's usually a good idea to hard code the output figure dimensions (if you plan to reuse or share a script)
+```
+</details>
+
 </details>
 <details open><summary class='drop2'>Further improvements?</summary> 
 
@@ -490,7 +546,29 @@ Here is an example of a final line graph. Feel free to personalize your graph wi
     text = paste0("Trends in visitor counts (in 1000's), by NPS unit type and region", '<br>', '<sup>', 'Each line represents an NPS unit', '</sup>'))) 
 
 ```
+
+<details open><summary class='drop2'>Answer to challenge question</summary>
+```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, fig.height = 7.5, fig.width = 8}
+# NOTES: 
+# 1. If we had mapped unit_code to a color or linetype aesthetic we would not have needed to separately specify the group aesthetic
+# 2. `ggplotly` doesn't support subtitles created in a ggplot object. To add subtitles to a ggplotly object, we can hack the `ggplotly` title text feature, or use `ggplotly` annotations (but then we have to specify position of text on plot)
+
+(final_line <- ggplot(line_dat, aes(x = year, y = visitors_k, group = unit_code)) + # it didn't know to draw separate line per unit. Could also set as color or line type aesthetic, etc. and that would automatically also map it to group aesthetic. 
+  geom_line() + 
+  labs(x = "Year", y = "Number of visitors, in 1000's") +
+  scale_y_continuous(breaks = scales::breaks_pretty()) +
+  facet_grid(rows = vars(unit_type), col = vars(region)) + # so it's separate scales per unit type but same within a row (so good way to decide what should be facet row vs. col)
+  ggthemes::theme_fivethirtyeight(base_size = 14) +
+    theme(plot.margin=unit(c(2,1,1,1), 'cm')) # needed extra space at top to fit ggplotly hack subtitle
+  ) %>%
+  ggplotly() %>%
+  layout(title = list(
+    text = paste0("Trends in visitor counts (in 1000's), by NPS unit type and region", '<br>', '<sup>', 'Each line represents an NPS unit', '</sup>'))) 
+
+```
 </details>
+</details>
+
 <details open><summary class='drop2'>Further improvements?</summary> 
 
 This line graph was really meant to add a few more skills to your `R` plotting toolkit. It can be greatly improved, and we'll leave it at that. 
@@ -562,7 +640,7 @@ With the numbers added, we can now more clearly see that annual visitor counts i
 
 It's difficult to see black numbers against the darker colors. One way to fix this is to set the text color conditional on the matrix value.
 
-```{r echo = FALSE, warning = FALSE, message = TRUE, fig.height = 9, fig.width = 11}
+```{r echo = TRUE, warning = FALSE, message = TRUE, fig.height = 9, fig.width = 11}
 ggplot(tab_visits, aes(y = unit_name, x = year_f, fill = visitors_m)) + 
   geom_tile(colour = "white", size = 0.3) +
   scale_fill_viridis_c(direction = -1) + 
@@ -621,6 +699,32 @@ tab_visits <- viz_dat %>%
 
 With this final heat map it's easy to see regional patterns in visitor counts. In all regions there are a few National Parks with really high visitor counts.The Intermountain region has many National Parks that typically exceed 2 million visitors per year.
 
+<details open><summary class='drop2'>Answer to challenge question</summary>
+```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, fig.height = 9, fig.width = 11}
+
+tab_visits <- viz_dat %>%
+  dplyr::filter(unit_type == "National Park") %>%
+  dplyr::mutate(
+    visitors_m = visitors/1000000,
+    year_f = as.factor(year),
+    unit_name_abbrev = gsub("National Park", "NP", unit_name)) # <<<< change to "NP". Could have also used `sub()`
+
+head(tab_visits) # Check the results
+
+(final_heat <- ggplot(tab_visits, aes(y = unit_name_abbrev, x = year_f, fill = visitors_m)) + 
+  geom_tile(colour = "white", size = 0.3) +
+  scale_y_discrete(limits=rev) + # <<<< reverse y-axis order
+  scale_fill_viridis_c(direction = -1, name = "Visitors, in millions", breaks = seq(2,10, by = 2)) + # <<< add legend name, set legend breaks
+  geom_text(aes(label=round(visitors_m, 1), color = visitors_m > 7), size = 3, show.legend = FALSE) + # <<< turn off text legend. Other ways to do it include `guides(color = "none)`
+  scale_color_manual(values = c("black", "white")) +
+  labs(x = "Year", y = "NPS Unit", title = "Trends in Annual Visitor Counts by NPS Unit, 2000 - 2015", subtitle = "Higher visitor counts shown as darker cells") + 
+  theme_minimal(base_size = 12) + # <<< my theme of choice
+  theme(legend.position = "top", # <<<< move legend to top)
+        legend.key.width = unit(2.5, "cm")) + # <<< make legend longer
+  ggforce::facet_col(vars(region), scales = "free_y", space = "free") # <<< fix facet format. Could also do facet_grid (without `ggforce`) but I like the fact that `facet_col` keeps the facet labels on top
+)
+```
+</details>
 </details>
 <details open><summary class='drop2'>Further improvements?</summary> 
 
