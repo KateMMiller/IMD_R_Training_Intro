@@ -431,10 +431,12 @@ for (i in fNames) {
 }
 ```
 Let's break this down again because practice makes perfect. 
-0. The iteration hasn't changed. Same approach, different products. 
-1. Same.
-2. This should be pretty familiar from the data visualization day. 
-3. I am a huge fan of doing things in base R, but boy does ggsave take the frustration out of saving plots. What I want to point out here is that we don't need to build the full file path. We specify the file name as discussed before and feed it a path separately. It probably is doing some `paste` magic behind the scenes (In fact it is feeding `path` and `filename` to the base function `file.path()`). 
+
+0.The iteration hasn't changed. Same approach, different products. 
+1.Same.
+2.This should be pretty familiar from the data visualization day. 
+3.I am a huge fan of doing things in base R, but boy does ggsave take the frustration out of saving plots. What I want to point out here is that we don't need to build the full file path. We specify the file name as discussed before and feed it a path separately. It probably is doing some `paste` magic behind the scenes (In fact it is feeding `path` and `filename` to the base function `file.path()`). 
+
 </details>
 </details>
 <br>
@@ -599,7 +601,7 @@ HoboList<-lapply(fNames,read.csv, skip=1, header=T)%>% #1. read hobo data into a
           lapply(.,setNames, c("idx","DateTime","T_F")) #3. fix column names
 ```
 
-Now all of those hobo files are available in the `HoboList` object that we could summarize, do some flagging, or plot from. How do we do that? We could do for loops again, or we could keep going with lapply. 
+Now all of those hobo files are available in the `HoboList` object that we could summarize, do some flagging, or plot from. How do we do that? We could do for loops again, or we could keep going with `lapply`. 
 </details>
 <br>
 <details open><summary class='drop2'>lapply() to summarize data</summary> 
