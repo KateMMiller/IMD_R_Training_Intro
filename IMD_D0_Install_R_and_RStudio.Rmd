@@ -22,6 +22,17 @@ The installer for RStudio for PCs can be downloaded <a href="https://rstudio.com
 </details>
 <br>
 
+<details open><summary class='drop'><b style="color:red">Day 3: Required Packages</b></summary>
+A number of packages are required to follow along with the Data Visualization session. Please try to install these ahead of time by running the code below, so you're able to keep up. 
+```{r reqpkg, echo = T, eval = F}
+packages <- c("tidyverse", "ggthemes", "GGally", "RColorBrewer", 
+              "viridis", "scales", "plotly", "patchwork", 
+              "sf", "tmap", "leaflet", "spsurvey")
+
+install.packages(setdiff(packages, rownames(installed.packages())))  
+```
+</details>
+
 <details open><summary class='drop'>Optional Reading</summary>
 We know you're all busy and have to prioritize how you spend your time. If you have any time before training starts, we highly recommend reading <a href="https://stat545.com/r-basics.html">Chapter 2: R basics and workflows</a> in STAT545. This is an online book based on a graduate level statistics class that Dr. Jenny Bryan teaches and is turning into this book. She's a stats professor turned senior programmer at RStudio, and I really like how she approaches programming R in this book. 
 </details>
