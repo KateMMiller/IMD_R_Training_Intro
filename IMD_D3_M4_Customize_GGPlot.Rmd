@@ -118,7 +118,9 @@ Let's try it both ways (`fill` aesthetic and faceting) and also compare the freq
 First try -- use different fill colors for different unit types.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE}
-# NOTE: We can set aesthetics to constant values by excluding the `aes()` function. For example, `aes(fill = unit_type)` groups and fills histograms based on the `unit_type` variable (different fill color for each unit type). In contrast, `fill = "red"` creates a single histogram that is red.
+# NOTES: 
+# 1. We can set aesthetics to constant values by excluding the `aes()` function. For example, `aes(fill = unit_type)` groups and fills histograms based on the `unit_type` variable (different fill color for each unit type). In contrast, `fill = "red"` creates a single histogram that is red.
+# 2. Instead of adding the `fill` aesthetic to the master template, we could have added it directly in the `geom_histogram()` layer
 
 ggplot(dat_2015, aes(x = visitors_k, fill = unit_type)) + 
   geom_histogram(alpha = 0.3, color = "black") # histograms for the different unit types overlap, so apply transparency (alpha = 0.3) and add a black outline on the bars so we can more easily distinguish them in the histograms.
@@ -187,13 +189,16 @@ Let's customize the bin sizes and x-axis labels. Save the result as `hist2`.
 
 ```{r, echo = TRUE, warning = FALSE, message = FALSE, fig.height = 7, fig.width = 6}
 
-# This is not the only way, but we are going to add new data columns that include the unit type median and a facet label
+# This is not the only way, but we are going to add new data columns that include the unit type median and a facet label. 
+# For alternative ideas, check out the `labeller` argument in `facet_wrap()`
+
 dat_2015_label <- dat_2015 %>%
               group_by(unit_type) %>% 
               mutate(N = n(),
-                        type_med = round(median(visitors_k)),
-                        type_label = paste0(unique(unit_type),"  (N = ", N, " NPS units; median = ", type_med, "k visitors)")) # `paste` and `paste0` are nice functions for combining strings and variables
-                     
+                     type_med = round(median(visitors_k)),
+                     type_label = paste0(unique(unit_type),"  (N = ", N, " NPS units; median = ", type_med, "k visitors)")) # `paste` and `paste0` are nice functions for combining strings and variables
+                 
+# View(dat_2015_label) # look at the new columns    
 ggplot(dat_2015_label, aes(x = visitors_k)) +
   geom_histogram( binwidth = 200) +
   scale_x_continuous(breaks = seq(0, 11000, by = 2000)) +
@@ -303,8 +308,6 @@ ggplot(subset(viz_dat, year %in% c(2000, 2015)),
        aes(x = as.factor(year), fill = unit_type)) +
   geom_bar(aes(weight = visitors)) + # we don't need to divide visitors by 1000 for this one because we will be converting to proportions anyway
   facet_grid(cols = vars(region))
-
-# Compare the plot to the data to make sure things look about right
 ```
 
 Notice that the order of levels in the legend is alphabetical from top to bottom, and the order of colors in the stacked bar chart matches the legend order. If `unit_type` were a factor data type (instead of character), then the legend and chart colors would follow the factor level orders (remember that we had manually set factor level orders for `region`)

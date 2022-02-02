@@ -160,17 +160,17 @@ For today's data visualizations we will use the [park visits data]("https://gith
 
 From subsets of the park visits and gas price data, we will create plots to:
 
-- compare the distribution of park visits among years and unit types
-- show temporal trends and unusual years in park visit patterns
-- show temporal trends in ranking of the top 5 visited park units
+- compare the distribution of park visitor counts among unit types
+- show temporal trends and unusual years in park visitor patterns
 - show the relationship between gas price and park visits
 
 Make sure you've installed and loaded the packages.
 
 1. Import and view the park visits and gas price data
-2. Extract a subset of the park visits data to work with
-3. Merge in the gas price data
-4. Check and clean/tidy the data
+2. Extract a subset of park data and join with gas price data
+3. Get the data in 'tidy' format
+4. Convert `region` to a factor data type
+5. Make sure every park unit has one and only one data record for each year
 
 <br>
 <details open><summary class='drop2'>Step 1. Import and view the data</summary>
@@ -190,88 +190,49 @@ View(gas_price); summary(gas_price)
 ```
 
 </details>
-<details open><summary class='drop2'>Step 2. Extract a subset of data</summary>
+<details open><summary class='drop2'>Step 2. Extract a subset of park data and join with gas price data</summary>
 
-Before we run more detailed data checks, let's extract a subset of the `park_visits` data to work with. 
+Before we run more detailed data checks, let's extract a subset of the `park_visits` data to work with and then join in the `gas_price$gas_constant` data, using `year` as the joining column.
 
-<div class="alert alert-info">
-  <strong>CHALLENGE:  Extract a subset of the `park_visits` data</strong>
-  
-  Create a new data frame that contains a subset of the `park_visits` data. Call the new data frame `park_sub`. We only want to include `park_visits` data that meet these criteria:
+The new data frame should be called `joined_dat` and should only include `park_visits` data that meet all of these criteria:
 
   - **region** is IM, PW or SE
   - **unit_type** is National Monument, National Historic Site, or National Park
   - **year** is in the range 2000 - 2015, inclusive
   
-  <br>
   We also only need to keep a subset of the data columns from `park_visits`. The new data frame should have these columns (in this order): **region, unit_type, unit_name, unit_code, year, visitors**
   
-  <br>
-  **Quick Tip!**  
-  Even though `park_visits$year` is classified as a character data type, `R` can sort these numbers-as-characters in numeric order. Try running `sort(unique(park_visits$year))` in the console to see for yourself. This means we can filter `park_visits` for a subset of years `"2000":"2015"` without first converting `park_visits$year` to a numeric data type (actually we can even omit the quotes and simply filter for years in `2000:2015`).
-</div>
+NOTE: Even though `park_visits$year` is classified as a character data type, `R` recognizes the numeric order of quoted numbers (e.g., "6") and puts quoted numbers before alphabetic characters. Type `sort(c("q", "1", "7", "3", "b"))` in your console and see how `R` sorts those values. Because of these sorting rules for quoted numbers, we can filter year for "2000":"2015" and `R` will correctly give us all records for which year (even though it's a character data type) is between 2000 and 2015, inclusive.
 
-```{r subset_data, echo = FALSE, message = FALSE, warning = FALSE}
+```{r subset_data, echo = TRUE, message = FALSE, warning = FALSE}
 
 # NOTES: 
 # 1. When we preface function names with the package name, we avoid potential issues with duplicate function names among packages
 # 2. The dplyr::select() function can simultaneously select columns, rename them, and order them as specified. See `?select`
+# 3. When we `dplyr::filter()` by multiple conditions, we can use a comma (,) or and-sign (&) to combine the multiple conditions
+# 4. `gas_price$gas_constant` is gas price in constant 2015 dollars/gallon
 
-park_sub <- park_visits %>%
-  dplyr::filter( 
-    region %in% c("IM", "PW", "SE"),
+joined_dat <- park_visits %>%
+  dplyr::filter( # filter by multiple conditions
+    region %in% c("IM", "PW", "SE"), 
     unit_type %in% c("National Monument", "National Historic Site", "National Park"),
-    year %in% 2000:2015) %>% # we would get the same result if we had enclosed the years in quotes, i.e., year %in% "2000":"2015"
-  dplyr::select(region, unit_type, unit_name, unit_code, year, visitors) 
+    year %in% "2000":"2015") %>%
+  dplyr::select(region, unit_type, unit_name, unit_code, year, visitors) %>% # keep these columns only, and arrange them in this order
+  dplyr::mutate(year = as.numeric(year)) %>% # convert `park_visits$year` to numeric, to match the data type of `gas_price$year`
+  dplyr::left_join(gas_price[c("year", "gas_constant")], by = "year")
 
-# summary(park_sub) # always check the data before and after wrangling!
+# summary(joined_dat) # always check the data before and after wrangling!
 ```
 
-The new data frame should look like this when we type `glimpse(park_sub)` in the console:
+The new data frame should look like this when we type `glimpse(joined_dat)` in the console:
 
-```{r check_park_sub, echo = FALSE, message = FALSE, warning = FALSE}
-glimpse(park_sub)
-```
-
-</details>
-
-<details open><summary class='drop2'>Step 3. Merge the `gas_constant` data with the `park_sub` data frame</summary>
-
-<div class="alert alert-info">
-  <strong>CHALLENGE:  Join the `gas_constant` data (from `gas_price` data frame) to `park_sub`, matching records by year. Call the new data frame `joined_dat`.</strong>
-</div>
-
-```{r join_gas, echo = FALSE, results = FALSE, message = FALSE, warning = FALSE}
-# `gas_constant` is gas price in constant 2015 dollars/gallon
-# Confirm that both data frames have a column called `year` and that the data types match (always check data before and after wrangling!)
-glimpse(park_sub) # `year` is a character data type
-glimpse(gas_price) # `year` is a double data type (double and numeric data types are equivalent) 
-
-# To join the two data frames by `year`, we need `year` to have the same data type in both data frames. Convert park_sub$year to numeric
-park_sub$year <- as.numeric(park_sub$year) # can also use as.double()
-class(park_sub$year)
-
-# Confirm that there is one and only one `gas_constant` per year from 2000 to 2015. If there are multiple `gas_constant` values for any year, extra (near-duplicate) rows will be created for that year when we join the data frames 
-subset(gas_price, year %in% 2000:2015) # since we're only working with 16 years of data, it's easy enough to check every year
-
-joined_dat <- left_join(park_sub, gas_price[c("year", "gas_constant")], by = "year") # keep all records in park_sub, and add records from gas_price that match by year
-
-dim(park_sub)
-dim(joined_dat) # confirm that joined dat has the same number of rows and one extra column than park_sub
-
-summary(joined_dat)
-```
-
-The new data frame should show the additional data column `gas_constant` when we type `glimpse(joined_dat)` in the console:
-
-```{r check_plot_dat, echo = FALSE, message = FALSE, warning = FALSE}
+```{r check_joined_dat, echo = FALSE, message = FALSE, warning = FALSE}
 glimpse(joined_dat)
 ```
-
 We now have all the data we need in a single data frame.
 
 </details>
-<details open><summary class='drop2'>Step 4. Tidy the data</summary>
+<details open><summary class='drop2'>Step 3. Get the data in 'tidy' format</summary>
 
 We are primarily using `dplyr` to wrangle data and `ggplot2` to plot data. These two packages are part of the [Tidyverse](https://www.tidyverse.org/packages/) of packages for data science. Tidyverse packages share a common design philosophy centered on ideas like breaking down complex tasks into a series of simpler functions executed in sequence (e.g., piping `%>%`). Functions from tidyverse packages work together most seamlessly and efficiently when data are in a tidy format. Remember that a 'tidy' format means data have one variable per column and one observation per row. 
 
@@ -296,9 +257,9 @@ We are primarily using `dplyr` to wrangle data and `ggplot2` to plot data. These
 
 What about our `joined_dat` data frame? Is it in 'tidy' format? Yes, it is! No need to pivot_long anything today. But let's make two final changes to the data before we begin plotting. First, we will convert `region` to an ordered factor with more descriptive labels. Second, we will remove park units that don't have visitor data for every year from 2000 to 2015. We will end with a final check of the data to make sure it's ready for plotting.
 </details>
-<details open><summary class='drop2'>Step 5. Convert `region` to a factor data type</summary>
+<details open><summary class='drop2'>Step 4. Convert `region` to a factor data type</summary>
 
-Convert the variable `region` to a factor data type and rename and re-order the levels as Pacific West < Intermountain < and Southeast (the default order is alphabetical). This way, bar plots and color legends will order the region levels from west to east instead of alphabetically. 
+Convert the variable `region` to a factor data type. Relabel and re-order the levels as Pacific West < Intermountain < and Southeast (the default order is alphabetical). This way, bar plots and color legends will order the region levels from west to east instead of alphabetically. 
 
 ```{r factor_regions, message = FALSE, warning = FALSE}
 
@@ -312,8 +273,8 @@ unique(joined_dat$region) # check what values are in `region`
 
 joined_dat$region <- 
   factor(joined_dat$region, 
-         levels = c("PW", "IM", "SE"), # specifies the factor levels and an order for the levels. If we omit this argument, the factor levels will be the unique set of values in the column, ordered alphabetically
-         labels = c("Pacific West", "Intermountain", "Southeast")) # relabels the levels with more descriptive names
+         levels = c("PW", "IM", "SE"), # specifies the factor levels and an order for them. If we omit this argument, the factor levels will be the unique set of values in the column, ordered alphabetically
+         labels = c("Pacific West", "Intermountain", "Southeast")) # relabels the levels with more descriptive names, keeping the same order as the `levels` argument
 
 # Check the data
 glimpse(joined_dat) # `region` is now a factor data type
@@ -323,45 +284,39 @@ summary(joined_dat) # the summary for `region` now counts the number of times ea
 ```
 
 </details>
-<details open><summary class='drop2'>Step 6. Remove park units with missing years of data</summary>
+<details open><summary class='drop2'>Step 5. Make sure every park unit has one and only one data record for each year</summary>
 
-We will be creating plots to see if trends in park visits differ by region or unit type, so we want to exclude park units for which we don't have complete data for the years 2000 to 2015. 
+We will be creating plots to see if trends in park visits from 2000 to 2015 differ by region or unit type. To avoid drawing improper conclusions from the data, make sure every park unit has one and only one data record for each year. Specifically, check for:
 
-Finding which park units have missing years of data is not as simple as filtering for NA's in `joined_dat` because missing park unit-years are not represented by records with `NA` for the visitor count--the missing data are simply not in the data frame.  
+- park-year combinations with more than one data record--could be a duplicate or another type of error
+- park-year combinations with no data record--indicating incomplete data for a park unit
 
-We could use tidyr's `expand_grid` function (and then join the template data frame with `joined_dat`) to create the missing records with an `NA` entry for visitors. We would then delete any park units that have at least one `NA` in the `visitors` column. `expand_grid` is a useful function to know because we sometimes need to add in missing records (and, for example, fill in zero values to indicate we went to the site but found zero saplings) so we can get correct summary statistics such as means and standard deviations (that should not be treating zero counts as missing data). 
+Determining if park units have incomplete data is not as simple as filtering for NA's because missing park unit-years are not represented by records with `NA` for the visitor count--the missing data are simply not in the data frame.  
 
-In our case, we have a simpler option. We can count the unique years of data for each park unit and delete park units that have less than 16 unique years of data. 
+We also cannot just count the number of records for each park unit and assume that if a park unit has 16 records then the data are fine. A park unit could, for example, be missing one year of data and have a duplicate record for another year. It would then have 16 data records but not one per year from 2000 to 2015.
 
-(Note that we should also check for park unit-year combinations with multiple records. If these are duplicate records, the duplicates can be deleted. If these records have different visitor counts for the same park unit-year, we would have to find out which record is the "correct" one).
-
+We present one--but not the only--way to solve this issue.
 ```{r complete_data, message = FALSE, warning = FALSE}
+# NOTES: 
+# 1. Check out `?expand_grid` for an alternative approach
+# 2. The `table` data class describs
 
-length(2000:2015) # if we can't figure this out in our head, we probably need more sleep. But here is proof that there are 16 years in the range 2000 to 2015, inclusive
-
-# Check if we have multiple records for any combination of unit_code and year (e.g., ARCH should not have multiple records for the year 2016)
-
-# Short example to show how `duplicated` works
-test <- data.frame(x = c(1, 1, 3, 2, 2), y = c(7, 2, 4, 1, 1), z = 1:5)
-duplicated(test[c("x", "y")])
-test[duplicated(test[c("x", "y")]), ]
-
-# Now use `duplicated` on our data
-joined_dat[duplicated(joined_dat[c("unit_code", "year")]), ] # good, no duplicates
-
-# Identify park units with less than 16 years of data
-remove_units <- joined_dat %>%
-  count(unit_code) %>% # count() combines group_by() and summarize(n = n()) in a single function. 
-  dplyr::filter(n != 16) # sort the data frame from lowest to highest count of unique years
-
-# View(joined_dat) to check results before you remove these park units from the data
+# Run the code in pieces to see what the different lines do. For example, copy `table(uc = park_sub$unit_code, yr =park_sub$year)` and run it in the console to see the output. Then copy `table(uc = park_sub$unit_code, yr =park_sub$year) %>% as.data.frame()` and run it in the console to see the output. Repeat until the end of the code chunk.
+remove_units <- 
+  table(unit = joined_dat$unit_code, yr = joined_dat$year) %>% # build a contingency table of counts for every combination of `unit_code` and `year`
+  as.data.frame() %>% # convert from `table` to `data frame` class
+  dplyr::filter(Freq != 1) %>% # filter for unit-year combinations that are less than or greater than 1
+  distinct(unit) # identify the corresponding park units
 
 # Remove those park units from the data
 viz_dat <- joined_dat %>%
-  dplyr::filter(!unit_code %in% remove_units$unit_code)
+  dplyr::filter(!unit_code %in% remove_units$unit)
   
 # View(viz_dat) to make sure the park units have been removed. The final data frame should have 1856 rows and 7 columns.
 ```
+
+</details>
+<details open><summary class='drop2'>Step 6. Save `viz_dat` as an `R` object (optional)</summary>
 
 ```{r save_dat, echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE}
 # If you want to save `viz_dat` to your current working directory, run the code below. This code saves `viz_dat` as an .RDS file, which just means it saves it as an `R` object instead of as a .csv file. 
