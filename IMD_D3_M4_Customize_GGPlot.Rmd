@@ -246,7 +246,7 @@ Here is an example of two histograms combined in a single graphic.
 )
 ```
 
-<details open><summary class='drop2'>Answer to challenge question</summary>
+<details><summary class='drop2'>Answer to challenge question</summary>
 ```{r, echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, fig.height = 7, fig.width = 6}
 # Final histogram
 (hist3 <- ggplot(dat_2015_label, aes(x = visitors_k)) +
@@ -451,7 +451,7 @@ Here is an example of a final bar chart. Yours may look similar (or not!)
 # NOTE: `ggsave()` uses the file extension to guess at the file type to save as. There are function arguments to set figure width and height (and the associated measurement unit). The default is to save the image based on how we manually sized it in the RStudio plots plane. When we save the image this way, we will see a message in the console about the width and height of the saved image. For reproducibility, it's usually a good idea to hard code the output figure dimensions (if you plan to reuse or share a script)
 ```
 
-<details open><summary class='drop2'>Answer to challenge question</summary>
+<details><summary class='drop2'>Answer to challenge question</summary>
 ```{r echo = TRUE, eval = FALSE, message = FALSE, warning = FALSE}
 # Assign the final bar chart to the name 'final_bar' so we can save it as a .pdf file in the next step
 (final_bar <- 
@@ -547,7 +547,7 @@ Here is an example of a final line graph. Feel free to personalize your graph wi
 
 ```
 
-<details open><summary class='drop2'>Answer to challenge question</summary>
+<details><summary class='drop2'>Answer to challenge question</summary>
 ```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, fig.height = 7.5, fig.width = 8}
 # NOTES: 
 # 1. If we had mapped unit_code to a color or linetype aesthetic we would not have needed to separately specify the group aesthetic
@@ -699,7 +699,7 @@ tab_visits <- viz_dat %>%
 
 With this final heat map it's easy to see regional patterns in visitor counts. In all regions there are a few National Parks with really high visitor counts.The Intermountain region has many National Parks that typically exceed 2 million visitors per year.
 
-<details open><summary class='drop2'>Answer to challenge question</summary>
+<details><summary class='drop2'>Answer to challenge question</summary>
 ```{r echo = TRUE, eval = FALSE, warning = FALSE, message = FALSE, fig.height = 9, fig.width = 11}
 
 tab_visits <- viz_dat %>%

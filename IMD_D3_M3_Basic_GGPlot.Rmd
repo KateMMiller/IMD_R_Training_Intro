@@ -25,6 +25,7 @@ arch_dat <- subset(viz_dat, unit_code == "ARCH") # subset of data that is for Ar
 ```
 </details>
 <br>
+
 <details open><summary class='drop'>Packages Used in this Section</summary>
 ```{r, echo = TRUE, message = FALSE, warning = FALSE}
 
@@ -34,6 +35,7 @@ library(ggthemes)
 ```
 </details>
 <br>
+
 <details open><summary class='drop'>Why `ggplot2`?</summary>
 If you search the Internet for information on plotting in `R`, you will quickly learn that `ggplot2` is the most popular `R` package for plotting. It takes a little effort to learn how the pieces of a ggplot object fit together. But once you get the hang of it, you will be able to create a large variety of attractive plots with just a few lines of `R` code.  
 
@@ -42,6 +44,7 @@ If you search the Internet for information on plotting in `R`, you will quickly 
 So let's get started! We will build our first ggplot object step-by-step to demonstrate how each component contributes to the final plot. Our first ggplot object will re-create the line graph of trends in visits to Arches National Park.
 </details>
 <br>
+
 <details open><summary class='drop'>Step 1. Create a "Master" Template for the Plot</summary>
 
 - identify the data (must be a data frame or tibble)
