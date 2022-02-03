@@ -175,7 +175,7 @@ names(grts_veg)
 
 # Create list of forest habitats
 sort(unique(sara_veg$simp_veg))
-forest_veg <- c('Forest', 'Forested Wetland')
+forest_veg <- c('Forest', 'Forested wetland')
 
 # Filter out non-forest points
 grts_forest <- grts_veg %>% filter(simp_veg %in% forest_veg)
