@@ -1,27 +1,9 @@
-<h3> Troubleshooting Iteration </h3>
-
-Jointly, Thomas take first crack. SARAH will do breakpoints.
-Thomas Do examples and posting to Stack for iteration troubleshooting
-Both sarah and Thomas useful resources
-
-Troubleshooting and good resources
--Troubleshooting iteration
-  -Simple and complex approaches 
-  -in development use verbose iteration   #covered
-      -print() to give an update #covered
-  -breakpoints debugging tool in r studio 
-  -traceback - certainly an option    #Covered needs an example maybe
-  -should you just ignore warnings()?  #covered
-  
--Minimum reproducible examples #covered
-  
-  
 <h3> Overview </h3>
 Believe it or not, there are only two types of errors and both are human. 1) Your code is written incorrectly (let's go find that missing ')'...). 2) You are telling your code to do something with data that it can't do with that data (let's figure out where we need to set `na.rm=T`). Another branch of troubleshooting is optimization - "why is my code so slow?" We will cover that next week.
 
 Troubleshooting iteration is often challenging and frustrating. Sometimes errors are obvious sometimes errors only show up when you start digging into outputs. Sometimes it works fine on the test data and fails on the real data. Ultimately, debugging is an exercise in hypothesis testing "If I do this, I should get this result. Where did I not get the expected result and why?" We present you with some basic manual approaches and resources here that should help you debug iteration. As you code you will find the approach that works best for you in each situation.
 
-#### Trouble cues
+#### Troubleshooting
 <h3> Clues you need to troubleshoot </h3>
 **Warnings** - Warnings are you prompt to check if there is a problem. Code will seldom fail to provide output on a warning, the question is whether or not it is the output you are after. When you see warnings you should run `warnings()` and see if it makes sense as to why there are warnings. ggplot, for example, will issue warnings for each incomplete record (e.g. a value for y, but not x) and will continue to plot everything that is complete. It is always good to pay attention to the number of warnings and periodically check that they are expected. If they are unexpected you may wish to dig deeper.
 
@@ -33,54 +15,9 @@ Troubleshooting iteration is often challenging and frustrating. Sometimes errors
 <h3> Tracking down the error </h3>
 Tracking the error down is usually the first step in fixing it. Once you track it down you can see which functions are involved in it or which data are involved in it. There are generally two approaches to this: manual and R-assisted. I am going to focus on the manual, because at some point you will have to fall back on that so it is good to have a solid understanding of that approach before you branch out to R-assisted approaches. For more on R-assisted approaches see 
 
-#add HTML hyperlink to Kate's session on debugging. 
-
 0) Don't try and pack too much into your code. Writing 'everything loops' means that you will have a lot of functions. Different functions have different inputs and outputs. The more different data structures and outputs your iteration will have to handle the more likely it is to break or provide unexpected results. Iteration works really well when it has 1 input structure and 1 output structure. 
 
 1) **Make your code verbose** - Iteration usually works until it doesn't - it will loop up to the point or dataset that breaks it. Depending on how you have written your code, you likely don't know where it actually failed. That is a fact of life with R and iteration. Iteration tends to hide errors and warnings and makes it difficult to see where things went wrong. Adding a `print()` command that prints a dataset name or a piece of data that allows you to evaluate progress allows you quickly to determine if the code is functioning properly. When you are done testing a developing a function, you can then remove it.
-
-As an example let's look at a early version of the super for loop we looked at earlier.
-```{r Day4TroubleVerbose, echo=T, eval=F}
-
-library(magrittr)
-library(ggplot2)
-fNames <- paste0(
-  "https://raw.githubusercontent.com/KateMMiller/IMD_R_Training_Intro/master/Data/",
-  c(
-    "APIS01_20548905_2021_temp.csv",
-    "APIS02_20549198_2021_temp.csv",
-    "APIS03_20557246_2021_temp.csv",
-    "APIS04_20597702_2021_temp.csv",
-    "APIS05_20597703_2021_temp.csv"
-  )
-)
-
-OutPath <- choose.dir() # note, no trailing '\\' in path
-TempUpper <- 40
-TempLower <- (-40)
-
-SummaryData <- NULL # make sure this gets cleared before rerunning this code
-for (i in fNames) {
-  d <- read.csv(i, skip = 1, header = T)[1:3]
-  fName <- basename(i)
-  print(fName) # dev/debug
-  names(d) <- c("idx", "DateTime", "T_F")
-  d$DateTime2 <- as.POSIXct(d$DateTime, "%m/%d/%y %H:%M:%S", tz = "UCT")
-  # summarize the data
-  OutDat <- data.frame(
-    FileName = fName,
-    T_F_mean = mean(d$T_F, na.rm = T),
-    T_F_min = min(d$T_F, na.rm = T),
-    T_F_max = max(d$T_F, na.rm = T),
-    nObs = nrow(d),
-    nDays = (d$DateTime2[nrow(d)] - d$DateTime2[1])[[1]]
-  ) # days
-  # Append new summary data to old summary data
-  SummaryData <- rbind(SummaryData, OutDat)
-}
-```
-
-In this case, the code was "fine," but it was not equipped to handle the data being thrown at it and it stopped on the dataset/loop step that was the problem. This, manual approach can be used to detect both code problems and data problems. 
 
 A few rules of thumb: if it returns an error on the first step of iteration, then it is a code *or* a data-code match problem. If it can iterate properly at least once, then the code 'works', but there is a code-data mismatch.
 
@@ -98,27 +35,19 @@ d # check output
 fName <- basename(i)
 # print(fName)#dev/debug frag
 names(d) <- c("idx", "DateTime", "T_F")
-d$DateTime2 <- as.POSIXct(d$DateTime, "%m/%d/%y %H:%M:%S", tz = "UCT")
 # summarize the data
 OutDat <- data.frame(
   FileName = fName,
   T_F_mean = mean(d$T_F, na.rm = T),
   T_F_min = min(d$T_F, na.rm = T),
   T_F_max = max(d$T_F, na.rm = T),
-  nObs = nrow(d),
-  nDays = (d$DateTime2[nrow(d)] - d$DateTime2[1])[[1]]
+  nObs = nrow(d)
 ) # days
 # Append new summary data to old summary data
 SummaryData <- rbind(SummaryData, OutDat)
 #  }
 
 ```
-
-!!!!!!!!!!!!!!!!!Add breakpoints discussion here!!!!!!!!!!!!!!!!!!!!!!!!
--live demo
--use uncommented out look an do some screenshots
-    <!-- -to link to an image, use ![alt-text goes here](image url goes here) -->
-
 
 **Step away from your data** - Sometimes we let our data over-complicate the coding task. There are few coding sessions where I don't end up trying to see if I can make something work on a built in dataset (e.g. `mtcars`). Often when trying to do the same thing, but with different data, I end up seeing and solving the problem. This approach also forces you to reduce your code to the bare basics... which you may need when you go to ask for help.
 
@@ -153,11 +82,11 @@ When you ask for help (on stackoverflow or in your office) you should provide an
   
   6.  Reply to people, thank them for their suggestions, provide clarificatin, select an answer. Avoid initiating a wholly new question in the comments/discussion.
 
-Here is an example of a question I posted in preparation for this training. Remeber that ugly for loop? It really bothered me so I wanted to see if there was a better way to do one part of it!
+Here is an example of a question I posted in preparation for this training. I had a way for it to work, but knew there was a cleaner way. 
 
 https://stackoverflow.com/questions/70747292/assigning-multiple-text-flags-to-an-observation/70748841#70748841
 
-Is that solution better than what I had? Is it better than the other answer? Maybe. In the end I think the solution I selected will make it easier to add other flags that may come up. But, I do have to call the tidyverse library, if that is the environment you work in then that is not a concern. Maybe there is slightly less code here. It is visually more appealing. I do like the direct handling of NA values.  
+Is that solution better than what I had? Is it better than the other answer? Maybe. In the end I think the solution I selected will make it easier to add other flags that may come up. Maybe there is slightly less code here. It is visually more appealing. I do like the direct handling of NA values.  
 
 
 #### Useful resources
@@ -166,9 +95,7 @@ https://stackoverflow.com/help/minimal-reproducible-example
 https://adv-r.hadley.nz/debugging.html
 
 
-**Traceback** - this is a somewhat newer feature of RStudio. Upon encountering an error, initiating the traceback and take you back up to the error. I find that it only sort of gets you close and isn't super helpful in saying 'this is what is wrong'. I look at it to get to the general location of the error. Sometimes that is the problem spot, sometimes the error is actually upstream and the spot it identifies just can't handle the output from the error upstream.
 
-#Thomas note ot self point the group to Kate's debugging session.
 
   
 

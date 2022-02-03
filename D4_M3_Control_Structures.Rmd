@@ -18,7 +18,7 @@ This first method `if(){}else{}` is a true control structure. This is useful for
 
 You will also see `ifelse` show up often. 
 
-`ifelse()` is the 'vectorized' version - this is most useful when you need to change the value in a vector i.e. (recoding).
+`ifelse()` is the 'vectorized' version - this is most useful when you need to change the value in a vector i.e. (recoding). However you can make it work on single logical values. This is not recommended.
 
 `ifelse(test= , yes= , no= )` (hereafter `ifelse`)
 </details>
