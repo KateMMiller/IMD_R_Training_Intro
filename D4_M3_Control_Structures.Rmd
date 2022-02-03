@@ -486,10 +486,18 @@ system.time(for (i in 1:nIter) {
   OutDat<-rbind(OutDat,d)# append the previous steps' outputs with this step's output
 }) #4.47 seconds on my system
 
-```
-Instant dataframe and everyone is happy. Or are they? They aren't. This is called `growing` an object. Patrick Burns also refers to this as the "Second Circle of R Hell" in his book *The R Inferno* (Dante's *Inferno*... the R community was a wonderful sense of humor). Look it up, it is great (no really, it is). To do this 1,000 times requires 0.23 seconds, 1,000,000 time took... well I quit after 13 minutes. If this were a strictly linear process it should have taken around 4 minutes to do 1,000,000 iterations - clearly it did not. 
+#similarly you could try append() - it works
+nIter=10000
+OutDat <- NULL # define an empty variable. 
+system.time(for (i in 1:nIter) {
+  d <- data.frame(x=i + 1,y=i)
+  OutDat<-append(OutDat,d)# append the previous steps' outputs with this step's output
+}) #4.93 seconds on my system
 
-Why? When you use `rbind` in this manner it copies the giant dataframe each time and tell's R to go look for/request another giant block of memory instead of the one that is already there. This slows your processing way down. So.... don't do that. Instead you should preallocate your dataframe, especially if it is going to be big, it even makes a difference on smaller dataframes.
+```
+Instant dataframe and everyone is happy. Or are they? They aren't. This is called `growing` an object. Patrick Burns also refers to this as the "Second Circle of R Hell" in his book *The R Inferno* (Dante's *Inferno*... the R community was a wonderful sense of humor). Look it up, it is great (no really, it is). To do this 10,000 times requires 4.96 seconds, 1,000,000 time took... well I quit after 13 minutes. If this were a strictly linear process it should have taken around 4 minutes to do 1,000,000 iterations - clearly it did not. 
+
+Why? When you use `rbind()` or `append()` in this manner it copies the dataframe each time and tells R to go look for/request another giant block of memory instead of the one that is already there. This slows your processing way down. So.... don't do that. Instead you should preallocate your dataframe, especially if it is going to be big, it even makes a difference on smaller dataframes.
 
 What does preallocate mean? `x<-data.frame()` just tells R you need an object that is a dataframe. What you really want to do is tell R the exact dimensions of the object you will need. If you want dataframe output, just generate a blank dataframe the same dimensions as your output. This is sometimes simple. The number of rows is probably the number of iterations `vec` and you already are defining columns so you could just start out with `x<-data.frame(Mean=rep(NA,vec), Min=rep(NA,vec))` and use the iteration indexing to tell R which row to drop stuff in.  
 
@@ -503,12 +511,13 @@ system.time(for (i in 1:nIter) {
 
 ```
 </details>
+In this simple example preallocating the dataframe speeds up the loop execution by 50%. In this example a 2.5 second gain seems small. However, across larger or multiple datasets this can become a significant time cost if you don't preallocate.
 
 <details open><summary class='drop'>Preallocation Wrapup</summary>
 <ul>
-  *When do we preallocate?* Pretty much just when we use `for` loops. `apply` family and `purrr` will take care of that preallocation for you.
+  *When do we preallocate?* Pretty much just when we use `for` loops to create data objects. It is important to note: `apply` family and `purrr` will take care of that preallocation for you.
   
-  *Should you always preallocate?* If you are using a `for` loop, probably.<br> 
+  *Should you always preallocate?* If you are using a `for` loop to output a data object, probably. <br> 
   
   *Do you really need to?* Not until your code execution takes longer than you are willing to wait.<br>
   
