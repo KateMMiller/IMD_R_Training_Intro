@@ -13,6 +13,19 @@ output:
 
 #### Vizualizing Spatial Data
 <details open><summary class = 'drop'>GIS in R</summary>
+<h4>Packages used in this section:</h4>
+```{r gispkges, echo = T, results = 'hide'}
+library(sf) # for working with simple features
+library(tmap) # for mapping spatial data
+library(leaflet) # Another package for mapping spatial data
+```
+
+If folks are having trouble installing `tmap` due to an issue with one of its dependencies, `terra`, try running the following code, and then reinstall `tmap`. 
+
+```{r installterra1, echo = T, results = 'hide', eval = FALSE}
+install.packages('terra', repos='https://rspatial.r-universe.dev')
+```
+
 If you've tried to do GIS and make maps in R even a few years ago, you probably encountered the same frustrations I did. There were a ton of packages out there, each with its own file format and coding convention, and each package rarely had all the features I needed. It was not easy to navigate, and I often found myself just exporting my work out of R and doing the rest in ArcGIS... Enter the `sf` and `tmap` packages, which are the latest and greatest R packages devoted to GIS and map making! Most of the frustrations I had with earlier packages have been resolved with these two packages.
 
 The `sf` package is the workhorse for anything you need to do with spatial vector data. File types with `sf` are called <b>simple features</b>, which follow a set of GIS standards that are becoming the universal data model for vector-based spatial data in R and that most GIS-based packages in R now employ. Simple features are also now the standard for open source GIS in general. That means if you're trying to troubleshoot something with simple features, you'll need to specify that it's for R, rather than PostGIS or some other implementation. The `sf` package is also superseding the `rgdal` package, which used to be the more common data model in R and open source GIS. The more I use this package, the more impressed I am with how intuitive it is to use, and how well documented the functions are. For vector data, I have yet to need to perform a task that `sf` couldn't do.
@@ -56,8 +69,8 @@ library(tmap)
 library(spsurvey)
 
 # Generate a random number for the seed
-sample(1:100000, 1) #62051
 set.seed(62051)
+sample(1:100000, 1) #62051
 
 # Read in shapefiles from teams data folder
 sara_bound1 <- st_read('./data/SARA_boundary_4269.shp')
@@ -175,7 +188,7 @@ names(grts_veg)
 
 # Create list of forest habitats
 sort(unique(sara_veg$simp_veg))
-forest_veg <- c('Forest', 'Forested Wetland')
+forest_veg <- c('Forest', 'Forested wetland')
 
 # Filter out non-forest points
 grts_forest <- grts_veg %>% filter(simp_veg %in% forest_veg)

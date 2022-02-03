@@ -196,7 +196,7 @@ for(i in vec){
   do thing 1
   do thing 2
   ...
-  return output 
+  append result to results of previous iterations
 }
 ```
 

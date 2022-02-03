@@ -21,6 +21,7 @@ viz_dat <- readRDS("viz_dat.RDS") # this file is provided with the training mate
 ```
 </details>
 <br>
+
 <details open><summary class='drop'>Packages Used in this Section</summary>
 ```{r, echo = TRUE, message = FALSE, warning = FALSE}
 
@@ -29,6 +30,7 @@ library(tidyverse)
 ```
 </details>
 <br>
+
 <details open><summary class='drop'>Why plot in base `R`?</summary>
 Plots can reveal data issues that we had overlooked with our data checks. I sometimes use base R plotting functions to create quick-and-dirty plots for this purpose. If I want to do a lot of plot customizations, I find `ggplot` functions easier to remember and use.
 
@@ -54,6 +56,7 @@ plot(mod) # residual plots
 We aren't going to discuss statistics or residual plots today, but it's useful to know these common uses for `plot()`.
 </details>
 <br>
+
 <details open><summary class='drop'>Feeding Data to Base R Plotting Functions</summary>
 
 Look in the help file for the R graphics package that is automatically installed with `R` (in RStudio's 'Packages' tab, click the hyperlink for the package called 'graphics'). Here you will find many functions for base R graphics. For example, the `boxplot()` function draws box plots. 
@@ -70,6 +73,7 @@ I tend to use the formula approach for feeding data to base R plotting functions
 
 </details>
 <br>
+
 <details open><summary class='drop'>Create a Box Plot</summary>
 
 Let's use base R functions to create a box plot of park visitors by year, for a subset of `viz_dat` that meets these criteria:
@@ -119,6 +123,7 @@ From the boxplots and numbers, it looks like visits were generally down in 2010 
 
 </details>
 <br>
+
 <details open><summary class='drop'>Graphical Parameters for Base R Plots</summary>
 
 Type `?par` in the console to see the many graphical parameters (arguments) that can be used to modify base R plots. Unless you plan to use base R functions to create complex plots, you can probably get by with remembering a small handful of useful graphical parameters, such as `pch =` to change scatter plot point types, `col =` to set color, and a variety of `cex` arguments to change font size and point size.
@@ -127,6 +132,7 @@ Let's create a basic scatter plot and use some of these graphical parameters to 
 
 </details>
 <br>
+
 <details open><summary class='drop'>Create a scatter plot</summary>
 
 <div class="alert alert-info">
@@ -164,7 +170,7 @@ plot(visitors/1000 ~ gas_constant,
      ylab = "Number of visitors, in 1000's")
 ```
 
-<details open><summary class='drop'>Answer to Challenge Question</summary>
+<details><summary class='drop'>Answer to Challenge Question</summary>
 ```{r, echo = TRUE, eval = FALSE, message = FALSE, warning = FALSE}
 
 # Subset the data
@@ -206,6 +212,7 @@ The plot above shows that gas prices have gone up and down between 2000 and 2015
 These scatter plots give interesting insight on trends in national gas prices and trends in visits to Arches National Park. The pattern we saw in our initial scatter plot--positive correlation between annual visitor counts and national average gas price--was almost certainly a spurious correlation. It's important to look at data from many different directions and to not jump to conclusions based on a narrow exploration of the data.
 </details>
 <br>
+
 <details open><summary class='drop'>Create a Line Graph</summary>
 
 Line graphs are often used for showing changes in continuous data over time. Let's make one last plot in base R before we move on to `ggplot`.
@@ -222,7 +229,7 @@ The final plot (with over-plotted points) should show this relationship:
 plot(visitors/1000 ~ year, data = arch_dat, type = "o", main = "Visits to Arches National Park, 2000 - 2015", xlab = "Year", ylab = "Number of visitors, in 1000's") # can use `type = "o" to get line plots with points
 ```
 
-<details open><summary class='drop'>Answer to Challenge Question</summary>
+<details><summary class='drop'>Answer to Challenge Question</summary>
 ```{r, echo = TRUE, eval = FALSE, message = FALSE, warning = FALSE}
 
 # Line graph
