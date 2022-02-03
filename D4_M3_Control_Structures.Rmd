@@ -154,7 +154,7 @@ dplyr::case_when(
   d > mean(d, na.rm = T) / 10 ~ "OK"
 )
 ```
-There are a few things to note here. First this is a clear statement of what is happening and there are few {} or () to track. Also, there is no 'else' option. Because there is no `else` option we have to specify all of the cases of interest. If we do not fully specify the cases the resultant vector will have `NA` for those. Finally, we don't show it here, but it passes NA values into the output if they are present. These are not bad things, sometimes these are very useful behaviors. You just need to know what they are doing so you can decide when to take advantage of them. We will come back to this function in a `for` loop below if we have time.
+There are a few things to note here. First this is a clear statement of what is happening and there are few {} or () to track. Also, there is no 'else' option. Because there is no `else` option we have to specify all of the cases of interest. If we do not fully specify the cases the resultant vector will add an `NA` for those cases that are not specified. It will evaluate each logical statement in order. Finally, we don't show it here, but it passes NA values into the output if they are present. These are not bad things, sometimes these are very useful behaviors. You just need to know what they are doing so you can decide when to take advantage of them. We will come back to this function in a `for` loop below if we have time.
 <br>
 </details>
 </details>
