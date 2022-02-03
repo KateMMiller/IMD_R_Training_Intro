@@ -17,7 +17,7 @@ If you've tried to do GIS and make maps in R even a few years ago, you probably 
 
 The `sf` package is the workhorse for anything you need to do with spatial vector data. File types with `sf` are called <b>simple features</b>, which follow a set of GIS standards that are becoming the universal data model for vector-based spatial data in R and that most GIS-based packages in R now employ. Simple features are also now the standard for open source GIS in general. That means if you're trying to troubleshoot something with simple features, you'll need to specify that it's for R, rather than PostGIS or some other implementation. The `sf` package is also superseding the `rgdal` package, which used to be the more common data model in R and open source GIS. The more I use this package, the more impressed I am with how intuitive it is to use, and how well documented the functions are. For vector data, I have yet to need to perform a task that `sf` couldn't do.
 
-The main application of `tmap` package is making maps, and it was designed using a grammar of graphics philosophy similar to `ggplot2`. In practice for `tmap`, it means that maps are built as a collection of many small functions/layers that get added together, and order matters. There are also tmap-enabled functions that you can use in `ggplot2` plots too, but you can do a lot more in `tmap`. I also prefer the look of tmap's built-in compass, legends, etc. over the ones available in `ggspatial`, which is an add-on package for plotting spatial data in `ggplot2`.    
+The main application of `tmap` package is making maps, and it was designed using a grammar of graphics philosophy similar to `ggplot2`. In practice for `tmap`, it means that maps are built as a collection of many small functions/layers that get added together with pipes (%>%), and order matters. There are also tmap-enabled functions that you can use in `ggplot2` plots too, but you can do a lot more in `tmap`. I also prefer the look of tmap's built-in compass, legends, etc. over the ones available in `ggspatial`, which is an add-on package for plotting spatial data in `ggplot2`.    
 
 The `raster` package is also an excellent package for analyzing/processing raster data. For large jobs, I find the `raster` package easier to work with than ESRI tools, and it tends to run a lot faster than ESRI built-in tools (I haven't compared with python).   
 
@@ -266,7 +266,7 @@ tmap_save(sara_map, 'SARA_GRTS.png', height = 10.5, width = 8,
 <details><summary class = 'drop2'>Answer</summary>
 
 ```{r d3gis_a2, echo = T}
-sara_map <- 
+sara_map2 <- 
   # Vegetation map
   tm_shape(sara_veg, projection = 26918, bbox = sara_bound) +
   tm_polygons('fill_col') + # A1: changed tm_fill() to tm_polygon()
@@ -282,7 +282,7 @@ sara_map <-
   # GRTS points  
   tm_shape(grts_forest) +
   tm_symbols(shapes = 21, col = '#EAFF16', border.lwd = 0.5, size = 0.3) + 
-  tm_text('priority', size = 0.9, xmod = -0.4, ymod = -0.4) +
+  tm_text('priority', size = 0.9, xmod = -0.5, ymod = -0.5) +
   tm_add_legend(type = 'symbol', labels = 'GRTS points', shape = 21, 
                 col = '#EAFF16', border.lwd = 1, size = 0.5, 
                 z = 1) +
@@ -291,7 +291,7 @@ sara_map <-
   tm_compass(size = 2, type = 'arrow', 
              text.size = 1, position = c('left', 'bottom')) +
   tm_scale_bar(text.size = 1.25, position = c('center', 'bottom')) + 
-  tm_layout(inner.margins = c(0.2, 0.02, 0.02, 0.02), # make room for legend
+  tm_layout(inner.margins = c(0.2, 0.02, 0.02, 0.02), 
             outer.margins = 0,
             legend.text.size = 1.25,
             legend.just = 'right',
@@ -321,8 +321,24 @@ knitr::include_graphics('SARA_GRTS.png')
 <br>
 
 <details open><summary class = 'drop2'>Interactive mode</summary>
-The last cool thing to show with tmap, is that you can include interactive HTML widgets similar to what leaflet can do (coming next). With the interactive mode, you can change baselayers, turn your layers off/on, and zoom to different extent. The legend in the interactive mode is a bit limited to only show fills, but it's still pretty cool. 
+The last cool thing to show with tmap, is that you can include interactive HTML widgets similar to what leaflet can do (coming next). With the interactive mode, you can change baselayers, turn your layers off/on, and zoom to different extent. The legend in the interactive mode is a bit limited to only show fills, but it's still pretty cool. You can also add custom basemaps (e.g. parktiles) to the interactive mode either by adding `tm_basemap(url)`, or by changing the default basemap via `tmap_options()`, which I show below.
 ```{r tmview, echo = T, warning = F, message = F}
+# Load park tiles
+NPSbasic = 'https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck58pyquo009v01p99xebegr9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg'
+  
+NPSimagery = 'https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck72fwp2642dv07o7tbqinvz4/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg'
+  
+NPSslate = 'https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck5cpvc2e0avf01p9zaw4co8o/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg'
+  
+NPSlight = 'https://atlas-stg.geoplatform.gov/styles/v1/atlas-user/ck5cpia2u0auf01p9vbugvcpv/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoiYXRsYXMtdXNlciIsImEiOiJjazFmdGx2bjQwMDAwMG5wZmYwbmJwbmE2In0.lWXK2UexpXuyVitesLdwUg'
+
+# Set parktiles as default basemaps for all interactive maps
+tmap_options(basemaps = c(Map = NPSbasic,
+                          Imagery = NPSimagery,
+                          Light = NPSlight,
+                          Slate = NPSslate))
+
+# Switch to interactive mode, and plot the sara_map
 tmap_mode('view') # turn interactive mode on
 sara_map
 tmap_mode('plot') # return to default plot view
