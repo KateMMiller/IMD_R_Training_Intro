@@ -7,8 +7,7 @@ There are two control structures we are going to focus on: `for` loops and `if/e
 <details open><summary class='drop'>if/else Statement Overview</summary>
 Most of you are probably familiar with this. It has 3 pieces (in order):
   
-  1.  A conditional statement ("if") to evaluate as a (TRUE / FALSE), e.g. `(x>1)` 
-  2.  An action to perform if it is `TRUE`  
+  1.  A conditional statement ("if") to evaluate as a (TRUE / FALSE), e.g. `(x>1)`   2.  An action to perform if it is `TRUE`  
   3.  An action to perform if it is `FALSE` 
   
 On any individual data point or set of data, only two of these code pieces will be applied. The conditional statement (1) will always be evaluated. Then only the appropriate `T` or `F` action (2 or 3) will be applied - the other will be skipped. There are a two different ways to invoke this in R and they do different things:
@@ -19,7 +18,7 @@ This first method `if(){}else{}` is a true control structure. This is useful for
 
 You will also see `ifelse` show up often. 
 
-`ifelse()` is the 'vectorized' version - this is most useful when you need to change the value in a vector based i.e. (recoding).
+`ifelse()` is the 'vectorized' version - this is most useful when you need to change the value in a vector i.e. (recoding).
 
 `ifelse(test= , yes= , no= )` (hereafter `ifelse`)
 </details>
