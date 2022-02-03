@@ -31,6 +31,13 @@ packages <- c("tidyverse", "ggthemes", "GGally", "RColorBrewer",
 
 install.packages(setdiff(packages, rownames(installed.packages())))  
 ```
+
+If folks are having trouble installing `tmap` due to an issue with one of its dependencies, `terra`, try running the following code, and then reinstall `tmap`. 
+
+```{r installterra, echo = T, results = 'hide', eval = FALSE}
+install.packages('terra', repos='https://rspatial.r-universe.dev')
+```
+
 </details>
 
 <details open><summary class='drop'>Optional Reading</summary>
