@@ -1,9 +1,10 @@
+#### Troubleshooting
 <h3> Overview </h3>
 Believe it or not, there are only two types of errors and both are human. 1) Your code is written incorrectly (let's go find that missing ')'...). 2) You are telling your code to do something with data that it can't do with that data (let's figure out where we need to set `na.rm=T`). Another branch of troubleshooting is optimization - "why is my code so slow?" We will cover that next week.
 
 Troubleshooting iteration is often challenging and frustrating. Sometimes errors are obvious sometimes errors only show up when you start digging into outputs. Sometimes it works fine on the test data and fails on the real data. Ultimately, debugging is an exercise in hypothesis testing "If I do this, I should get this result. Where did I not get the expected result and why?" We present you with some basic manual approaches and resources here that should help you debug iteration. As you code you will find the approach that works best for you in each situation.
 
-#### Troubleshooting
+
 <h3> Clues you need to troubleshoot </h3>
 **Warnings** - Warnings are you prompt to check if there is a problem. Code will seldom fail to provide output on a warning, the question is whether or not it is the output you are after. When you see warnings you should run `warnings()` and see if it makes sense as to why there are warnings. ggplot, for example, will issue warnings for each incomplete record (e.g. a value for y, but not x) and will continue to plot everything that is complete. It is always good to pay attention to the number of warnings and periodically check that they are expected. If they are unexpected you may wish to dig deeper.
 
@@ -15,13 +16,11 @@ Troubleshooting iteration is often challenging and frustrating. Sometimes errors
 <h3> Tracking down the error </h3>
 Tracking the error down is usually the first step in fixing it. Once you track it down you can see which functions are involved in it or which data are involved in it. There are generally two approaches to this: manual and R-assisted. I am going to focus on the manual, because at some point you will have to fall back on that so it is good to have a solid understanding of that approach before you branch out to R-assisted approaches. For more on R-assisted approaches see 
 
-0) Don't try and pack too much into your code. Writing 'everything loops' means that you will have a lot of functions. Different functions have different inputs and outputs. The more different data structures and outputs your iteration will have to handle the more likely it is to break or provide unexpected results. Iteration works really well when it has 1 input structure and 1 output structure. 
+1) **Don't try and pack too much into your code.** Writing 'everything loops' means that you will have a lot of functions. Different functions have different inputs and outputs. The more different data structures and outputs your iteration will have to handle the more likely it is to break or provide unexpected results. Iteration works really well when it has 1 input structure and 1 output structure. 
 
-1) **Make your code verbose** - Iteration usually works until it doesn't - it will loop up to the point or dataset that breaks it. Depending on how you have written your code, you likely don't know where it actually failed. That is a fact of life with R and iteration. Iteration tends to hide errors and warnings and makes it difficult to see where things went wrong. Adding a `print()` command that prints a dataset name or a piece of data that allows you to evaluate progress allows you quickly to determine if the code is functioning properly. When you are done testing a developing a function, you can then remove it.
+2) **Make your code verbose** - Iteration usually works until it doesn't - it will loop up to the point or dataset that breaks it. Depending on how you have written your code, you likely don't know where it actually failed. That is a fact of life with R and iteration. Iteration tends to hide errors and warnings and makes it difficult to see where things went wrong. Adding a `print()` command that prints a dataset name or a piece of data that allows you to evaluate progress allows you quickly to determine if the code is functioning properly. When you are done testing a developing a function, you can then remove it. A few rules of thumb: *if it returns an error on the first step of iteration, then it is a code <b>or</b> a data-code match problem. If it can iterate properly at least once, then the code 'works', but there is a code-data mismatch.*
 
-A few rules of thumb: if it returns an error on the first step of iteration, then it is a code *or* a data-code match problem. If it can iterate properly at least once, then the code 'works', but there is a code-data mismatch.
-
-**Step away from the iteration** - The problem is seldom the iteration itself. In this approach you set the input data to the known issue or case you want to test and don't attempt to iterate over all the data. Without invoking the iteration, you then run each step of your code line by line to determine where the error occurs. This is used for fixing a code error and for troubleshooting a dataset. What does that look like?
+3) **Step away from the iteration** - The problem is seldom the iteration itself. In this approach you set the input data to the known issue or case you want to test and don't attempt to iterate over all the data. Without invoking the iteration, you then run each step of your code line by line to determine where the error occurs. This is used for fixing a code error and for troubleshooting a dataset. What does that look like?
 
 ```{r Day4TroubleStepByStep, echo=TRUE, eval=F}
 #effectively these are manual "breakpoints"
@@ -49,25 +48,17 @@ SummaryData <- rbind(SummaryData, OutDat)
 
 ```
 
-**Step away from your data** - Sometimes we let our data over-complicate the coding task. There are few coding sessions where I don't end up trying to see if I can make something work on a built in dataset (e.g. `mtcars`). Often when trying to do the same thing, but with different data, I end up seeing and solving the problem. This approach also forces you to reduce your code to the bare basics... which you may need when you go to ask for help.
-
-Process wise (you will develop your own):
-  1) Develop the code that works on the test example
-  2) Wrap it in your iterative loop
-  3) Run the for loop on more data
-  4) Identify bugs
-  5) unwrap the for loop and debug specific cases causing problems
+4) **Step away from your data** - Sometimes we let our data over-complicate the coding task. There are few coding sessions where I don't end up trying to see if I can make something work on a built in dataset (e.g. `mtcars`). Often when trying to do the same thing, but with different data, I end up seeing and solving the problem. This approach also forces you to reduce your code to the bare basics... which you may need when you go to ask for help.
 
 Lastly, don't spin your wheels by yourself for too long. Coding is a team effort.
 
+#### Reproducible Examples
 <h3> Ask for help </h3>
 We have talked about getting help before, but here we want to cover the "Minimim Reproducible Example (MRE)" and asking for help on Stack Overflow. This is actually a crucial part of debugging. Often the process of developing the MRE will actually answer your question.
 
-#### Reproducible Examples
+When you ask for help (on stackoverflow or in your office) you should provide an example of the problem you are having complete with data. This is called the minimal reproducible example (MRE). It is easiest on you and the people trying to help you if it does not use your data.  In the end you want to be able to create a fairly simple statement: "*I am trying to _____. Here is the code I have so far. I want it to produce output that looks like ____. However, it is not currently doing that, instead it is providing this output _____. What did I do wrong?*"
 
-When you ask for help (on stackoverflow or in your office) you should provide an example of the problem you are having complete with data. This is called the minimal reproducible example (MRE). It is easiest on you and the people trying to help you if it does not use your data.  In the end you want to be able to create a fairly simple statement: "I am trying to _____. Here is the code I have so far. I want it to produce output that looks like ____. However, it is not currently doing that, instead it is providing this output _____. What did I do wrong?"
-
-<h3>Steps for getting help / developing an MRE on Stackoverflow**:</h3>
+<h3>Steps for getting help / developing an MRE on Stackoverflow:</h3>
   1.  Identify a common built-in dataset that has a structure that is vaguely similar to your data or write some simple code that mimics what you are trying to deal with. A good one to use is often `mtcars` which is in ggplot2. It has integer data, continuous data, and categorical data. If you are using a random number generator for you data (e.g. `rnorm` then using `set.seed()` is advisable.) Don't try to reproduce your entire dataset, reproduce only what your code is using. If you have 40 variables, and your code only operates on 8, provide a dataframe with 8 variables (or 9 in the unlikely event the problem is in the unused variable). 
   
   2.  Strip your code down to the essentials - sometimes the bigger context of your code is relevant, usually it isn't. 
