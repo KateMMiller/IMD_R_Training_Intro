@@ -240,30 +240,7 @@ We now have all the data we need in a single data frame.
 
 We are primarily using `dplyr` to wrangle data and `ggplot2` to plot data. These two packages are part of the [Tidyverse](https://www.tidyverse.org/packages/) of packages for data science. Tidyverse packages share a common design philosophy centered on ideas like breaking down complex tasks into a series of simpler functions executed in sequence (e.g., piping `%>%`). Functions from tidyverse packages work together most seamlessly and efficiently when data are in a tidy format. Remember that a 'tidy' format means data have one variable per column and one observation per row. 
 
-<div class="alert alert-info">
-  <strong>POLL:  Which of the data sets below is 'tidy'?</strong>
-  
-  A) Plant Growth Rates
-  <br>
-  B) Political Twitter Likes
-  <br>
-  C) Test Grades and Lunch
-  <br>
-  D) A & C
-  <br>
-  E) None of the above
-  
-</div>
-
-<center>![](images/tidy_poll.png)</center>
-
-<details><summary class='drop2'>Answer to poll question</summary>
-A. Plant Growth Rates - of the three, this is the only data frame that is in 'tidy' format
-</details>
-
-<br>
-
-What about our `joined_dat` data frame? Is it in 'tidy' format? Yes, it is! No need to pivot_long anything today. But let's make two final changes to the data before we begin plotting. First, we will convert `region` to an ordered factor with more descriptive labels. Second, we will remove park units that don't have visitor data for every year from 2000 to 2015. We will end with a final check of the data to make sure it's ready for plotting.
+Look at the `joined_dat` data frame. Is it in 'tidy' format? Yes, it is! The visitor count for each park unit and year is in a separate data frame row. No need to pivot_long anything today. But let's make two final changes to the data before we begin plotting. First, we will convert `region` to an ordered factor with more descriptive labels. Second, we will remove park units that don't have visitor data for every year from 2000 to 2015. We will end with a final check of the data to make sure it's ready for plotting.
 </details>
 <details open><summary class='drop2'>Step 4. Convert `region` to a factor data type</summary>
 
