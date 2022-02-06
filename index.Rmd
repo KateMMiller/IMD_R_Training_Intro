@@ -5,6 +5,18 @@ output:
     css: custom_styles.css
 title: "NPS IMD Intro to R"
 ---
+<head>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-171818766-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-171818766-1');
+</script>
+</head>
+
 ```{r globaloptions, include = FALSE}
 knitr::opts_chunk$set(warning=FALSE, message=FALSE)
 ```
@@ -19,29 +31,29 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE)
 
 ### Day 1: Intro to R {.tabset}
 
-```{r Intro_to_R_tab, child = "D1_M1_Intro_to_R_tab.Rmd"}
+```{r Intro_to_R_tab, child = "IMD_D1_M1_Intro_to_R_tab.Rmd"}
 ```
 
-```{r Start_coding, child = "D1_M2_Lets_start_coding.Rmd"}
+```{r Start_coding, child = "IMD_D1_M2_Lets_start_coding.Rmd"}
 ```
 
-```{r Vars_Fns, child = "D1_M3_Variables_and_functions.Rmd"}
+```{r Vars_Fns, child = "IMD_D1_M3_Variables_and_functions.Rmd"}
 ```
 
-```{r Examining_data, child = "D1_M4_Examining_data.Rmd"}
+```{r Examining_data, child = "IMD_D1_M4_Examining_data.Rmd"}
 
 ```
 
-```{r Data_structures, child = "D1_M5_Data_structures.Rmd"}
+```{r Data_structures, child = "IMD_D1_M5_Data_structures.Rmd"}
 ```
 
-```{r Working_with_columns, child = "D1_M6_Working_with_columns.Rmd"}
+```{r Working_with_columns, child = "IMD_D1_M6_Working_with_columns.Rmd"}
 ```
 
-```{r Basic_data_viz, child = "D1_M7_Basic_data_viz.Rmd"}
+```{r Basic_data_viz, child = "IMD_D1_M7_Basic_data_viz.Rmd"}
 ```
 
-```{r Getting_help, child = "D1_M8_Getting_help.Rmd"}
+```{r Getting_help, child = "IMD_D1_M8_Getting_help.Rmd"}
 ```
 
 ### Day 2: Data Wrangling {.tabset}
@@ -80,16 +92,16 @@ knitr::opts_chunk$set(warning=FALSE, message=FALSE)
 
 ### Day 4: Best Practices and Iteration {.tabset}
 
-```{r Good_Practices, child = "D4_M1_Good_Practices.Rmd"}
+```{r Good_Practices, child = "IMD_D4_M1_Good_Practices.Rmd"}
 ```
 
-```{r Vectorization, child = "D4_M2_Vectorization.Rmd"}
+```{r Vectorization, child = "IMD_D4_M2_Vectorization.Rmd"}
 ```
 
-```{r Control_Structures, child = "D4_M3_Control_Structures.Rmd"}
+```{r Control_Structures, child = "IMD_D4_M3_Control_Structures.Rmd"}
 ```
 
-```{r Troubleshooting_Iteration, child = "D4_M4_Troubleshooting_Iteration.Rmd"}
+```{r Troubleshooting_Iteration, child = "IMD_D4_M4_Troubleshooting_Iteration.Rmd"}
 ```
 
 ### Resources
@@ -128,4 +140,8 @@ There's a lot of great online material for learning new applications of R. The o
 
 ### Meet the Instructors
 ```{r about, child = "IMD_Meet_the_Trainers.Rmd"}
+```
+
+```{r, include = F}
+rm(list = ls())
 ```
