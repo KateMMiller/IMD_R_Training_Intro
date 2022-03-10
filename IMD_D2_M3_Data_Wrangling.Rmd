@@ -31,9 +31,9 @@ The data we'll use for modules 3-5 is from the Tidy Tuesday community on GitHub.
 The data we'll use is in csv format, so we'll need to call the readr package, as well as the tidyverse and janitor for this lesson (if you've already called tidyverse and janitor, don't run those lines).
 
 ```{r echo=TRUE, message = FALSE, warning = FALSE}
-library('readr')
-library('janitor')
-library('tidyverse')
+library(readr)
+library(janitor)
+library(tidyverse)
 ```
 
 Next, we'll load the data from the R for Data Science Tidy Tuesday GitHub page. There are three lines which will load three data.frames.
@@ -45,9 +45,9 @@ Next, we'll load the data from the R for Data Science Tidy Tuesday GitHub page. 
 For now, we'll focus on the park_visits data.frame, and will circle back to the other two later. There are descriptions of each column for each data.frame on the Tidy Tuesday website linked above if you'd like more information. 
 
 ```{r echo=TRUE, message = FALSE, warning = FALSE}
-park_visits <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/national_parks.csv")
-state_pop <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/state_pop.csv")
-gas_price <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/gas_price.csv")
+park_visits <- read.csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/national_parks.csv")
+state_pop <- read.csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/state_pop.csv")
+gas_price <- read.csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-09-17/gas_price.csv")
 ```
 </details>
 <br>

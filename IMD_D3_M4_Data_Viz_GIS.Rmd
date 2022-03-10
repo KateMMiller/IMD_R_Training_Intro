@@ -11,7 +11,7 @@ output:
 #------------------------
 ```
 
-#### Vizualizing Spatial Data
+#### Visualizing Spatial Data
 <details open><summary class = 'drop'>GIS in R</summary>
 <h4>Packages used in this section:</h4>
 ```{r gispkges, echo = T, results = 'hide'}
